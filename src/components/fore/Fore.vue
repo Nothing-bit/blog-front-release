@@ -1,0 +1,358 @@
+<template>
+    <el-container id="header">
+        <el-header  style="height:65px;position:fixed;background: rgb(255,255,255);z-index: 2;width:100%;border-bottom: 1px solid #c6c4ca;">
+            <el-row type="flex" align="middle" justify="center">
+                <el-menu default-active="/fore/index" active-text-color="rgb(64,158,255)" mode="horizontal"  router>
+                    <el-menu-item index="/fore/index" class="nav-bar-item" ><i class="el-icon-s-promotion"></i>首 页</el-menu-item>
+                    <el-menu-item index="/fore/news" class="nav-bar-item"><i class="el-icon-edit"></i>随 说</el-menu-item>
+                    <el-menu-item index="/fore/category" class="nav-bar-item"><i class="el-icon-menu"></i>分 类</el-menu-item>
+                    <el-menu-item index="/fore/tag" class="nav-bar-item"><i class="el-icon-price-tag"></i>标 签</el-menu-item>
+                    <el-menu-item index="/fore/archive" class="nav-bar-item"><i class="el-icon-date"></i>归 档</el-menu-item>
+                    <el-menu-item index="/fore/about" class="nav-bar-item"><i class="el-icon-more"></i>关 于</el-menu-item>
+<!--                    <el-menu-item>-->
+<!--                        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=298 height=52 :src=musicURL></iframe>-->
+<!--                    </el-menu-item>-->
+<!--                    <el-menu-item>-->
+<!--                        <el-autocomplete placeholder="搜啥"-->
+<!--                                         v-model="form.searchValue"-->
+<!--                                         prefix-icon="el-icon-search"-->
+<!--                                         :fetch-suggestions="queryArticle"-->
+<!--                                         @select="selectHandler"-->
+<!--                                         style="width: 100%"-->
+<!--                        >-->
+<!--                        </el-autocomplete>-->
+<!--                    </el-menu-item>-->
+                </el-menu>
+            </el-row>
+        </el-header>
+        <el-main class="main" style="padding-top: 10px; min-height: calc(100vh - 150px);margin-top:65px">
+            <keep-alive >
+                <router-view v-if="$route.meta.keepAlive"/>
+            </keep-alive>
+            <router-view v-if="!$route.meta.keepAlive"/>
+        </el-main>
+        <el-footer id="footer">
+            <div class="footer">
+                <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
+                <br>
+                <a href="http://beian.miit.gov.cn" target="_blank">
+                    <span>苏ICP备19061991号</span>
+                </a>
+            </div>
+        </el-footer>
+            <!--    登录Dialog-->
+            <el-dialog :visible.sync="loginDialogDisplay" width="35%">
+                <el-row class="login-module">
+                    <h1>登 录</h1>
+                    <span>选择以下方式第三方进行登录</span>
+                    <el-divider></el-divider>
+                    <el-tooltip content="Github">
+                        <el-button @click="login('github')"><img src="../../assets/login-github.png" ></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="QQ">
+                        <el-button @click="login('qq')"><img src="../../assets/login-qq.png"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="Gitee">
+                        <el-button @click="login('gitee')"><img src="../../assets/login-gitee.png"></el-button></el-tooltip>
+                    <el-divider></el-divider>
+                    <span>TIP:只获取你的昵称和头像~</span>
+                </el-row>
+            </el-dialog>
+<!--        右下角小菜单-->
+<!--        搜索-->
+        <div class="el-backtop"  style="bottom: 240px;right: 40px" @click="drawer=true">
+            <i class="el-icon-search"></i>
+        </div>
+<!--        搜索抽屉-->
+        <el-drawer
+                :visible.sync="drawer"
+                :show-close="false"
+                :with-header="false"
+                size="20%">
+            <div style="    display: flex;
+                            flex-direction: column;
+                            height: 100%;
+                            padding: 20px">
+                <el-form :model="form" >
+                    <el-form-item label="搜索内容" >
+                        <el-input v-model="form.searchValue" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="搜索范围">
+                        <el-select v-model="form.searchProperty" placeholder="请选择搜索范围">
+                            <el-option label="标题" value="title"></el-option>
+                            <el-option label="简介" value="summary"></el-option>
+                            <el-option label="内容" value="content"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <div style="display: flex;">
+                    <el-button @click="drawer=false">取 消</el-button>
+                    <el-button type="primary" >确 定</el-button>
+                </div>
+            </div>
+        </el-drawer>
+<!--        登录-->
+        <div  class="el-backtop"  style="bottom: 190px;right: 40px" @click="loginDialog">
+            <i class="el-icon-user"></i>
+        </div>
+<!--        注销-->
+        <el-popover v-if="userInfoDisplay"
+                placement="left"
+                width="160"
+                v-model="visible">
+            <p>是否注销？</p>
+            <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="visible=false">取消</el-button>
+                <el-button type="primary" size="mini" @click="logout">确定</el-button>
+            </div>
+            <div slot="reference" class="el-backtop"  style="bottom: 190px;right: 40px">
+                <el-avatar :src="userInfo.avatar"></el-avatar>
+            </div>
+        </el-popover>
+<!--        多媒体-->
+        <div class="el-backtop animate__animated animate__rollIn"  style="bottom: 140px;right: 40px" >
+            <i class="el-icon-video-pause "></i>
+        </div>
+<!--        前往顶部-->
+        <div class="el-backtop" style="bottom: 90px;right: 40px" @click="scrollToTop">
+            <i class="el-icon-caret-top"></i>
+        </div>
+<!--        前往底部-->
+        <div class="el-backtop" style="bottom: 40px;right: 40px" @click="scrollToBottom">
+            <i class="el-icon-caret-bottom"></i>
+        </div>
+    </el-container>
+</template>
+
+<script>
+    import axios from 'axios'
+    import { Notification }  from 'element-ui';
+    export default {
+        name:'fore',
+        data() {
+            return {
+                activeIndex: '1',
+                loginDialogDisplay:false,
+                userInfo:'',
+                userInfoDisplay:false,
+                musicURL:'',
+                form:{
+                    searchValue:'',
+                    searchProperty:''
+                },
+                visible: false,
+                drawer:false,
+            };
+        },
+        methods: {
+            scrollToTop(){
+                document.getElementById("header").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+            },
+            scrollToBottom(){
+                document.getElementById("footer").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+            },
+            queryArticle(searchValue,callback){
+                let url=this.baseUrl+"/fore/article/all?searchValue="+searchValue;
+                axios.get(url).then(res=>{
+                    let result=res.data;
+                    if(result.code==200){
+                        callback(result.data)
+                    }
+                })
+            },
+            selectHandler(item){
+                this.$router.push({name:'article',query:{id:item.id}})
+            },
+            logout(){
+                this.$cookies.remove("zBlogToken");
+                Notification({
+                    title:'提示',
+                    message:'你已成功退出登录！',
+                    type:'success'
+                })
+                this.userInfoDisplay=false;
+            },
+            check(){//检查token是否有效，有效则获取用户信息，无效则需要重新登录
+                 var url=this.baseUrl+"/oauth/check"
+                 var token=this.$cookies.get("zBlogToken")
+                 axios.get(url,{headers:{Authorization:token}}).then((res)=>{
+                     var result=res.data;
+                     if(result.code==200){//有效则保存用户信息，并渲染出来
+                         this.userInfo=result.data;
+                         var message="欢迎回来！来自"+result.data.source+"的"+result.data.username
+                        Notification({
+                            title:'提示',
+                            message:message,
+                            type:'success'
+                        })
+                         this.userInfoDisplay=true;
+                     }else if(result.code==201){//无效则渲染出登录按钮
+                         this.userInfoDisplay=false;
+                         this.$cookies.remove("zBlogToken")
+                     }
+                 })
+            },
+            loginDialog(){
+                this.loginDialogDisplay=true
+            },
+            getUserInfo(e){
+                var userInfo=e.data;
+                if(e.data!=null){
+                    var message="来自"+userInfo.source+"的"+userInfo.username+",你已成功登录！"
+                    Notification({
+                        title:'提示：',
+                        message:message,
+                        type:'success'
+                    })
+                    this.userInfo=userInfo;
+                    this.userInfoDisplay=true;
+                    this.$cookies.set("zBlogToken",userInfo.token,60*60*24*7);
+                }else{
+                    Notification({
+                        title:'提示：',
+                        message:'糟糕，登录出现了问题!',
+                        type:'error'
+                    })
+                    this.userInfoDisplay=false;
+                }
+                window.removeEventListener('message',this.getUserInfo,false)
+            },
+            login(platform){//登录操作
+                this.loginDialogDisplay=false;
+                var url=this.baseUrl+"/oauth/login/"+platform
+                window.open(url,'newwindow', 'height=500, width=500, top=50, left=50, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no')
+                window.addEventListener('message', this.getUserInfo,false)
+            },
+            getMusicURL(){//获取音乐URL
+                let url=this.baseUrl+"/fore/setting?name=musicURL"
+                axios.get(url).then(res=>{
+                    let result= res.data;
+                    if(result.code==200){
+                        this.musicURL=result.data;
+                    }else{
+                        Notification({
+                            title:'提示',
+                            message:'未能获取到背景音乐的链接！',
+                            type:'warning'
+                        })
+                    }
+                })
+            }
+        },
+        components:{
+        },
+        created(){
+            this.check()
+            this.getMusicURL()
+        },
+    }
+</script>
+
+<style>
+    @import "~@/assets/css/ckeditor-content.css";
+    @import "~animate.css/animate.min.css";
+    .username{
+        color:rgb(64,158,255);
+    }
+    .avatar{
+        vertical-align:center;
+    }
+    .nav-bar-item{
+        font-size: 17px;
+        font-family: "Helvetica Neue";
+        text-align: center;
+    }
+    .breadcrumb{
+        padding: 15px;
+    }
+    .breadcrumb-item{
+        font-size: 15px;
+    }
+    .footer{
+        text-align: center;
+        background: white;
+        padding: 20px;
+    }
+    .main{
+        min-height: 700px;
+    }
+    .login-module{
+        text-align: center;
+    }
+
+
+    .article-card{
+        padding: 13px;
+        margin-bottom: 5px;
+        text-align: left;
+    }
+    .tag-container{
+        height: 20px;
+        vertical-align: center;
+        padding: 10px;
+    }
+    .article-tag{
+        margin-left: 15px;
+    }
+    .tag-cloud{
+        height: 300px;
+    }
+    .pagination{
+        text-align: center;
+    }
+    .card{
+        margin-top: 5px;
+    }
+    .article-pic{
+        border-radius: 5px;
+        width: 300px;
+        height:200px;
+        cursor: pointer;
+        transition: transform 500ms;
+    }
+    .article-pic:hover{
+        transform: scale(1.05);
+    }
+    .article-tag:hover{
+        cursor: pointer;
+    }
+    .article-info-summary{
+        height: 90px;
+    }
+    i{
+        margin: 3px;
+        font-size: 20px;
+        color: rgb(92,182,255);
+    }
+    .el-timeline-item__tail{position:absolute;left:4px;height:100%;border-left:2px solid #accaf7}
+    .el-card{
+        border: 1px solid #d3d5d7;
+        background-color: #FFF;
+        color: #303133;
+        transition: .3s;
+    }
+    .el-header {
+        padding: 0 20px;
+        box-sizing: border-box;
+        flex-shrink: 0;
+        border-bottom: 1px solid #c6c4ca;
+    }
+    .el-menu.el-menu--horizontal {
+        border-bottom: none;
+    }
+    .el-footer {
+        /* border-top: 1px solid rgb(220,223,230); */
+        text-align: center;
+        background: white;
+        border-top: 1px solid #c6c4ca
+    }
+    .list-complete-item {
+        transition: all 1s;
+    }
+    .list-complete-leave-to{
+        display: none;
+    }
+    .list-complete-leave-active {
+        position: absolute;
+    }
+</style>
