@@ -19,21 +19,21 @@
                 </el-upload>
             </el-form-item>
             <el-row>
-                <el-col :lg="4">
+                <el-col :lg="3">
                     <el-form-item label="分类">
                         <el-select v-model="article.categoryId" filterable placeholder="请选择">
                             <el-option v-for="item in categoryList" :value="item.id" :label="item.name" v-bind:key="item.id"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :lg="4">
+                <el-col :lg="3">
                     <el-form-item label="标签">
                         <el-select v-model="article.tagList" filterable placeholder="请选择" allow-create multiple>
                             <el-option v-for="item in tagList" :value="item.name" :label="item.name" v-bind:key="item.id"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :lg={span:4}>
+                <el-col :lg={span:3}>
                     <el-form-item label="置顶">
                         <el-radio-group v-model="article.top">
                             <el-radio  :label="true">是</el-radio>
@@ -41,7 +41,7 @@
                         </el-radio-group>
                     </el-form-item>
                 </el-col>
-                <el-col :lg={span:4}>
+                <el-col :lg={span:3}>
                     <el-form-item label="隐藏">
                         <el-radio-group v-model="article.privated">
                             <el-radio  :label="true">是</el-radio>
@@ -49,9 +49,29 @@
                         </el-radio-group>
                     </el-form-item>
                 </el-col>
-                <el-col :lg={span:4}>
+                <el-col :lg={span:3}>
                     <el-form-item label="点击量">
                         <el-input-number v-model="article.traffic"></el-input-number>
+                    </el-form-item>
+                </el-col>
+                <el-col :lg="3">
+                    <el-form-item label="首次创建">
+                        <el-date-picker
+                                v-model="article.createBy"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                type="datetime"
+                                placeholder="选择日期">
+                        </el-date-picker>
+                    </el-form-item>
+                </el-col>
+                <el-col :lg="3">
+                    <el-form-item label="最后修改">
+                        <el-date-picker
+                                v-model="article.modifiedBy"
+                                type="datetime"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                placeholder="选择日期">
+                        </el-date-picker>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -61,6 +81,12 @@
         </el-form>
         <div class="button-container">
             <el-button class="el-button--primary" @click="submit">提 交</el-button><el-button @click="back">返 回</el-button>
+        </div>
+        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 190px;right: 40px" @click="submit">
+            <i class="el-icon-check"></i>
+        </div>
+        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 140px;right: 40px" @click="back">
+            <i class="el-icon-close"></i>
         </div>
     </el-card>
 </template>
@@ -126,6 +152,9 @@
                         },
                         uploadUrl: this.baseUrl+"/admin/upload/images"
                     },
+                    // fontFamily: {
+                    //     supportAllValues: true
+                    // },
                     toolbar: {
                         items: [
                             'undo',
@@ -192,7 +221,7 @@
                                         type:'success',
                                         duration:5000,
                                         showClose:false,
-                                        position:'bottom-right'
+                                        position:'top-right'
                                     })
                                 }else{
                                     Notification({
@@ -201,7 +230,7 @@
                                         type:'error',
                                         duration:5000,
                                         showClose:false,
-                                        position:'bottom-right'
+                                        position:'top-right'
                                     })
                                 }
                             })
@@ -219,6 +248,8 @@
                     privated:false,
                     pictureUrl:'',
                     tagList:[],
+                    createBy:'',
+                    modifiedBy:''
                 },
                 categoryList:[],
                 tagList:[],
@@ -239,6 +270,7 @@
                     if(result.code==200){
                         let data=result.data;
                         this.article=data;
+                        // console.log(data)
                     }else{
                         Notification({
                             title:"提示",
@@ -306,6 +338,7 @@
                 })
             },
             submit(){
+                // console.log(this.article)
                 if(this.article.title==''){
                     Notification({
                         title:'提示',
@@ -344,8 +377,6 @@
                     })
                 }else{
                     let url=this.baseUrl+"/admin/article"
-                    this.$delete(this.article,'createBy')
-                    this.$delete(this.article,'modifiedBy')
                     axios.put(url,this.article,this.headerConfig).then(res=>{
                         let result=res.data;
                         if(result.code==200){

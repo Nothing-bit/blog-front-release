@@ -58,6 +58,12 @@
         <div class="button-container">
             <el-button class="el-button--primary" @click="submit">提 交</el-button><el-button @click="back">返 回</el-button>
         </div>
+        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 190px;right: 40px" @click="submit">
+            <i class="el-icon-check"></i>
+        </div>
+        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 140px;right: 40px" @click="back">
+            <i class="el-icon-close"></i>
+        </div>
     </el-card>
 </template>
 

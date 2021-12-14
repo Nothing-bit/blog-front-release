@@ -159,9 +159,11 @@
                 })
             }
         },
+        activated(){
+          this.getArticleList(1)
+        },
         created(){
             this.getToken()
-            this.getArticleList(1)
         }
     }
 </script>

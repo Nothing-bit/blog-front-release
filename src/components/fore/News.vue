@@ -12,10 +12,11 @@
             </el-col>
         </el-row>
         <el-row>
+<!--            <el-button @click="$forceUpdate">test fresh</el-button>-->
             <el-col :xl="{span:14,offset:5}" :lg="{span:16,offset:4}" :md="{span:24}">
                 <!--                时间轴部分-->
                 <el-col :lg="{span:20,offset:2}" :md="{span:24}">
-                    <el-timeline class="infinite-list" infinite-scroll-delay="1500"  :infinite-scroll-distance="200" v-infinite-scroll="getList" style="overflow:auto">
+                    <el-timeline class="infinite-list" infinite-scroll-delay="1000"  :infinite-scroll-distance="200" v-infinite-scroll="getList" style="overflow:auto">
                         <transition-group name="list-complete"
                                           tag="div"
                                           appear

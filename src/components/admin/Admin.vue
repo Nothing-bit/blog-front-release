@@ -1,5 +1,5 @@
 <template>
-    <el-container>
+    <el-container id="header">
         <!---头部--->
         <el-header style="height: 65px;width: 100%;background: rgb(255,255,255);z-index: 2;">
             <el-row type="flex" align="middle" justify="center" >
@@ -21,12 +21,17 @@
                 <router-view v-if="$route.meta.keepAlive"/>
             </keep-alive>
             <router-view v-if="!$route.meta.keepAlive"/>
-            <el-backtop :visibility-height="200">
-                UP
-            </el-backtop>
         </el-main>
+        <!--        前往顶部-->
+        <div class="el-backtop" style="bottom: 90px;right: 40px" @click="scrollToTop">
+            <i class="el-icon-caret-top"></i>
+        </div>
+        <!--        前往底部-->
+        <div class="el-backtop" style="bottom: 40px;right: 40px" @click="scrollToBottom">
+            <i class="el-icon-caret-bottom"></i>
+        </div>
 <!--底部-->
-        <el-footer class="footer" style="height: calc(7vh)">
+        <el-footer id="footer" class="footer" style="height: calc(7vh)">
             <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
             <br>
             <a href="http://beian.miit.gov.cn" target="_blank">
@@ -42,6 +47,14 @@
         data(){
             return{
             }
+        },
+        methods:{
+            scrollToTop(){
+                document.getElementById("header").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+            },
+            scrollToBottom(){
+                document.getElementById("footer").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+            },
         }
     }
 </script>

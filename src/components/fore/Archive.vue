@@ -168,41 +168,5 @@
     }
 </script>
 
-<style scoped>
-
-    .article-pic{
-        border-radius: 5px;
-        width: 95%;
-    }
-    .article-card{
-        padding: 20px;
-        margin-bottom: 5px;
-        text-align: left;
-    }
-    .tag-container{
-        height: 20px;
-        vertical-align: center;
-        padding: 10px;
-    }
-    .article-tag{
-        margin-left: 15px;
-    }
-    .pagination{
-        text-align: center;
-    }
-    .nav-menu{
-        text-align: center;
-        padding: 10px;
-
-    }
-    .nav-item{
-        color: rgb(64,158,255);
-    }
-    .article-info-icon{
-        font-size: 20px;
-        margin-right: 5px;
-    }
-    .article-info-summary{
-        height: 100px;
-    }
+<style>
 </style>

@@ -9,28 +9,17 @@
                     <el-menu-item index="/fore/tag" class="nav-bar-item"><i class="el-icon-price-tag"></i>标 签</el-menu-item>
                     <el-menu-item index="/fore/archive" class="nav-bar-item"><i class="el-icon-date"></i>归 档</el-menu-item>
                     <el-menu-item index="/fore/about" class="nav-bar-item"><i class="el-icon-more"></i>关 于</el-menu-item>
-<!--                    <el-menu-item>-->
-<!--                        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=298 height=52 :src=musicURL></iframe>-->
-<!--                    </el-menu-item>-->
-<!--                    <el-menu-item>-->
-<!--                        <el-autocomplete placeholder="搜啥"-->
-<!--                                         v-model="form.searchValue"-->
-<!--                                         prefix-icon="el-icon-search"-->
-<!--                                         :fetch-suggestions="queryArticle"-->
-<!--                                         @select="selectHandler"-->
-<!--                                         style="width: 100%"-->
-<!--                        >-->
-<!--                        </el-autocomplete>-->
-<!--                    </el-menu-item>-->
                 </el-menu>
             </el-row>
         </el-header>
-        <el-main class="main" style="padding-top: 10px; min-height: calc(100vh - 150px);margin-top:65px">
-            <keep-alive >
-                <router-view v-if="$route.meta.keepAlive"/>
-            </keep-alive>
-            <router-view v-if="!$route.meta.keepAlive"/>
-        </el-main>
+        <el-scrollbar>
+            <el-main class="main" style="padding-top: 10px; min-height: calc(100vh - 150px);margin-top:65px">
+                <keep-alive >
+                    <router-view v-if="$route.meta.keepAlive"/>
+                </keep-alive>
+                <router-view v-if="!$route.meta.keepAlive"/>
+            </el-main>
+        </el-scrollbar>
         <el-footer id="footer">
             <div class="footer">
                 <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
@@ -60,7 +49,7 @@
             </el-dialog>
 <!--        右下角小菜单-->
 <!--        搜索-->
-        <div class="el-backtop"  style="bottom: 240px;right: 40px" @click="drawer=true">
+        <div class="el-backtop animate__animated animate__rollIn"  style="bottom: 190px;right: 40px" @click="drawer=true">
             <i class="el-icon-search"></i>
         </div>
 <!--        搜索抽屉-->
@@ -74,25 +63,33 @@
                             height: 100%;
                             padding: 20px">
                 <el-form :model="form" >
-                    <el-form-item label="搜索内容" >
-                        <el-input v-model="form.searchValue" autocomplete="off"></el-input>
+                    <el-form-item label="搜索" >
+                        <el-input prefix-icon="el-icon-search" v-model="form.searchValue" autocomplete="off" clearable minLength="1" maxLength="50"></el-input>
                     </el-form-item>
-                    <el-form-item label="搜索范围">
-                        <el-select v-model="form.searchProperty" placeholder="请选择搜索范围">
-                            <el-option label="标题" value="title"></el-option>
-                            <el-option label="简介" value="summary"></el-option>
-                            <el-option label="内容" value="content"></el-option>
-                        </el-select>
-                    </el-form-item>
+<!--                    <el-form-item label="搜索范围">-->
+<!--                        <el-select v-model="form.searchProperty" placeholder="请选择搜索范围">-->
+<!--                            <el-option label="标题" value="title"></el-option>-->
+<!--                            <el-option label="简介" value="summary"></el-option>-->
+<!--                            <el-option label="内容" value="content"></el-option>-->
+<!--                        </el-select>-->
+<!--                    </el-form-item>-->
                 </el-form>
-                <div style="display: flex;">
+                <el-row justify="center" type="flex">
                     <el-button @click="drawer=false">取 消</el-button>
-                    <el-button type="primary" >确 定</el-button>
-                </div>
+                    <el-button type="primary" @click="queryArticle" >确 定</el-button>
+                </el-row>
+                <span style="margin:10px;text-align: center">包含 “{{showSearchValue}}” 关键字的日志共 {{searchResultList.length}} 条</span>
+                <el-scrollbar v-if="searchResultList.length>0">
+                    <div style="padding: 20px;font-size: 20px">
+                        <el-row v-for="item in searchResultList" v-bind:key="item.id">
+                            <el-link type="primary" @click="selectHandler(item)">{{item.value}}</el-link>
+                        </el-row>
+                    </div>
+                </el-scrollbar>
             </div>
         </el-drawer>
 <!--        登录-->
-        <div  class="el-backtop"  style="bottom: 190px;right: 40px" @click="loginDialog">
+        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 140px;right: 40px" @click="loginDialog">
             <i class="el-icon-user"></i>
         </div>
 <!--        注销-->
@@ -105,20 +102,20 @@
                 <el-button size="mini" type="text" @click="visible=false">取消</el-button>
                 <el-button type="primary" size="mini" @click="logout">确定</el-button>
             </div>
-            <div slot="reference" class="el-backtop"  style="bottom: 190px;right: 40px">
+            <div slot="reference" class="el-backtop"  style="bottom: 140px;right: 40px">
                 <el-avatar :src="userInfo.avatar"></el-avatar>
             </div>
         </el-popover>
 <!--        多媒体-->
-        <div class="el-backtop animate__animated animate__rollIn"  style="bottom: 140px;right: 40px" >
-            <i class="el-icon-video-pause "></i>
-        </div>
+<!--        <div class="el-backtop animate__animated animate__rollIn"  style="bottom: 140px;right: 40px" @click="musicNotify">-->
+<!--            <i class="el-icon-video-pause "></i>-->
+<!--        </div>-->
 <!--        前往顶部-->
-        <div class="el-backtop" style="bottom: 90px;right: 40px" @click="scrollToTop">
+        <div class="el-backtop animate__animated animate__rollIn" style="bottom: 90px;right: 40px" @click="scrollToTop">
             <i class="el-icon-caret-top"></i>
         </div>
 <!--        前往底部-->
-        <div class="el-backtop" style="bottom: 40px;right: 40px" @click="scrollToBottom">
+        <div class="el-backtop animate__animated animate__rollIn" style="bottom: 40px;right: 40px" @click="scrollToBottom">
             <i class="el-icon-caret-bottom"></i>
         </div>
     </el-container>
@@ -140,28 +137,40 @@
                     searchValue:'',
                     searchProperty:''
                 },
+                showSearchValue:'',
+                searchResultList:[],
                 visible: false,
                 drawer:false,
             };
         },
         methods: {
+            // musicNotify(){
+            //     this.$notify({
+            //         title: 'HTML 片段',
+            //         dangerouslyUseHTMLString: true,
+            //         message: '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src='+this.musicURL+'></iframe>'
+            //     })
+            // },
             scrollToTop(){
                 document.getElementById("header").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
             },
             scrollToBottom(){
                 document.getElementById("footer").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
             },
-            queryArticle(searchValue,callback){
-                let url=this.baseUrl+"/fore/article/all?searchValue="+searchValue;
+            queryArticle(){
+                this.showSearchValue=this.form.searchValue
+                let url=this.baseUrl+"/fore/article/all?searchValue="+this.form.searchValue;
                 axios.get(url).then(res=>{
                     let result=res.data;
                     if(result.code==200){
-                        callback(result.data)
+                        // console.log(result.data)
+                        this.searchResultList=result.data
                     }
                 })
             },
             selectHandler(item){
                 this.$router.push({name:'article',query:{id:item.id}})
+                this.drawer=false
             },
             logout(){
                 this.$cookies.remove("zBlogToken");
@@ -285,6 +294,7 @@
         padding: 13px;
         margin-bottom: 5px;
         text-align: left;
+        position: relative;
     }
     .tag-container{
         height: 20px;
@@ -346,13 +356,21 @@
         background: white;
         border-top: 1px solid #c6c4ca
     }
-    .list-complete-item {
-        transition: all 1s;
+    .nav-menu{
+        text-align: center;
+        padding: 10px;
+
     }
+    /*.list-complete-item {*/
+    /*    transition: all 1s;*/
+    /*}*/
     .list-complete-leave-to{
         display: none;
     }
-    .list-complete-leave-active {
-        position: absolute;
-    }
+    /*.list-complete-leave-active {*/
+    /*    position: absolute;*/
+    /*}*/
+    /*.list-complete-move{*/
+    /*    transition: transform 1s;*/
+    /*}*/
 </style>

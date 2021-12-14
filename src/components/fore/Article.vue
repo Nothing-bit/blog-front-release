@@ -18,7 +18,7 @@
                     <div style="text-align: center" slot="header" >
                         <b>目 录</b>
                     </div>
-                    <el-tree :data="directory" empty-text="空" highlight-current default-expand-all :expand-on-click-node=false :render-content="renderContent" @node-click="handleNodeClick">
+                    <el-tree :data="directory" empty-text="空" :highlight-current=false default-expand-all :expand-on-click-node=false :render-content="renderContent" @node-click="handleNodeClick">
 
                     </el-tree>
                 </el-card>

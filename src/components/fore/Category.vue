@@ -24,7 +24,7 @@
                                                   appear-active-class="animate__animated animate__fadeInLeft"
                                                   enter-active-class="animate__animated animate__fadeInLeft">
                                     <div class="nav-menu" v-for="item in categoryList" v-bind:key="item.id">
-                                        <el-link type="primary" class="nav-item" @click="getArticleListByCategoryId(item.id)">{{item.name}}</el-link>
+                                        <el-link class="nav-item" @click="getArticleListByCategoryId(item.id)">{{item.name}}</el-link>
                                         <br>
                                     </div>
                                 </transition-group>
@@ -169,15 +169,4 @@
 </script>
 
 <style>
-    .pagination{
-        text-align: center;
-    }
-    .nav-menu{
-        text-align: center;
-        padding: 10px;
-
-    }
-    .nav-item{
-        color: rgb(64,158,255);
-    }
 </style>

@@ -4,12 +4,11 @@ import ElementUI from 'element-ui'
 import vueCookie from 'vue-cookies'
 import 'element-ui/lib/theme-chalk/index.css'
 import hljs from "highlight.js"
-import  'highlight.js/styles/idea.css'
+import  'highlight.js/styles/vs.css'
 
 Vue.use(ElementUI)
 Vue.use(vueCookie)
 Vue.use(hljs)
-
 Vue.directive('highlight',function (el) {
   let blocks = el.querySelectorAll('code');
   blocks.forEach((block)=>{

@@ -4,9 +4,8 @@
             <!--            第一列-->
             <el-col :xl="{span:5,offset:2}" :lg="{span:6}">
                 <el-alert type="success" :title="notice"></el-alert>
-                <transition appear
-                            appear-active-class="animate__animated animate__fadeIn"
-                            enter-active-class="animate__animated animate__fadeIn">
+                <transition
+                        enter-active-class="animate__animated animate__fadeIn">
                     <el-card  shadow="hover" class="self-info-card card " >
                         <img class="head-pic" src="../../assets/headPic.png" width="100px">
                         <h3>Zhou Jian Guo</h3>
@@ -14,17 +13,17 @@
                         <el-divider></el-divider>
                         <el-row>
                             <el-col  :xl="{span:4,offset:6}" :lg="{span:6,offset:3}">
-                                <el-tooltip content="逼乎">
+                                <el-tooltip content="逼乎" effect="light">
                                     <a href="https://www.zhihu.com/people/zhou-xiao-jun-3-75" target="_blank"><img  class="appPic" src="../../assets/index-zhihu.png"></a>
                                 </el-tooltip>
                             </el-col>
-                            <el-col :xl="{span:4}" :lg="{span:6}">
-                                <el-tooltip content="网抑云">
+                            <el-col :xl="{span:4}" :lg="{span:6}" >
+                                <el-tooltip content="网抑云" effect="light">
                                     <a href="https://music.163.com/#/user/home?id=336092679" target="_blank"><img class="appPic" src="../../assets/index-wycloudmusic.png"></a>
                                 </el-tooltip>
                             </el-col>
                             <el-col :xl="{span:4}" :lg="{span:6}">
-                                <el-tooltip content="CopyHub">
+                                <el-tooltip content="CopyHub" effect="light">
                                     <a href="https://github.com/Nothing-bit"><img class="appPic" src="../../assets/index-github.png"></a>
                                 </el-tooltip>
                             </el-col>
@@ -56,14 +55,15 @@
             </el-col>
             <!--            第二列-->
             <el-col :xl="{span:10}" :lg="{span:12}">
+                <h3>日 志</h3>
                 <div v-loading="loading">
-                    <h3>日 志</h3>
-                    <transition-group name="list-complete"
+                    <transition-group  name="list-complete"
                                       tag="div"
-                                      appear
-                                      appear-active-class="animate__animated animate__fadeIn"
                                       enter-active-class="animate__animated animate__fadeIn">
                         <el-card shadow="hover" v-for="item in articleList" v-bind:key="item.id" class="article-card" >
+                            <el-tooltip v-if="item.top" content="置 顶" effect="light" placement="left">
+                                <img src="../../assets/top1.png" style="position: absolute;right: 20px;top: 12px;"/>
+                            </el-tooltip>
                             <el-row :gutter=5>
                                 <!--                封面列-->
                                 <el-col :lg="10" :md="24" :sm="24">
@@ -152,6 +152,7 @@
                 searchValue:'',
                 newsList:[],
                 friendLinkList:[],
+                temp:[]
             }
         },
         methods:{
@@ -306,6 +307,20 @@
                 let diffDays = Math.floor((diff/days)-diffYears*365);
                 this.time=diffYears+" 年 "+diffDays+" 天 "
             }
+        },
+        updated(){
+                //console.log("Updated!")
+        },
+        activated(){
+            // this.articleList=this.temp
+            // console.log("Activated")
+            // this.isShow=true
+        },
+        deactivated(){
+            // this.temp=this.articleList
+            // this.articleList=[]
+            // console.log("Deactivated")
+            // this.isShow=false
         },
         created(){
             this.initData()
