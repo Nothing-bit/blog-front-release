@@ -18,7 +18,7 @@ export default new Router({
             path:'/admin',
             name:'admin',
             // component: ()=>import("@/components/admin/Admin"),
-            component:resolve =>require(["@/components//admin/Admin"],resolve),
+            component:resolve =>require(["@/components/admin/Admin"],resolve),
             children:[
                 {//微动态列表
                     path:"news/list",

@@ -12,7 +12,7 @@ Vue.use(hljs)
 Vue.directive('highlight',function (el) {
   let blocks = el.querySelectorAll('code');
   blocks.forEach((block)=>{
-    hljs.highlightBlock(block)
+    hljs.highlightElement(block)
   })
 })
 

@@ -315,8 +315,8 @@
     }
     .article-pic{
         border-radius: 5px;
-        width: 300px;
-        height:200px;
+        width: calc(15vw);
+        height:calc(20vh);
         cursor: pointer;
         transition: transform 500ms;
     }
@@ -361,12 +361,12 @@
         padding: 10px;
 
     }
-    /*.list-complete-item {*/
-    /*    transition: all 1s;*/
-    /*}*/
     .list-complete-leave-to{
         display: none;
     }
+    /*.list-complete-item {*/
+    /*    transition: all 1s;*/
+    /*}*/
     /*.list-complete-leave-active {*/
     /*    position: absolute;*/
     /*}*/

@@ -1,9 +1,8 @@
 <template>
-    <div>
-        <vue-canvas-nest :config="config"></vue-canvas-nest>
+    <div @keypress.enter="login">
         <el-row :gutter="10">
             <el-col :lg="{span:8,offset:8}">
-                <el-card>
+                <el-card >
                     <h2>后台管理登录</h2>
                     <el-form>
                         <el-form-item  label="用户名">

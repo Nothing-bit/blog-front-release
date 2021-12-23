@@ -18,8 +18,7 @@
                     <div style="text-align: center" slot="header" >
                         <b>目 录</b>
                     </div>
-                    <el-tree :data="directory" empty-text="空" :highlight-current=false default-expand-all :expand-on-click-node=false :render-content="renderContent" @node-click="handleNodeClick">
-
+                    <el-tree :data="directory" empty-text="空" :highlight-current=false  :expand-on-click-node=false :render-content="renderContent" @node-click="handleNodeClick">
                     </el-tree>
                 </el-card>
             </el-col>
@@ -57,8 +56,7 @@
                             </el-row>
                         </div>
                         <el-divider></el-divider>
-                        <div v-html="articleData.content" v-highlight class="article-content ck-content">
-                        </div>
+                        <div v-html="articleData.content" v-highlight class="article-content ck-content" v-viewer="{movable: false}"/>
                         <el-divider></el-divider>
                         <div style="text-align: center">
                             <el-row>
@@ -164,15 +162,30 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
+        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 240px;right: 40px" @click="$router.go(-1)">
+            <i class="el-icon-back"></i>
+        </div>
     </div>
 </template>
 <script type="text/jsx">
     import axios from 'axios'
     import { Notification }  from 'element-ui';
     import html2pdf from 'html2pdf.js'
+    import 'viewerjs/dist/viewer.css'
+    import { directive as viewer } from "v-viewer"
     export default {
         name: "Article",
+        directives: {
+            viewer: viewer({
+                debug: false,
+            }),
+        },
         methods:{
+            //viewer渲染
+            show(){
+              const viewer=this.$el.querySelector('.ck-content').$viewer
+              viewer.show()
+            },
             // 自定义目录树渲染
             renderContent(h, { node}) {
                 return (
@@ -190,45 +203,89 @@
 
 
             },
-            //深度搜索建立目录索引树
             dfs(level, titleList, anchor){
-                let list = []
-                for(let i=0;i<titleList.length;i++){
+                console.log("in")
+                // let totalLength=0
+                // console.log(titleList)
+                let list=[]
+                for(let i=0;i<titleList.length;){
+                    console.log(level+titleList[i])
                     let curLevel=titleList[i].charAt(2)
-                    let data={
-                        label:titleList[i].match(/(?!<=h[1-9])[^>]+(?=<\/h[1-9])/g),
-                        children:[],
-                        anchor:anchor++
-                    }
                     if(curLevel==level){
+                        let data={
+                            label:titleList[i].match(/(?<=<h[1-9][^\/]*?>).+?(?=<\/h[1-9]>)/g),
+                            children:[],
+                            anchor:anchor++
+                        }
                         list.push(data)
+                        i++
                     }else if(curLevel>level){
-                        let results=this.dfs(curLevel,titleList.slice(i+1),anchor)
-                        anchor=results[0]
-                        let children=results[1]
-                        children=[data,...children]
-                        list[list.length-1].children=children
-                        i+=children.length-1
+                        let result=this.dfs(curLevel,titleList.slice(i),anchor)
+                        list[list.length-1].children=result[0]
+                        // totalLength+=result[2]
+                        // i=i+result[2]
+                        i+=result[1]-list[list.length-1].anchor-1
+                        anchor=result[1]
                     }else{
                         break;
                     }
                 }
+                // totalLength+=list.length
                 let result=[]
-                result.push(anchor-1)
                 result.push(list)
-                return result
+                result.push(anchor)
+                // result.push(totalLength)
+                console.log("out")
+                return result;
+
             },
+            // //深度搜索建立目录索引树
+            // dfs(level, titleList, anchor){
+            //     console.log(titleList)
+            //     let list = []
+            //     for(let i=0;i<titleList.length;i++){
+            //         //获取当前等级
+            //         let curLevel=titleList[i].charAt(2)
+            //         //构造节点数据
+            //         let data={
+            //             label:titleList[i].match(/(?<=<h[1-9][^\/]*?>).+?(?=<\/h[1-9]>)/g),
+            //             children:[],
+            //             anchor:anchor++
+            //         }
+            //         //若当前层级和上一层级一致，则直接加入list
+            //         if(curLevel==level){
+            //             list.push(data)
+            //         }else if(curLevel>level){
+            //             //层级更深，应当深度搜索
+            //             let results=this.dfs(curLevel,titleList.slice(i+1),anchor)
+            //             anchor=results[0]
+            //             let children=results[1]
+            //             children=[data,...children]
+            //             list[list.length-1].children=children
+            //             i+=children.length-1
+            //             console.log("children")
+            //             console.log(children)
+            //         }else{
+            //             break;
+            //         }
+            //     }
+            //     let result=[]
+            //     result.push(anchor-1)
+            //     result.push(list)
+            //     return result
+            // },
             //生成目录
             generateDirectory(detail){
-                let titleList=detail.match(/<h[1-9][^>]*>[^>]*<\/h[1-9]>/g)
+                let titleList=detail.match(/(<h[1-9].*?>.*?<\/h[1-9]>)/g)
                 if(titleList!=null&&titleList.length!=0){
                     titleList.forEach(((value, index) => {
                         detail=detail.replace(value,"<a id=anchor"+index+">"+value+"</a>")
                     }))
-                    // console.log(titleList)
+                     // console.log(titleList)
                     let level=titleList[0].charAt(2)
-                    this.directory=this.dfs(level,titleList,0)[1]
-                    // console.log(this.directory)
+                    let directory=this.dfs(level,titleList,0)[0]
+                    // console.log(directory)
+                    this.directory=directory
                 }
                 return detail
             },

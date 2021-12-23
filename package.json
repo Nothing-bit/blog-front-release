@@ -19,6 +19,7 @@
     "element-ui": "^2.14.1",
     "highlight.js": "^10.7.2",
     "html2pdf.js": "^0.9.3",
+    "v-viewer": "^1.6.4",
     "vue": "^2.6.12",
     "vue-canvas-nest": "^2.0.0",
     "vue-cookies": "^1.7.4",
