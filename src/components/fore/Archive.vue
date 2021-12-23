@@ -9,78 +9,80 @@
                         <el-breadcrumb-item><a class="breadcrumb-item">归 档</a></el-breadcrumb-item>
                     </el-breadcrumb>
                 </div>
-                <div style="min-height: 700px;">
-                    <!--                    分类-->
-                    <el-col :lg={span:4} style="text-align: center" v-loading="archiveListLoading">
-                        <transition name="list-complete"
-                                          tag="div"
-                                          appear
-                                          appear-active-class="animate__animated animate__fadeInLeft"
-                                          enter-active-class="animate__animated animate__fadeInLeft">
-                            <el-card>
-                                <transition-group name="list-complete"
-                                                  tag="div"
-                                                  appear
-                                                  appear-active-class="animate__animated animate__fadeIn"
-                                                  enter-active-class="animate__animated animate__fadeIn">
-                                    <div class="nav-menu" v-for="item in archiveList" v-bind:key="item">
-                                        <el-link class="nav-item" @click="getArticleListByMonth(item)">{{item}}</el-link>
-                                        <br>
-                                    </div>
-                                </transition-group>
-                            </el-card>
-                        </transition>
-                        <el-pagination :total=archiveTotal
-                                       :page-size=archivePageSize
-                                       :current-page=1
-                                       @current-change="getArchiveList"
-                                       layout="prev,next"></el-pagination>
-                    </el-col>
-                    <!--                    日志-->
-                    <el-col :lg={span:18} v-loading="articleListLoading">
-                        <transition-group name="list-complete"
-                                          tag="div"
-                                          appear
-                                          appear-active-class="animate__animated animate__fadeIn"
-                                          enter-active-class="animate__animated animate__fadeIn">
-                            <el-card shadow="hover" v-for="item in articleList" v-bind:key="item.id" class="article-card" >
-                                <el-row :gutter=5>
-                                    <!--                封面列-->
-                                    <el-col :lg="10" :md="24" :sm="24">
-                                        <img :src="baseUrl+item.pictureUrl" @click="articlePage(item.id)" class="article-pic"  >
-                                    </el-col>
-                                    <!--                简略信息列-->
-                                    <el-col :lg="14" :md="24" :sm="24">
-                                        <h3>{{item.title}}</h3>
-                                        <div class="article-info-summary">
-                                            <p>{{item.summary}}</p>
-                                        </div>
-                                        <el-row >
-                                            <el-col :lg="9" :md="9" :sm="8">
-                                                <p><i class="el-icon-menu article-info-icon"></i>{{item.categoryName}}</p>
-                                            </el-col>
-                                            <el-col :lg="9" :md="9" :sm="8">
-                                                <p><i class="el-icon-date article-info-icon"></i>{{item.createBy}}</p>
-                                            </el-col>
-                                            <el-col :lg="6" :md="6" :sm="8">
-                                                <p><i class="el-icon-view article-info-icon"></i> {{item.traffic}}</p>
-                                            </el-col>
-                                        </el-row>
-                                    </el-col>
-                                </el-row>
-                                <el-row class="tag-container">
-                                    <i class="el-icon-price-tag"></i>
-                                    <el-tag class="article-tag" v-for="tag in item.tagList" v-bind:key="tag" @click="jumpToArticlePage(tag)">{{tag}}</el-tag>
-                                </el-row>
-                            </el-card>
-                        </transition-group>
-                        <el-pagination  class="pagination" :total=articleTotal
-                                        :page-size=articlePageSize
-                                        :current-page=1
-                                        @current-change="getArticleList"></el-pagination>
-                    </el-col>
-                </div>
             </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <div style="min-height: 700px;">
+                <!--                    分类-->
+                <el-col style="text-align: center; position: fixed" :xl="{span:3,offset:3}" :lg="{span:3,offset:3}" :md="6" v-loading="archiveListLoading">
+                    <transition name="list-complete"
+                                      tag="div"
+                                      appear
+                                      appear-active-class="animate__animated animate__fadeInLeft"
+                                      enter-active-class="animate__animated animate__fadeInLeft">
+                        <el-card>
+                            <transition-group name="list-complete"
+                                              tag="div"
+                                              appear
+                                              appear-active-class="animate__animated animate__fadeIn"
+                                              enter-active-class="animate__animated animate__fadeIn">
+                                <div class="nav-menu" v-for="item in archiveList" v-bind:key="item">
+                                    <el-link class="nav-item" @click="getArticleListByMonth(item)">{{item}}</el-link>
+                                    <br>
+                                </div>
+                            </transition-group>
+                        </el-card>
+                    </transition>
+                    <el-pagination :total=archiveTotal
+                                   :page-size=archivePageSize
+                                   :current-page=1
+                                   @current-change="getArchiveList"
+                                   layout="prev,next"></el-pagination>
+                </el-col>
+                <!--                    日志-->
+                <el-col :xl="{span:10}" :lg="{span:12,offset:6}" :md="{span:18,offset:6}" v-loading="articleListLoading">
+                    <transition-group name="list-complete"
+                                      tag="div"
+                                      appear
+                                      appear-active-class="animate__animated animate__fadeIn"
+                                      enter-active-class="animate__animated animate__fadeIn">
+                        <el-card shadow="hover" v-for="item in articleList" v-bind:key="item.id" class="article-card" >
+                            <el-row :gutter=5>
+                                <!--                封面列-->
+                                <el-col :lg="10" :md="24" :sm="24">
+                                    <img :src="baseUrl+item.pictureUrl" @click="articlePage(item.id)" class="article-pic"  >
+                                </el-col>
+                                <!--                简略信息列-->
+                                <el-col :lg="14" :md="24" :sm="24">
+                                    <h3>{{item.title}}</h3>
+                                    <div class="article-info-summary">
+                                        <p>{{item.summary}}</p>
+                                    </div>
+                                    <el-row >
+                                        <el-col :lg="9" :md="9" :sm="8">
+                                            <p><i class="el-icon-menu article-info-icon"></i>{{item.categoryName}}</p>
+                                        </el-col>
+                                        <el-col :lg="9" :md="9" :sm="8">
+                                            <p><i class="el-icon-date article-info-icon"></i>{{item.createBy}}</p>
+                                        </el-col>
+                                        <el-col :lg="6" :md="6" :sm="8">
+                                            <p><i class="el-icon-view article-info-icon"></i> {{item.traffic}}</p>
+                                        </el-col>
+                                    </el-row>
+                                </el-col>
+                            </el-row>
+                            <el-row class="tag-container">
+                                <i class="el-icon-price-tag"></i>
+                                <el-tag class="article-tag" v-for="tag in item.tagList" v-bind:key="tag" @click="jumpToArticlePage(tag)">{{tag}}</el-tag>
+                            </el-row>
+                        </el-card>
+                    </transition-group>
+                    <el-pagination  class="pagination" :total=articleTotal
+                                    :page-size=articlePageSize
+                                    :current-page=1
+                                    @current-change="getArticleList"></el-pagination>
+                </el-col>
+            </div>
         </el-row>
     </div>
 </template>
