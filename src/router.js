@@ -144,7 +144,7 @@ export default new Router({
                     path:'tagArticle',
                     name:'tagArticle',
                     meta:{
-                        keepAlive:true,
+                        keepAlive:false,
                     },
                     // component:()=>import("@/components/fore/TagArticle")
                     component:resolve =>require(["@/components/fore/TagArticle"],resolve)
@@ -172,7 +172,7 @@ export default new Router({
                     path:'news',
                     name:'news',
                     meta:{
-                        keepAlive:true,
+                        keepAlive:false,
                     },
                     // component:()=>import('@/components/fore/News')
                     component:resolve =>require(["@/components/fore/News"],resolve)

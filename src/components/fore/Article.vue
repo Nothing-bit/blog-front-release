@@ -204,12 +204,12 @@
 
             },
             dfs(level, titleList, anchor){
-                console.log("in")
+                // console.log("in")
                 // let totalLength=0
                 // console.log(titleList)
                 let list=[]
                 for(let i=0;i<titleList.length;){
-                    console.log(level+titleList[i])
+                    // console.log(level+titleList[i])
                     let curLevel=titleList[i].charAt(2)
                     if(curLevel==level){
                         let data={
@@ -235,45 +235,10 @@
                 result.push(list)
                 result.push(anchor)
                 // result.push(totalLength)
-                console.log("out")
+                // console.log("out")
                 return result;
 
             },
-            // //深度搜索建立目录索引树
-            // dfs(level, titleList, anchor){
-            //     console.log(titleList)
-            //     let list = []
-            //     for(let i=0;i<titleList.length;i++){
-            //         //获取当前等级
-            //         let curLevel=titleList[i].charAt(2)
-            //         //构造节点数据
-            //         let data={
-            //             label:titleList[i].match(/(?<=<h[1-9][^\/]*?>).+?(?=<\/h[1-9]>)/g),
-            //             children:[],
-            //             anchor:anchor++
-            //         }
-            //         //若当前层级和上一层级一致，则直接加入list
-            //         if(curLevel==level){
-            //             list.push(data)
-            //         }else if(curLevel>level){
-            //             //层级更深，应当深度搜索
-            //             let results=this.dfs(curLevel,titleList.slice(i+1),anchor)
-            //             anchor=results[0]
-            //             let children=results[1]
-            //             children=[data,...children]
-            //             list[list.length-1].children=children
-            //             i+=children.length-1
-            //             console.log("children")
-            //             console.log(children)
-            //         }else{
-            //             break;
-            //         }
-            //     }
-            //     let result=[]
-            //     result.push(anchor-1)
-            //     result.push(list)
-            //     return result
-            // },
             //生成目录
             generateDirectory(detail){
                 let titleList=detail.match(/(<h[1-9].*?>.*?<\/h[1-9]>)/g)
@@ -375,8 +340,8 @@
             getArticleComment(){
                 if(this.hasNextPage){
                     this.commentLoading=true
-                    var articleId=this.$route.query.id
-                    var url=this.baseUrl+"/fore/article/comment/list?articleId="+articleId+"&pageNum="+this.pageNum
+                    let articleId=this.$route.query.id
+                    let url=this.baseUrl+"/fore/article/comment/list?articleId="+articleId+"&pageNum="+this.pageNum
                     axios.get(url).then((res)=>{
                         var result=res.data;
                         if(result.code==200){
@@ -480,5 +445,4 @@
         margin-bottom: 50px;
 
     }
-
 </style>
