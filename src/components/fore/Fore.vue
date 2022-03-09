@@ -12,14 +12,13 @@
                 </el-menu>
             </el-row>
         </el-header>
-        <el-scrollbar>
+
             <el-main class="main" style="padding-top: 10px; min-height: calc(100vh - 150px);margin-top:65px">
                 <keep-alive >
                     <router-view v-if="$route.meta.keepAlive"/>
                 </keep-alive>
                 <router-view v-if="!$route.meta.keepAlive"/>
             </el-main>
-        </el-scrollbar>
         <el-footer id="footer">
             <div class="footer">
                 <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
@@ -66,13 +65,6 @@
                     <el-form-item label="搜索" >
                         <el-input prefix-icon="el-icon-search" v-model="form.searchValue" autocomplete="off" clearable minLength="1" maxLength="50"></el-input>
                     </el-form-item>
-<!--                    <el-form-item label="搜索范围">-->
-<!--                        <el-select v-model="form.searchProperty" placeholder="请选择搜索范围">-->
-<!--                            <el-option label="标题" value="title"></el-option>-->
-<!--                            <el-option label="简介" value="summary"></el-option>-->
-<!--                            <el-option label="内容" value="content"></el-option>-->
-<!--                        </el-select>-->
-<!--                    </el-form-item>-->
                 </el-form>
                 <el-row justify="center" type="flex">
                     <el-button @click="drawer=false">取 消</el-button>
@@ -373,4 +365,26 @@
     /*.list-complete-move{*/
     /*    transition: transform 1s;*/
     /*}*/
+    /* width */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: rgb(235, 235, 235);
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: rgb(190, 190, 190);
+        border-radius:5px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgb(150, 150, 150);
+    }
+
+    .el-scrollbar__wrap{ overflow-x:hidden; }
 </style>

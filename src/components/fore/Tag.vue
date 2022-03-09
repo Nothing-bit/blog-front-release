@@ -91,7 +91,7 @@
                         height: '100%',
                         // Text size range which the value in data will be mapped to.
                         // Default to have minimum 12px and maximum 60px size.
-                        sizeRange: [10, 50],
+                        sizeRange: [5, 50],
                         // Text rotation range and step in degree. Text will be rotated randomly in range [-90, 90] by rotationStep 45
                         rotationRange: [0, 0],
                         rotationStep: 0,

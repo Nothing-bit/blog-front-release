@@ -13,12 +13,15 @@
         </el-row>
         <el-row :gutter=20>
 <!--            目录-->
-            <el-col id="directory" class="animate__animated animate__fadeInLeft" style="position: fixed" :xl="{span:4,offset:1}" :lg="{span:4}" :md="3" >
-                <el-card  shadow="hover" v-loading="articleLoading" >
+            <el-col id="directory"  class="animate__animated animate__fadeInLeft" style="position: fixed" :xl="{span:4,offset:1}" :lg="{span:4}" :md="3" >
+                <el-card  shadow="hover" v-loading="articleLoading" :body-style="{padding:'10px'}">
                     <div style="text-align: center" slot="header" >
                         <b>目 录</b>
                     </div>
-                    <el-tree :data="directory" empty-text="空" :highlight-current=false  :expand-on-click-node=false :render-content="renderContent" @node-click="handleNodeClick">
+                    <el-tree ref="directory" :auto-expand-parent=true node-key="anchor" :data="directory" empty-text="空"
+                             :highlight-current=true  :expand-on-click-node=true
+                             :render-after-expand=false
+                             :render-content="renderContent" @node-click="handleNodeClick">
                     </el-tree>
                 </el-card>
             </el-col>
@@ -181,6 +184,28 @@
             }),
         },
         methods:{
+            //选择当前阅读位置所对应的目录节点
+            directoryLocator(){
+                //1.获取anchor的list，无需树状结构
+                //锚点位置列表
+                if(this.locationList==null||this.locationList.length==0){
+                    this.locationList=[]
+                    for(let i=0;i<this.titleListLength;i++){
+                        this.locationList.push((document.getElementById("anchor"+i).offsetTop))
+                    }
+                }
+                //2.top-k查找，判断最近位置
+                let position=window.pageYOffset
+                let i=this.locationList.length-1
+                for(;i>=0;i--){
+                    if(position>=this.locationList[i]){
+                       break;
+                    }
+                }
+                //3.目录对应节点设置为高亮状态
+                this.$refs.directory.setCurrentKey(i)
+                this.$refs.directory.store.nodesMap[i].expanded=true
+            },
             //viewer渲染
             show(){
               const viewer=this.$el.querySelector('.ck-content').$viewer
@@ -190,30 +215,23 @@
             renderContent(h, { node}) {
                 return (
                     <el-tooltip content={node.label[0]} effect="light" placement="right">
-                        <el-link>{node.label}</el-link>
+                        <span>{node.label}</span>
                     </el-tooltip>);
             },
             // 锚点跳转
             handleNodeClick(data){
-
-                // this.$nextTick(()=>{
-                    let selector="anchor"+(data.anchor)
-                   document.getElementById(selector).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
-                // })
-
-
+                let selector="anchor"+(data.anchor)
+               document.getElementById(selector).scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
             },
+            //深度搜索建立目录树
             dfs(level, titleList, anchor){
-                // console.log("in")
-                // let totalLength=0
-                // console.log(titleList)
                 let list=[]
                 for(let i=0;i<titleList.length;){
                     // console.log(level+titleList[i])
                     let curLevel=titleList[i].charAt(2)
                     if(curLevel==level){
                         let data={
-                            label:titleList[i].match(/(?<=<h[1-9][^\/]*?>).+?(?=<\/h[1-9]>)/g),
+                            label:titleList[i].match(/(?<=<h[1-9][^/]*?>).+?(?=<\/h[1-9]>)/g),
                             children:[],
                             anchor:anchor++
                         }
@@ -222,20 +240,15 @@
                     }else if(curLevel>level){
                         let result=this.dfs(curLevel,titleList.slice(i),anchor)
                         list[list.length-1].children=result[0]
-                        // totalLength+=result[2]
-                        // i=i+result[2]
                         i+=result[1]-list[list.length-1].anchor-1
                         anchor=result[1]
                     }else{
                         break;
                     }
                 }
-                // totalLength+=list.length
                 let result=[]
                 result.push(list)
                 result.push(anchor)
-                // result.push(totalLength)
-                // console.log("out")
                 return result;
 
             },
@@ -246,13 +259,16 @@
                     titleList.forEach(((value, index) => {
                         detail=detail.replace(value,"<a id=anchor"+index+">"+value+"</a>")
                     }))
-                     // console.log(titleList)
                     let level=titleList[0].charAt(2)
+                    //目录树
                     let directory=this.dfs(level,titleList,0)[0]
-                    // console.log(directory)
                     this.directory=directory
                 }
-                return detail
+                let result=[]
+                result.push(detail)
+                result.push(titleList.length)
+                this.titleListLength=titleList.length
+                return result
             },
             //校验输入格式
             checkInput(){
@@ -277,6 +293,7 @@
                 }
                 return true;
             },
+            //导出PDF
             exportPDF(){
                 html2pdf().set({
                     pagebreak:{mode:'avoid-all'},
@@ -330,7 +347,8 @@
                 axios.get(url).then((res)=>{
                     var result=res.data;
                     if(result.code==200){
-                        result.data.content=this.generateDirectory(result.data.content)
+                        let res=this.generateDirectory(result.data.content)
+                        result.data.content=res[0]
                         this.articleData=result.data
                         this.articleLoading=false
                         this.form.articleId=id;
@@ -364,31 +382,30 @@
                 this.$router.push({name:'article',query:{id:id}})
                 this.getArticleDetail()
             },
-            onscrollListener () {
+            //决定目录是否隐藏
+            directoryCollapse () {
                 let directory=document.getElementById("directory")
                 let content=document.getElementById("content")
                 if(window.pageYOffset+directory.offsetHeight>=content.offsetHeight){
-                    // directory.style.animation="fadeOutLeft 0.5s"
                     directory.classList.remove('animate__fadeInLeft')
                     directory.classList.add('animate__fadeOutLeft')
-                    // directory.style.display="none"
                 }else{
                     directory.classList.remove('animate__fadeOutLeft')
                     directory.classList.add('animate__fadeInLeft')
-                    //directory.style.animation="fadeInLeft 0.5s"
-                    // directory.style.display="block"
                 }
-            }
+            },
         },
         created(){
         },
         mounted(){
             this.getArticleDetail()
-            window.addEventListener("scroll",this.onscrollListener)
+            window.addEventListener("scroll",this.directoryCollapse)
+            window.addEventListener('scroll',this.directoryLocator)
 
         },
         beforeDestroy(){
-            window.removeEventListener("scroll",this.onscrollListener)
+            window.removeEventListener("scroll",this.directoryCollapse)
+            window.removeEventListener("scroll",this.directoryLocator)
         },
         updated(){
         },
@@ -412,7 +429,7 @@
                 commentLoading:false,
                 list:[],
                 pageNum:1,
-                directory:[]
+                directory:[],
             }
         }
     }
@@ -444,5 +461,10 @@
         margin-top: 50px;
         margin-bottom: 50px;
 
+    }
+    ::v-deep .el-tree--highlight-current .el-tree-node .is-current > .el-tree-node__content {
+        background: #5fabff !important;
+        color: #ffffff !important;
+        border-radius: 2px !important;
     }
 </style>
