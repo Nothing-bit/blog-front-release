@@ -11,16 +11,14 @@
                 </div>
             </el-col>
         </el-row>
-        <el-row :gutter=20>
+        <el-row :gutter=15>
 <!--            目录-->
-            <el-col id="directory"  class="animate__animated animate__fadeInLeft" style="position: fixed" :xl="{span:4,offset:1}" :lg="{span:4}" :md="3" >
+            <el-col id="directory"  class="animate__animated animate__fadeInLeft" style="position: fixed;" :xl="{span:4,offset:1}" :lg="{span:4}" :md="3" >
+<!--                <el-card  shadow="hover" v-loading="articleLoading" :body-style="{padding:'10px',-->
+<!--                height:'200px',overflow: 'scroll','overflow-x': 'hidden'}">-->
                 <el-card  shadow="hover" v-loading="articleLoading" :body-style="{padding:'10px'}">
-                    <div style="text-align: center" slot="header" >
-                        <b>目 录</b>
-                    </div>
-                    <el-tree ref="directory" :auto-expand-parent=true node-key="anchor" :data="directory" empty-text="空"
-                             :highlight-current=true  :expand-on-click-node=true
-                             :render-after-expand=false
+                    <el-tree ref="directory" node-key="anchor" :data="directory" empty-text="空"
+                             highlight-current :expand-on-click-node=true :indent=8
                              :render-content="renderContent" @node-click="handleNodeClick">
                     </el-tree>
                 </el-card>
@@ -203,19 +201,38 @@
                     }
                 }
                 //3.目录对应节点设置为高亮状态
-                this.$refs.directory.setCurrentKey(i)
-                this.$refs.directory.store.nodesMap[i].expanded=true
+                this.$refs["directory"].setCurrentKey(i)
+                this.$nextTick(()=>{
+                    let currentNode=this.$refs["directory"].store.currentNode
+                    if(currentNode!=null){
+                        currentNode.expanded=true
+                        if(currentNode.parent!=null){
+                            currentNode.parent.expanded=true
+                        }
+                        // let child_nodes = new Array();
+                        // child_nodes.unshift(currentNode);
+                        // while (child_nodes.length != 0) {
+                        //     let nowNode = child_nodes.pop();
+                        //     if (nowNode.childNodes) { //如果有孩子节点才需要进一步遍历
+                        //         for (let i = 0; i < nowNode.childNodes.length; i++) {
+                        //             nowNode.childNodes[i].expanded = true;
+                        //             child_nodes.unshift(nowNode.childNodes[i]);
+                        //         }
+                        //     }
+                        // }
+                    }
+                })
             },
             //viewer渲染
             show(){
               const viewer=this.$el.querySelector('.ck-content').$viewer
               viewer.show()
             },
-            // 自定义目录树渲染
+            // 目录节点渲染
             renderContent(h, { node}) {
                 return (
                     <el-tooltip content={node.label[0]} effect="light" placement="right">
-                        <span>{node.label}</span>
+                        <span style="font-size:12px">{node.label}</span>
                     </el-tooltip>);
             },
             // 锚点跳转
@@ -462,9 +479,17 @@
         margin-bottom: 50px;
 
     }
-    ::v-deep .el-tree--highlight-current .el-tree-node .is-current > .el-tree-node__content {
-        background: #5fabff !important;
-        color: #ffffff !important;
-        border-radius: 2px !important;
+    ::v-deep .el-tree--highlight-current .is-current.el-tree-node> .el-tree-node__content{
+         background: #66b1ff !important;
+         color: #ffffff !important;
+         border-radius: 2px !important;
+     }
+    ::v-deep .el-tree-node:hover> .el-tree-node__content{
+         background: #66b1ff !important;
+         color: #ffffff !important;
+         border-radius: 2px !important;
+     }
+    ::v-deep .el-tree-node:focus> .el-tree-node__content{
+        background: rgb(255,255,255);
     }
 </style>

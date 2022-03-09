@@ -62,7 +62,7 @@
                                       enter-active-class="animate__animated animate__fadeIn">
                         <el-card shadow="hover" v-for="item in articleList" v-bind:key="item.id" class="article-card" >
                             <el-tooltip v-if="item.top" content="置 顶" effect="light" placement="left">
-                                <img src="../../assets/top1.png" style="position: absolute;right: 20px;top: 12px;"/>
+<!--                                <img src="../../assets/top1.png" style="position: absolute;right: 20px;top: 12px;"/>-->
                             </el-tooltip>
                             <el-row :gutter=5>
                                 <!--                封面列-->
@@ -115,7 +115,7 @@
                         <div id="wordCloudChart" class="tag-cloud"></div>
                     </el-card>
                     <h3>友 链</h3>
-                    <el-card style="text-align: center;">
+                    <el-card style="text-align: center;" :body-style="{padding:'10px !important'}">
                         <el-link class="link" v-for="item in friendLinkList" type="primary" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
                     </el-card>
                     <h3>站点信息</h3>
