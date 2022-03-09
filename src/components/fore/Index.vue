@@ -62,7 +62,7 @@
                                       enter-active-class="animate__animated animate__fadeIn">
                         <el-card shadow="hover" v-for="item in articleList" v-bind:key="item.id" class="article-card" >
                             <el-tooltip v-if="item.top" content="置 顶" effect="light" placement="left">
-<!--                                <img src="../../assets/top1.png" style="position: absolute;right: 20px;top: 12px;"/>-->
+                                <img src="../../assets/top.png" style="position: absolute;right: 20px;top: 12px;"/>
                             </el-tooltip>
                             <el-row :gutter=5>
                                 <!--                封面列-->
