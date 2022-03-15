@@ -101,7 +101,9 @@
                             '|',
                             'resizeImage',
                             '|',
-                            'imageTextAlternative'
+                            'imageTextAlternative',
+                            '|',
+                            'toggleImageCaption'
                         ],
                         styles: [
                             'full',
@@ -150,10 +152,12 @@
                             'blockQuote',
                             'insertTable',
                             'codeBlock',
+                            'htmlEmbed',
+                            'mediaEmbed',
+                            'sourceEditing',
                             'specialCharacters',
                             '|',
                             'link',
-                            'anchor',
                             'bulletedList',
                             'numberedList',
                             'todoList',

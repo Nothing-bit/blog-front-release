@@ -127,7 +127,9 @@
                             '|',
                             'resizeImage',
                             '|',
-                            'imageTextAlternative'
+                            'imageTextAlternative',
+                            '|',
+                            'toggleImageCaption'
                         ],
                         styles: [
                             'full',
@@ -180,10 +182,11 @@
                             'insertTable',
                             'codeBlock',
                             'htmlEmbed',
+                            'mediaEmbed',
+                            'sourceEditing',
                             'specialCharacters',
                             '|',
                             'link',
-                            'anchor',
                             'bulletedList',
                             'numberedList',
                             'todoList',
@@ -421,6 +424,8 @@
             this.initArticle()
             this.getCategoryList()
             this.getTagList()
+        },
+        mounted() {
         }
     }
 </script>
