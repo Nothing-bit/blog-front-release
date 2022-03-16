@@ -12,7 +12,7 @@
                         <span>{{signature}}</span>
                         <el-divider></el-divider>
                         <el-row>
-                            <el-col  :xl="{span:4,offset:6}" :lg="{span:6,offset:3}">
+                            <el-col  :xl="{span:4,offset:4}" :lg="{span:6}">
                                 <el-tooltip content="逼乎" effect="light">
                                     <a href="https://www.zhihu.com/people/zhou-xiao-jun-3-75" target="_blank"><img  class="appPic" src="../../assets/index-zhihu.png"></a>
                                 </el-tooltip>
@@ -25,6 +25,11 @@
                             <el-col :xl="{span:4}" :lg="{span:6}">
                                 <el-tooltip content="CopyHub" effect="light">
                                     <a href="https://github.com/Nothing-bit"><img class="appPic" src="../../assets/index-github.png"></a>
+                                </el-tooltip>
+                            </el-col>
+                            <el-col :xl="{span:4}" :lg="{span:6}">
+                                <el-tooltip content="Gitee" effect="light">
+                                    <a href="https://gitee.com/zhou-jian-guo"><img class="appPic" src="../../assets/login-gitee.png"></a>
                                 </el-tooltip>
                             </el-col>
                         </el-row>

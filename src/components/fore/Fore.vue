@@ -54,7 +54,6 @@
 <!--        搜索抽屉-->
         <el-drawer
                 :visible.sync="drawer"
-                :show-close="false"
                 :with-header="false"
                 size="20%">
             <div style="    display: flex;
@@ -63,21 +62,19 @@
                             padding: 20px">
                 <el-form :model="form" >
                     <el-form-item label="搜索" >
-                        <el-input prefix-icon="el-icon-search" v-model="form.searchValue" autocomplete="off" clearable minLength="1" maxLength="50"></el-input>
+                        <el-input prefix-icon="el-icon-search" @input="queryArticle" v-model="form.searchValue"  autocomplete="off" clearable minLength="1" maxLength="50"></el-input>
                     </el-form-item>
                 </el-form>
-                <el-row justify="center" type="flex">
-                    <el-button @click="drawer=false">取 消</el-button>
-                    <el-button type="primary" @click="queryArticle" >确 定</el-button>
-                </el-row>
+<!--                <el-row justify="center" type="flex">-->
+<!--                    <el-button @click="drawer=false">取 消</el-button>-->
+<!--                    <el-button type="primary" @click="queryArticle" >确 定</el-button>-->
+<!--                </el-row>-->
                 <span style="margin:10px;text-align: center">包含 “{{showSearchValue}}” 关键字的日志共 {{searchResultList.length}} 条</span>
-                <el-scrollbar v-if="searchResultList.length>0">
-                    <div style="padding: 20px;font-size: 20px">
-                        <el-row v-for="item in searchResultList" v-bind:key="item.id">
-                            <el-link type="primary" @click="selectHandler(item)">{{item.value}}</el-link>
-                        </el-row>
-                    </div>
-                </el-scrollbar>
+                <div class="overflow-box" style="padding: 20px;font-size: 20px; height: calc(65vh);">
+                    <el-row v-for="(item, index) in searchResultList" v-bind:key="item.id">
+                        <el-link  type="primary" @click="selectHandler(item)">{{index+1+". "+item.value}}</el-link>
+                    </el-row>
+                </div>
             </div>
         </el-drawer>
 <!--        登录-->
@@ -151,14 +148,19 @@
             },
             queryArticle(){
                 this.showSearchValue=this.form.searchValue
-                let url=this.baseUrl+"/fore/article/all?searchValue="+this.form.searchValue;
-                axios.get(url).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        // console.log(result.data)
-                        this.searchResultList=result.data
-                    }
-                })
+                if(this.showSearchValue!=null&&this.showSearchValue!=''){
+                    let url=this.baseUrl+"/fore/article/all?searchValue="+this.form.searchValue;
+                    axios.get(url).then(res=>{
+                        let result=res.data;
+                        if(result.code==200){
+                            // console.log(result.data)
+                            this.searchResultList=result.data
+                        }
+                    })
+                }else{
+                    this.showSearchValue=''
+                    this.searchResultList=[]
+                }
             },
             selectHandler(item){
                 this.$router.push({name:'article',query:{id:item.id}})
@@ -252,6 +254,9 @@
 <style>
     @import "~@/assets/css/ckeditor-content.css";
     @import "~animate.css/animate.min.css";
+    .overflow-box{
+        overflow: auto;
+    }
     .username{
         color:rgb(64,158,255);
     }

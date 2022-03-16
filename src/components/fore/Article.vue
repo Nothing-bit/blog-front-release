@@ -13,12 +13,12 @@
         </el-row>
         <el-row :gutter=15>
 <!--            目录-->
-            <el-col id="directory"  class="animate__animated animate__fadeInLeft" style="position: fixed;" :xl="{span:4,offset:1}" :lg="{span:4}" :md="3" >
+            <el-col id="directory"  class="animate__animated animate__fadeInLeft" style="position: fixed; overflow: auto; max-height: calc(70vh)" :xl="{span:4,offset:1}" :lg="{span:4}" :md="3" >
 <!--                <el-card  shadow="hover" v-loading="articleLoading" :body-style="{padding:'10px',-->
 <!--                height:'200px',overflow: 'scroll','overflow-x': 'hidden'}">-->
                 <el-card  shadow="hover" v-loading="articleLoading" :body-style="{padding:'10px'}">
                     <el-tree ref="directory" node-key="anchor" :data="directory" empty-text="空"
-                             highlight-current :expand-on-click-node=true :indent=8
+                             highlight-current :expand-on-click-node=true :indent=6
                              :render-content="renderContent" @node-click="handleNodeClick">
                     </el-tree>
                 </el-card>
@@ -186,6 +186,9 @@
             directoryLocator(){
                 //1.获取anchor的list，无需树状结构
                 //锚点位置列表
+                if(this.titleListLength==null||this.titleListLength==0){
+                    return;
+                }
                 if(this.locationList==null||this.locationList.length==0){
                     this.locationList=[]
                     for(let i=0;i<this.titleListLength;i++){
@@ -209,19 +212,13 @@
                         if(currentNode.parent!=null){
                             currentNode.parent.expanded=true
                         }
-                        // let child_nodes = new Array();
-                        // child_nodes.unshift(currentNode);
-                        // while (child_nodes.length != 0) {
-                        //     let nowNode = child_nodes.pop();
-                        //     if (nowNode.childNodes) { //如果有孩子节点才需要进一步遍历
-                        //         for (let i = 0; i < nowNode.childNodes.length; i++) {
-                        //             nowNode.childNodes[i].expanded = true;
-                        //             child_nodes.unshift(nowNode.childNodes[i]);
-                        //         }
-                        //     }
-                        // }
                     }
                 })
+                //4.滚动到高亮目录节点
+                let target = document.getElementById("node"+i);
+                if(target!=null){
+                   target.scrollIntoView({block: "center", inline: "nearest"})
+                }
             },
             //viewer渲染
             show(){
@@ -232,13 +229,45 @@
             renderContent(h, { node}) {
                 return (
                     <el-tooltip content={node.label[0]} effect="light" placement="right">
-                        <span style="font-size:12px">{node.label}</span>
+                        <span id={"node"+node.data.anchor} style="font-size:12px">{node.label}</span>
                     </el-tooltip>);
             },
             // 锚点跳转
             handleNodeClick(data){
                 let selector="anchor"+(data.anchor)
-               document.getElementById(selector).scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+                let target=document.getElementById(selector)
+                // const drag = 15;
+                // 指定元素距离顶部的距离
+                const location = target.offsetTop;
+                // 当前位置距离顶部的距离
+                // const gap = document.documentElement.scrollTop || document.body.scrollTop;
+                // const scrollUp = () => {
+                //     // 当前位置距离顶部的距离
+                //     const gap = document.documentElement.scrollTop || document.body.scrollTop;
+                //     if (location<gap) {
+                //         window.requestAnimationFrame(scrollUp);
+                //         window.scrollTo(0, gap - gap / drag);
+                //     }
+                // };
+                // const scrollDown = ()=>{
+                //     // 当前位置距离顶部的距离
+                //     const gap = document.documentElement.scrollTop || document.body.scrollTop;
+                //     if (gap < location) {
+                //         window.requestAnimationFrame(scrollDown);
+                //         window.scrollTo(0, gap + gap / drag);
+                //     }
+                // }
+                // if(location<gap){
+                //     //目标在当前位置上面
+                //     scrollUp()
+                // }else{
+                //     scrollDown()
+                // }
+                window.scrollTo({
+                    top: location,
+                    behavior: "smooth"
+                })
+               // target.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
             },
             //深度搜索建立目录树
             dfs(level, titleList, anchor){
@@ -281,11 +310,9 @@
                     let directory=this.dfs(level,titleList,0)[0]
                     this.directory=directory
                 }
-                let result=[]
-                result.push(detail)
-                result.push(titleList.length)
-                this.titleListLength=titleList.length
-                return result
+                if(titleList!=null)
+                    this.titleListLength=titleList.length
+                return detail
             },
             //校验输入格式
             checkInput(){
@@ -364,8 +391,7 @@
                 axios.get(url).then((res)=>{
                     var result=res.data;
                     if(result.code==200){
-                        let res=this.generateDirectory(result.data.content)
-                        result.data.content=res[0]
+                        result.data.content=this.generateDirectory(result.data.content)
                         this.articleData=result.data
                         this.articleLoading=false
                         this.form.articleId=id;
