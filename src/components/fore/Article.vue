@@ -18,7 +18,7 @@
 <!--                height:'200px',overflow: 'scroll','overflow-x': 'hidden'}">-->
                 <el-card  shadow="hover" v-loading="articleLoading" :body-style="{padding:'10px'}">
                     <el-tree ref="directory" node-key="anchor" :data="directory" empty-text="空"
-                             highlight-current :expand-on-click-node=true :indent=6
+                             highlight-current :expand-on-click-node=true :indent=8
                              :render-content="renderContent" @node-click="handleNodeClick">
                     </el-tree>
                 </el-card>
@@ -217,7 +217,10 @@
                 //4.滚动到高亮目录节点
                 let target = document.getElementById("node"+i);
                 if(target!=null){
-                   target.scrollIntoView({block: "center", inline: "nearest"})
+                    const location = target.offsetTop;
+                    document.getElementById("directory").scrollTo({
+                        top: location,
+                    })
                 }
             },
             //viewer渲染
@@ -239,30 +242,6 @@
                 // const drag = 15;
                 // 指定元素距离顶部的距离
                 const location = target.offsetTop;
-                // 当前位置距离顶部的距离
-                // const gap = document.documentElement.scrollTop || document.body.scrollTop;
-                // const scrollUp = () => {
-                //     // 当前位置距离顶部的距离
-                //     const gap = document.documentElement.scrollTop || document.body.scrollTop;
-                //     if (location<gap) {
-                //         window.requestAnimationFrame(scrollUp);
-                //         window.scrollTo(0, gap - gap / drag);
-                //     }
-                // };
-                // const scrollDown = ()=>{
-                //     // 当前位置距离顶部的距离
-                //     const gap = document.documentElement.scrollTop || document.body.scrollTop;
-                //     if (gap < location) {
-                //         window.requestAnimationFrame(scrollDown);
-                //         window.scrollTo(0, gap + gap / drag);
-                //     }
-                // }
-                // if(location<gap){
-                //     //目标在当前位置上面
-                //     scrollUp()
-                // }else{
-                //     scrollDown()
-                // }
                 window.scrollTo({
                     top: location,
                     behavior: "smooth"
