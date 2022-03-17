@@ -206,6 +206,7 @@
                 let token=this.$cookies.get("zBlogAdminToken")
                 if(token!=null){
                     this.headerConfig.headers.Authorization=token
+                    this.editorConfig.simpleUpload.headers.Authorization=token
                 }else{
                     this.$router.push("/admin/login")
                 }
