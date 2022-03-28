@@ -289,7 +289,7 @@
 
     .article-card{
         padding: 13px;
-        margin-bottom: 5px;
+        margin-bottom: 15px;
         text-align: left;
         position: relative;
     }
