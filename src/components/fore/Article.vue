@@ -50,7 +50,7 @@
                                             <el-button  size="medium" icon="el-icon-download" @click="exportPDF"></el-button>
                                         </el-tooltip>
                                         <el-tooltip class="item" effect="dark" content="分 享" placement="top">
-                                            <el-button size="medium" icon="el-icon-share"></el-button>
+                                            <el-button size="medium" icon="el-icon-share" @click="copyLink"></el-button>
                                         </el-tooltip>
                                     </el-button-group>
                                 </el-col>
@@ -174,6 +174,8 @@
     import html2pdf from 'html2pdf.js'
     import 'viewerjs/dist/viewer.css'
     import { directive as viewer } from "v-viewer"
+    import copy from 'copy-to-clipboard';
+    import { Message } from 'element-ui';
     export default {
         name: "Article",
         directives: {
@@ -182,6 +184,12 @@
             }),
         },
         methods:{
+            //分享连接
+            copyLink(){
+                copy(window.location.href)
+                // console.log(block)
+                Message.success({message:"复制分享链接成功！", offset:100})
+            },
             //选择当前阅读位置所对应的目录节点
             directoryLocator(){
                 //1.获取anchor的list，无需树状结构
@@ -322,6 +330,7 @@
                     pagebreak:{mode:'avoid-all'},
                     margin: 10,
                     }).from(this.articleData.content).toPdf().save(this.articleData.title+this.articleData.modifiedBy);
+                 Message.success({message:"导出PDF文件成功！", offset:100})
             },
             reply(targetUserId,parentId,targetUsername){
                 this.replyDialogDisplay=true

@@ -32,7 +32,6 @@ Vue.directive('highlight',function (el){
 import router from "./router.js";
 // Vue.config.devtools = true;
 Vue.prototype.baseUrl="https://www.zhoujianguo.ltd:8080"
-
 new Vue({
   el:'#app',
   router,

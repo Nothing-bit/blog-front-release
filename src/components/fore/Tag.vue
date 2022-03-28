@@ -18,9 +18,6 @@
                         </div>
                         <el-divider></el-divider>
                             <div id="wordCloudChart" style="width: auto;height: calc(50vh);"></div>
-    <!--                        <div class="tag-button-container"  >-->
-    <!--                            <el-link class="tag-button" type="primary" @click="jumpToArticlePage(item.name)" v-for="item in tagList" v-bind:key="item.name">{{item.name}}</el-link >-->
-    <!--                        </div>-->
                         <div></div>
                     </el-card>
                 </transition>
@@ -91,7 +88,7 @@
                         height: '100%',
                         // Text size range which the value in data will be mapped to.
                         // Default to have minimum 12px and maximum 60px size.
-                        sizeRange: [5, 50],
+                        sizeRange: [10, 50],
                         // Text rotation range and step in degree. Text will be rotated randomly in range [-90, 90] by rotationStep 45
                         rotationRange: [0, 0],
                         rotationStep: 0,

@@ -310,25 +310,30 @@
     .card{
         margin-top: 5px;
     }
-    .article-pic{
-        border-radius: 5px;
-        width: calc(15vw);
-        height:calc(20vh);
-        cursor: pointer;
+    .article-info-cover{
+        text-align: center;
+        border-radius: 2px;
+        width: 95%;
+        /*cursor: pointer;*/
         transition: transform 500ms;
     }
-    .article-pic:hover{
-        transform: scale(1.05);
+    .article-info-title{
+        cursor: pointer;
+        font-size: 18px;
+    }
+    .article-info-item{
+        padding: 2px;
     }
     .article-tag:hover{
         cursor: pointer;
     }
     .article-info-summary{
-        height: 90px;
+        height: 100px;
+        color: rgba(0,0,0,.45);
+        overflow-y: hidden;
     }
     i{
-        margin: 3px;
-        font-size: 20px;
+        font-size: 16px;
         color: rgb(92,182,255);
     }
     .el-timeline-item__tail{position:absolute;left:4px;height:100%;border-left:2px solid #accaf7}

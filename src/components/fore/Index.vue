@@ -71,31 +71,39 @@
                             </el-tooltip>
                             <el-row :gutter=5>
                                 <!--                封面列-->
-                                <el-col :lg="10" :md="24" :sm="24">
-                                    <img :src="baseUrl+item.pictureUrl" @click="articlePage(item.id)" class="article-pic"  >
+                                <el-col :lg="8" :md="24" :sm="24">
+                                    <img :src="baseUrl+item.pictureUrl"  class="article-info-cover">
                                 </el-col>
                                 <!--                简略信息列-->
-                                <el-col :lg="14" :md="24" :sm="24">
-                                    <h3>{{item.title}}</h3>
+                                <el-col :lg="16" :md="24" :sm="24">
+                                    <div class="article-info-title">
+                                        <b><a @click="articlePage(item.id)">{{item.title}}</a></b>
+                                    </div>
                                     <div class="article-info-summary">
                                         <p>{{item.summary}}</p>
                                     </div>
                                     <el-row >
                                         <el-col :lg="9" :md="9" :sm="8">
-                                            <p><i class="el-icon-menu article-info-icon"></i>{{item.categoryName}}</p>
+                                            <div class="article-info-item">
+                                                <span><i class="el-icon-menu"></i>&nbsp;{{item.categoryName}}</span>
+                                            </div>
                                         </el-col>
                                         <el-col :lg="9" :md="9" :sm="8">
-                                            <p><i class="el-icon-date article-info-icon"></i>{{item.createBy}}</p>
+                                            <div class="article-info-item">
+                                                <span><i class="el-icon-date"></i>&nbsp;{{item.createBy}}</span>
+                                            </div>
                                         </el-col>
                                         <el-col :lg="6" :md="6" :sm="8">
-                                            <p><i class="el-icon-view article-info-icon"></i> {{item.traffic}}</p>
+                                            <div class="article-info-item">
+                                                <span><i class="el-icon-view"></i>&nbsp;{{item.traffic}} 次</span>
+                                            </div>
                                         </el-col>
                                     </el-row>
                                 </el-col>
                             </el-row>
                             <el-row class="tag-container">
                                 <i class="el-icon-price-tag"></i>
-                                <el-tag class="article-tag" v-for="tag in item.tagList" v-bind:key="tag" @click="jumpToArticlePage(tag)">{{tag}}</el-tag>
+                                <el-tag size="medium" class="article-tag" v-for="tag in item.tagList" v-bind:key="tag" @click="jumpToArticlePage(tag)">{{tag}}</el-tag>
                             </el-row>
                         </el-card>
                     </transition-group>
