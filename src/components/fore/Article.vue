@@ -35,13 +35,13 @@
                         </div>
                         <div class="article-info" >
                             <el-row type="flex" align="middle">
-                                <el-col :lg="6">
+                                <el-col :lg="4">
                                     <p >分类：{{articleData.categoryName}}</p>
                                 </el-col>
-                                <el-col :lg="6" >
+                                <el-col :lg="7" >
                                     <p >创建于：{{articleData.createBy}}</p>
                                 </el-col>
-                                <el-col :lg="6" >
+                                <el-col :lg="7" >
                                     <p >最后修改：{{articleData.createBy}}</p>
                                 </el-col>
                                 <el-col :lg="6">

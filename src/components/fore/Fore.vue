@@ -141,10 +141,17 @@
             //     })
             // },
             scrollToTop(){
-                document.getElementById("header").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+                window.scrollTo({
+                    top:0,
+                    behavior:'smooth'
+                })
             },
             scrollToBottom(){
-                document.getElementById("footer").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+                let footerLocation = document.getElementById("footer").offsetTop
+                window.scrollTo({
+                    top:footerLocation,
+                    behavior:'smooth'
+                })
             },
             queryArticle(){
                 this.showSearchValue=this.form.searchValue
@@ -329,7 +336,7 @@
     }
     .article-info-summary{
         height: 100px;
-        color: rgba(0,0,0,.45);
+        color: rgba(0,0,0,.5);
         overflow-y: hidden;
     }
     i{
