@@ -125,7 +125,7 @@
             },
             disableArticleComment(id){
                 let url=this.baseUrl+"/admin/article/comment/disable?id="+id
-                axios.put(url,this.headerConfig).then(res=>{
+                axios.put(url,{},this.headerConfig).then(res=>{
                     let result=res.data;
                     if(result.code==200){
                         Notification({
@@ -145,7 +145,8 @@
             },
             enableArticleComment(id){
                 let url=this.baseUrl+"/admin/article/comment/enable?id="+id
-                axios.put(url,this.headerConfig).then(res=>{
+                console.log(this.headerConfig)
+                axios.put(url,{},this.headerConfig).then(res=>{
                     let result=res.data;
                     if(result.code==200){
                         Notification({

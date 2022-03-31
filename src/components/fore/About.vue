@@ -160,9 +160,9 @@
             },
             submitComment(){
                 if(this.checkInput()==true){
-                    var token=this.$cookies.get("zBlogToken")
+                    let token=this.$cookies.get("zBlogToken")
                     if(token!=null){
-                        var url=this.baseUrl+"/fore/comment"
+                        let url=this.baseUrl+"/fore/comment"
                         this.formLoading=true;
                         axios.post(url,this.form,{headers:{Authorization:token}}).then((res)=>{
                             var result=res.data;

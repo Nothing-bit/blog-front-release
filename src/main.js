@@ -13,9 +13,10 @@ Vue.use(hljs)
 Vue.directive('highlight',function (el){
     let blocks = el.querySelectorAll('pre code');
     blocks.forEach((block)=>{
+        hljs.highlightElement(block)
       if(block.innerHTML.indexOf("<ol>") == -1){
           let code = block.innerHTML
-          hljs.highlightElement(block)
+          // hljs.highlightElement(block)
           block.innerHTML = "<ol><li style='border-left:1px solid rgb(75,75,75);padding-left: 15px;'>"+block.innerHTML.replace(/\n/g,"</li><li style='border-left:1px solid rgb(75,75,75);padding-left: 15px;'>")+"</li></ol>";
           block.innerHTML = "<span style='margin-right: 10px;padding: 3px;border: #107ded solid 1px;color:#107ded;border-radius: 5px'>"+block.className.match(/(?<=language-).*(?= hljs)/).toString()+"</span><button>复制</button>"+block.innerHTML
           let copyButton = block.querySelector('button')

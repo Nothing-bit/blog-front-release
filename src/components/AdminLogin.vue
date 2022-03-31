@@ -41,22 +41,18 @@
         components:{
         },
         methods:{
-            getSave(){
-                if(this.$cookies.get('zBlogAdminSave')!=null)
-                    this.adminUser=this.$cookies.get('zBlogAdminSave')
-            },
             login(){
-                if(this.save){
-                    this.$cookies.set('zBlogAdminSave',this.adminUser,60*60*24*7)
-                }else{
-                    this.$cookies.remove('zBlogAdminSave')
-                }
                 let url=this.baseUrl+"/admin/login"
                 axios.post(url,this.adminUser).then(res=>{
                     let result=res.data;
                     if(result.code==200){
                         let data=result.data;
-                        this.$cookies.set('zBlogAdminToken',data.token,60*60*24*7)
+                        //是否记住我，记住则token延长一段时间
+                        if(this.save){
+                            this.$cookies.set('zBlogAdminToken',this.adminUser,60*60*24*15)
+                        }else{
+                            this.$cookies.set('zBlogAdminToken',data.token,60*60*24*3)
+                        }
                         this.$message({
                             type:'success',
                             message:'登录成功!'
@@ -72,7 +68,6 @@
             }
         },
         created(){
-            this.getSave()
         }
     }
 </script>

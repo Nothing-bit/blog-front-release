@@ -46,11 +46,20 @@
                                 </el-col>
                                 <el-col :lg="6">
                                     <el-button-group>
-                                        <el-tooltip class="item" effect="dark" content="导出PDF文档" placement="top">
-                                            <el-button  size="medium" icon="el-icon-download" @click="exportPDF"></el-button>
+<!--                                        <el-tooltip class="item" effect="light" content="打赏" placement="top">-->
+<!--                                            <el-button  size="small" icon="el-icon-chicken" ></el-button>-->
+<!--                                        </el-tooltip>-->
+                                        <el-tooltip class="item" effect="light" content="收藏" placement="top">
+                                            <el-button  size="small" icon="el-icon-star-off" ></el-button>
                                         </el-tooltip>
-                                        <el-tooltip class="item" effect="dark" content="分 享" placement="top">
-                                            <el-button size="medium" icon="el-icon-share" @click="copyLink"></el-button>
+                                        <el-tooltip class="item" effect="light" content="发表评论" placement="top">
+                                            <el-button  size="small" icon="el-icon-chat-dot-square" @click="toComment"></el-button>
+                                        </el-tooltip>
+                                        <el-tooltip class="item" effect="light" content="导出PDF文档" placement="top">
+                                            <el-button  size="small" icon="el-icon-download" @click="exportPDF"></el-button>
+                                        </el-tooltip>
+                                        <el-tooltip class="item" effect="light" content="分 享" placement="top">
+                                            <el-button size="small" icon="el-icon-share" @click="copyLink"></el-button>
                                         </el-tooltip>
                                     </el-button-group>
                                 </el-col>
@@ -74,9 +83,9 @@
             </el-col>
         </el-row>
 <!--        评论模块-->
-        <el-row>
+        <el-row id="comment">
             <el-col :lg={span:18,offset:3} :md="24">
-                <el-card shadow="hover" class="article-comment-module" v-loading="formLoading">
+                <el-card  shadow="hover" class="article-comment-module" v-loading="formLoading">
 <!--                    发表评论表单模块-->
                     <el-row>
                         <el-col :lg={span:12,offset:6} :md={span:20,offset:2}>
@@ -184,12 +193,7 @@
             }),
         },
         methods:{
-            //分享连接
-            copyLink(){
-                copy(window.location.href)
-                // console.log(block)
-                Message.success({message:"复制分享链接成功！", offset:100})
-            },
+
             //选择当前阅读位置所对应的目录节点
             directoryLocator(){
                 //1.获取anchor的list，无需树状结构
@@ -323,6 +327,20 @@
                     }
                 }
                 return true;
+            },
+            //前往评论
+            toComment(){
+                let commentOffsetY = document.getElementById("comment").offsetTop
+                window.scrollTo({
+                    top:commentOffsetY,
+                    behavior:'smooth'
+                })
+            },
+            //分享连接
+            copyLink(){
+                copy(window.location.href)
+                // console.log(block)
+                Message.success({message:"复制分享链接成功！", offset:100})
             },
             //导出PDF
             exportPDF(){
