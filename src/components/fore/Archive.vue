@@ -13,8 +13,8 @@
         </el-row>
         <el-row :gutter="20">
             <div style="min-height: 700px;">
-                <!--                    分类-->
-                <el-col style="text-align: center; position: fixed" :xl="{span:3,offset:3}" :lg="{span:3,offset:3}" :md="6" v-loading="archiveListLoading">
+                <!--                    归档-->
+                <el-col style="text-align: center; position: fixed" :xl="{span:3,offset:5}"  :lg="{span:3,offset:3}" v-loading="archiveListLoading">
                     <transition name="list-complete"
                                       tag="div"
                                       appear
@@ -40,7 +40,7 @@
                                    layout="prev,next"></el-pagination>
                 </el-col>
                 <!--                    日志-->
-                <el-col :xl="{span:10}" :lg="{span:12,offset:6}" :md="{span:18,offset:6}" v-loading="articleListLoading">
+                <el-col :xl="{span:10,offset:8}" :lg="{span:12,offset:6}" v-loading="articleListLoading">
                     <transition-group name="list-complete"
                                       tag="div"
                                       appear
@@ -58,7 +58,7 @@
                                 <!--                简略信息列-->
                                 <el-col :lg="16" :md="24" :sm="24">
                                     <div class="article-info-title">
-                                        <b><a @click="articlePage(item.id)">{{item.title}}</a></b>
+                                        <b @click="articlePage(item.id)">{{item.title}}</b>
                                     </div>
                                     <div class="article-info-summary">
                                         <p>{{item.summary}}</p>

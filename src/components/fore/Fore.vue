@@ -322,11 +322,16 @@
         border-radius: 2px;
         width: 95%;
         /*cursor: pointer;*/
-        transition: transform 500ms;
+        /*transition: transform 500ms;*/
     }
     .article-info-title{
         cursor: pointer;
         font-size: 18px;
+
+    }
+    .article-info-title:hover{
+        color: rgba(64,158,255,0.9);
+        transition: color 500ms;
     }
     .article-info-item{
         padding: 2px;

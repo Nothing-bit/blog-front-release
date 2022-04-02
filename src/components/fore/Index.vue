@@ -77,7 +77,7 @@
                                 <!--                简略信息列-->
                                 <el-col :lg="16" :md="24" :sm="24">
                                     <div class="article-info-title">
-                                        <b><a @click="articlePage(item.id)">{{item.title}}</a></b>
+                                        <b @click="articlePage(item.id)">{{item.title}}</b>
                                     </div>
                                     <div class="article-info-summary">
                                         <p>{{item.summary}}</p>
