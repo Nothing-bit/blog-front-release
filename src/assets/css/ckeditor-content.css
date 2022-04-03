@@ -301,6 +301,7 @@
     white-space: pre-wrap;
     font-style: normal;
     min-width: 200px;
+    font-size: 15px;
 }
 /* ckeditor5-code-block/theme/codeblock.css */
 .ck-content pre code {

@@ -63,7 +63,7 @@
                                     <div class="article-info-summary">
                                         <p>{{item.summary}}</p>
                                     </div>
-                                    <el-row >
+                                    <el-row style="text-align: center">
                                         <el-col :lg="9" :md="9" :sm="8">
                                             <div class="article-info-item">
                                                 <span><i class="el-icon-menu"></i>&nbsp;{{item.categoryName}}</span>

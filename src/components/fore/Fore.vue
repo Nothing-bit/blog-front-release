@@ -261,6 +261,23 @@
 <style>
     @import "~@/assets/css/ckeditor-content.css";
     @import "~animate.css/animate.min.css";
+    /* for block of numbers */
+    .hljs-ln-numbers {
+        text-align: center;
+        color: #ccc;
+        border-right: 1px solid #CCC;
+        vertical-align: top;
+        padding-right: 5px !important;
+
+        /* your custom style here */
+    }
+
+    /* for block of code */
+    .hljs-ln-code {
+        padding-left: 5px !important;
+    }
+
+
     .overflow-box{
         overflow: auto;
     }
@@ -378,15 +395,7 @@
     .list-complete-leave-to{
         display: none;
     }
-    /*.list-complete-item {*/
-    /*    transition: all 1s;*/
-    /*}*/
-    /*.list-complete-leave-active {*/
-    /*    position: absolute;*/
-    /*}*/
-    /*.list-complete-move{*/
-    /*    transition: transform 1s;*/
-    /*}*/
+
     /* width */
     ::-webkit-scrollbar {
         width: 10px;

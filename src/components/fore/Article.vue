@@ -412,7 +412,7 @@
                     axios.get(url).then((res)=>{
                         var result=res.data;
                         if(result.code==200){
-                            var data=result.data;
+                            let data=result.data;
                             this.list=this.list.concat(data.list)
                             this.pageNum++
                             this.hasNextPage=data.hasNextPage
@@ -445,11 +445,13 @@
             },
         },
         created(){
+
         },
         mounted(){
             this.getArticleDetail()
             window.addEventListener("scroll",this.directoryCollapse)
             window.addEventListener('scroll',this.directoryLocator)
+            // console.error("mounted!")
 
         },
         beforeDestroy(){
@@ -457,6 +459,7 @@
             window.removeEventListener("scroll",this.directoryLocator)
         },
         updated(){
+
         },
         data(){
             return{
