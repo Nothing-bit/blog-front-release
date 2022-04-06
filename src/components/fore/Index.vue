@@ -145,7 +145,7 @@
 
 </template>
 <script>
-    var echarts = require('echarts');
+    var echarts = require('echarts/lib/echarts');
     require('echarts-wordcloud');
     import axios from 'axios'
     export default {

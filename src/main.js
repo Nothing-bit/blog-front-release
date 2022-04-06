@@ -3,11 +3,36 @@ import App from './App.vue'
 import ElementUI from 'element-ui'
 import vueCookie from 'vue-cookies'
 import 'element-ui/lib/theme-chalk/index.css'
-import hljs from "highlight.js"
-import 'highlight.js/styles/atom-one-light.css'
+import hljs from "highlight.js/lib/core"
+import 'highlight.js/styles/vs.css'
 import {lineNumbersBlock} from "@/assets/js/highlight-line-number"
 import { Message } from 'element-ui';
 import copy from 'copy-to-clipboard';
+//按需加载代码高亮组件
+hljs.registerLanguage('bash', require('highlight.js/lib/languages/bash'))
+hljs.registerLanguage('java', require('highlight.js/lib/languages/java'))
+hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'))
+hljs.registerLanguage('python', require('highlight.js/lib/languages/python'))
+hljs.registerLanguage('sql', require('highlight.js/lib/languages/sql'))
+hljs.registerLanguage('html', require('highlight.js/lib/languages/xml'))
+hljs.registerLanguage('css', require('highlight.js/lib/languages/css'))
+hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
+hljs.registerLanguage('c', require('highlight.js/lib/languages/c'))
+hljs.registerLanguage('c++', require('highlight.js/lib/languages/cpp'))
+hljs.registerLanguage('json', require('highlight.js/lib/languages/json'))
+Vue.prototype.languages=[
+    {language: 'bash', label: 'Bash'},
+    {language: 'java',label: 'Java'},
+    {language: 'javascript',label: 'JavaScript'},
+    {language: 'python', label: 'Python'},
+    {language: 'sql', label: 'SQL'},
+    {language: 'html',label: 'HTML'},
+    {language: 'css',label: 'CSS'},
+    {language: 'xml',label: 'XML'},
+    { language: 'c', label: 'C' },
+    {language: 'c++', label: 'C++'},
+    {language: 'json',label: 'JSON'}
+]
 Vue.use(ElementUI)
 Vue.use(vueCookie)
 

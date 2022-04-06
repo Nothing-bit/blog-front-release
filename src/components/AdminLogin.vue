@@ -49,7 +49,7 @@
                         let data=result.data;
                         //是否记住我，记住则token延长一段时间
                         if(this.save){
-                            this.$cookies.set('zBlogAdminToken',this.adminUser,60*60*24*15)
+                            this.$cookies.set('zBlogAdminToken',data.token,60*60*24*15)
                         }else{
                             this.$cookies.set('zBlogAdminToken',data.token,60*60*24*3)
                         }

@@ -81,19 +81,7 @@
                 editorConfig:{
                     language:'zh-cn',
                     codeBlock:{
-                        languages:[
-                            {language: 'bash', label: 'Bash'},
-                            {language: 'java',label: 'Java'},
-                            {language: 'javascript',label: 'JavaScript'},
-                            {language: 'python', label: 'Python'},
-                            {language: 'sql', label: 'SQL'},
-                            {language: 'html',label: 'HTML'},
-                            {language: 'css',label: 'CSS'},
-                            {language: 'xml',label: 'XML'},
-                            { language: 'c', label: 'C' },
-                            {language: 'c++', label: 'C++'},
-                            {language: 'json',label: 'JSON'}
-                        ]
+                        languages:this.languages
                     },
                     image: {
                         toolbar: [
