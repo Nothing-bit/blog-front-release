@@ -4,7 +4,7 @@ import ElementUI from 'element-ui'
 import vueCookie from 'vue-cookies'
 import 'element-ui/lib/theme-chalk/index.css'
 import hljs from "highlight.js/lib/core"
-import 'highlight.js/styles/vs.css'
+import 'highlight.js/styles/atom-one-light.css'
 import {lineNumbersBlock} from "@/assets/js/highlight-line-number"
 import { Message } from 'element-ui';
 import copy from 'copy-to-clipboard';
@@ -20,6 +20,7 @@ hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
 hljs.registerLanguage('c', require('highlight.js/lib/languages/c'))
 hljs.registerLanguage('c++', require('highlight.js/lib/languages/cpp'))
 hljs.registerLanguage('json', require('highlight.js/lib/languages/json'))
+//富文本插件代码块的配置属性
 Vue.prototype.languages=[
     {language: 'bash', label: 'Bash'},
     {language: 'java',label: 'Java'},
