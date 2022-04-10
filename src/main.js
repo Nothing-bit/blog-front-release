@@ -48,7 +48,7 @@ Vue.directive('highlight', {
             let code = block.innerHTML// block.innerHTML="<div><span style='margin-right: 10px;padding: 3px;border: #107ded solid 1px;color:#107ded;border-radius: 5px'>"+ "test"+"</span><button>复制</button>"+block.innerHTML+"</div>"
             hljs.highlightElement(block)
             lineNumbersBlock(block)
-            block.innerHTML="<div><div style='padding: 5px 0px 10px 20px'><span style='margin-right: 10px;padding: 5px;border: rgba(16, 125, 237,0.5) solid 1px;color:#107ded;border-radius: 5px'>"+ block.className.match(/(?<=language-).*(?= hljs)/).toString()+"</span><button class='el-button el-button--default el-button--mini' style='border-radius: 5px'>复制</button></div>"+block.innerHTML+"</div>"
+            block.innerHTML="<div><div style='padding: 5px 0px 10px 20px; vertical-align: center'><button class='el-button el-button--default el-button--mini' style='border-radius: 5px'>复制</button></div>"+block.innerHTML+"</div>"
             let copyButton = block.querySelector('button')
             if(copyButton!=null){
                 copyButton.onclick = function (){

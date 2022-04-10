@@ -175,6 +175,7 @@
             }
         },
         created(){
+            document.title="归 档"
             this.getArchiveList(1)
             this.getArticleList(1)
         }

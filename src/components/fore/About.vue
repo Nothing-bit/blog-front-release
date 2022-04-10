@@ -216,6 +216,7 @@
             },
         },
         created(){
+            document.title="关 于"
             this.getMyInfo()
         },
         data(){

@@ -91,6 +91,7 @@
             }
         },
         created(){
+            document.title="随 说"
         }
     }
 </script>

@@ -264,7 +264,7 @@
     /* for block of numbers */
     .hljs-ln-numbers {
         text-align: center;
-        color: #ccc;
+        color: #aaa;
         border-right: 1px solid #CCC;
         vertical-align: top;
         padding-right: 5px !important;

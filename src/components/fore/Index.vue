@@ -190,7 +190,16 @@
                 })
             },
             articlePage(id){
-                this.$router.push({name:'article',query:{id:id}})
+                this.$router.push(
+                    {
+                        name:'article',
+                        query:{
+                            id:id,
+                        },
+                        // params:{
+                        //     title:title
+                        // }
+                    })
             },
             jumpToArticlePage(tagName){
                 this.$router.push({name:'tagArticle',query:{tagName:tagName}})
@@ -336,6 +345,7 @@
             // this.isShow=false
         },
         created(){
+            document.title="首 页"
             this.initData()
             this.setTime()
             this.getNews()

@@ -175,6 +175,7 @@
         created(){
             this.getCategoryList(1)
             this.getArticleList(1)
+            document.title="分 类"
         },
         mounted(){
         }

@@ -78,7 +78,7 @@
             lines.pop();
         }
 
-        if (lines.length > 1 || options.singleLine) {
+        if (lines.length >= 1 || options.singleLine) {
             let html = '';
 
             for (let i = 0, l = lines.length; i < l; i++) {

@@ -399,6 +399,7 @@
                     if(result.code==200){
                         result.data.content=this.generateDirectory(result.data.content)
                         this.articleData=result.data
+                        document.title = this.articleData.title
                         this.articleLoading=false
                         this.form.articleId=id;
                     }
@@ -445,7 +446,7 @@
             },
         },
         created(){
-
+            // document.title=this.$route.params.title
         },
         mounted(){
             this.getArticleDetail()

@@ -125,6 +125,7 @@
             },
         },
         created(){
+            document.title="标 签"
             this.getTagCloudList()
         }
     }
