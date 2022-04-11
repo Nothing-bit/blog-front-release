@@ -32,7 +32,7 @@
                                             <p class="username">{{item.username}}</p>
                                         </el-col>
                                     </el-row>
-                                    <div v-html="item.content" class="content-module ck-content"></div>
+                                    <div v-html="item.content" v-proxy class="content-module ck-content"></div>
                                 </el-card>
                             </el-timeline-item>
                         </transition-group>

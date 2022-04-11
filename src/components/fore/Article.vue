@@ -29,7 +29,7 @@
                 <transition appear
                             appear-active-class="animate__animated animate__fadeIn"
                             enter-active-class="animate__animated animate__fadeIn">
-                    <el-card id="content" shadow="hover" v-loading="articleLoading">
+                    <el-card id="content" shadow="hover" v-proxy v-loading="articleLoading">
                         <div class="article-title">
                             <h1>{{articleData.title}}</h1>
                         </div>

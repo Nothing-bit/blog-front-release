@@ -15,7 +15,7 @@
                             appear-active-class="animate__animated animate__fadeIn"
                             enter-active-class="animate__animated animate__fadeIn">
                     <el-card >
-                        <div  class="info-content ck-content" v-html="myInfo">
+                        <div  class="info-content ck-content" v-proxy v-html="myInfo">
 
                         </div>
                     </el-card>

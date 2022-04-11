@@ -36,15 +36,15 @@ Vue.prototype.languages=[
 ]
 Vue.use(ElementUI)
 Vue.use(vueCookie)
-
+//过滤所有的高亮模块
 Vue.directive('highlight', {
     update(el){
         let blocks = el.querySelectorAll('pre code');
         blocks.forEach((block)=>{
-            if(block.getAttribute("highlighted")=="true"){
+            if(block.hasAttribute("highlighted")){
                 return
             }
-            block.setAttribute("highlighted","true")
+            block.setAttribute("highlighted","")
             let code = block.innerHTML// block.innerHTML="<div><span style='margin-right: 10px;padding: 3px;border: #107ded solid 1px;color:#107ded;border-radius: 5px'>"+ "test"+"</span><button>复制</button>"+block.innerHTML+"</div>"
             hljs.highlightElement(block)
             lineNumbersBlock(block)
@@ -59,8 +59,28 @@ Vue.directive('highlight', {
         })
     }
 })
+//过滤所有ck content的区域，为图片添加baseURL
+Vue.directive('proxy',{
+    update(el){
+        let images = el.querySelectorAll('img');
+        images.forEach((image)=>{
+            if(image.hasAttribute('acted')){
+                return
+            }
+            console.log(image)
+            let url=image.getAttribute("src")
+            //非外部资源图片需要代理
+            if(url.indexOf("http")==-1){
+                url=Vue.prototype.baseUrl+url
+            }
+            image.setAttribute("src",url)
+            image.setAttribute('acted','')
+        })
+    }
+})
 
 import router from "./router.js";
+
 // Vue.config.devtools = true;
 Vue.prototype.baseUrl="https://www.zhoujianguo.ltd:8080"
 new Vue({
