@@ -61,13 +61,13 @@ Vue.directive('highlight', {
 })
 //过滤所有ck content的区域，为图片添加baseURL
 Vue.directive('proxy',{
-    update(el){
+    inserted(el){
         let images = el.querySelectorAll('img');
         images.forEach((image)=>{
             if(image.hasAttribute('acted')){
                 return
             }
-            console.log(image)
+            // console.log(image)
             let url=image.getAttribute("src")
             //非外部资源图片需要代理
             if(url.indexOf("http")==-1){
