@@ -32,7 +32,7 @@
                                             <p class="username">{{item.username}}</p>
                                         </el-col>
                                     </el-row>
-                                    <div v-html="item.content" v-proxy class="content-module ck-content"></div>
+                                    <div v-html="item.content" class="content-module ck-content"></div>
                                 </el-card>
                             </el-timeline-item>
                         </transition-group>
@@ -75,6 +75,9 @@
                         if(result.code==200){
                             let data=result.data;
                             this.pageInfo.pageNum++
+                            data.list.forEach(value => {
+                                value.content=value.content.replace(/(?<=src=")\/images\//g,this.baseUrl+'/images/')
+                            })
                             this.pageInfo.list=this.pageInfo.list.concat(data.list);
                             this.pageInfo.total=data.total;
                             this.pageInfo.hasNextPage=data.hasNextPage

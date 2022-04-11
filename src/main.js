@@ -59,25 +59,25 @@ Vue.directive('highlight', {
         })
     }
 })
-//过滤所有ck content的区域，为图片添加baseURL
-Vue.directive('proxy',{
-    inserted(el){
-        let images = el.querySelectorAll('img');
-        images.forEach((image)=>{
-            if(image.hasAttribute('acted')){
-                return
-            }
-            // console.log(image)
-            let url=image.getAttribute("src")
-            //非外部资源图片需要代理
-            if(url.indexOf("http")==-1){
-                url=Vue.prototype.baseUrl+url
-            }
-            image.setAttribute("src",url)
-            image.setAttribute('acted','')
-        })
-    }
-})
+// //过滤所有ck content的区域，为图片添加baseURL
+// Vue.directive('proxy',{
+//     watch(el){
+//         let images = el.querySelectorAll('img');
+//         images.forEach((image)=>{
+//             if(image.hasAttribute('acted')){
+//                 return
+//             }
+//             // console.log(image)
+//             let url=image.getAttribute("src")
+//             //非外部资源图片需要代理
+//             if(url.indexOf("http")==-1){
+//                 url=Vue.prototype.baseUrl+url
+//             }
+//             image.setAttribute("src",url)
+//             image.setAttribute('acted','')
+//         })
+//     }
+// })
 
 import router from "./router.js";
 

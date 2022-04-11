@@ -29,7 +29,7 @@
                 <transition appear
                             appear-active-class="animate__animated animate__fadeIn"
                             enter-active-class="animate__animated animate__fadeIn">
-                    <el-card id="content" shadow="hover" v-proxy v-loading="articleLoading">
+                    <el-card id="content" shadow="hover" v-loading="articleLoading">
                         <div class="article-title">
                             <h1>{{articleData.title}}</h1>
                         </div>
@@ -397,7 +397,9 @@
                 axios.get(url).then((res)=>{
                     var result=res.data;
                     if(result.code==200){
-                        result.data.content=this.generateDirectory(result.data.content)
+                        let content = this.generateDirectory(result.data.content)
+                        content = content.replace(/(?<=src=")\/images\//g,this.baseUrl+"/images/")
+                        result.data.content = content
                         this.articleData=result.data
                         document.title = this.articleData.title
                         this.articleLoading=false

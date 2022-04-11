@@ -15,7 +15,7 @@
                             appear-active-class="animate__animated animate__fadeIn"
                             enter-active-class="animate__animated animate__fadeIn">
                     <el-card >
-                        <div  class="info-content ck-content" v-proxy v-html="myInfo">
+                        <div  class="info-content ck-content"  v-html="myInfo">
 
                         </div>
                     </el-card>
@@ -127,7 +127,10 @@
                 let url=this.baseUrl+"/fore/myInfo"
                 axios.get(url).then(res=>{
                     let result=res.data;
-                    this.myInfo=result.data;
+
+                    let myInfo=result.data;
+                    myInfo = myInfo.replace(/(?<=src=")\/images\//g,this.baseUrl+"/images/")
+                    this.myInfo=myInfo;
                 })
             },
             checkInput(){

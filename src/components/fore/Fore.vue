@@ -251,6 +251,15 @@
         },
         components:{
         },
+        beforeMount(){
+            // console.warn("beforeMount")
+        },
+        mounted(){
+            // console.warn("mounted")
+        },
+        beforeUpdate(){
+
+        },
         created(){
             this.check()
             this.getMusicURL()
