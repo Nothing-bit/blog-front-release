@@ -12,19 +12,15 @@
                 <transition appear
                             appear-active-class="animate__animated animate__fadeIn"
                             enter-active-class="animate__animated animate__fadeIn">
-                    <el-card style="height: calc(70vh)" v-loading="tagListLoading">
+                    <el-card style="height: calc(60vh)" v-loading="tagListLoading">
                         <div style="text-align: center">
                             <h2>当前共有{{tagList.length}}个标签</h2>
                         </div>
                         <el-divider></el-divider>
-                        <el-link :style="{padding:'0.5rem',fontSize:item.value+15+'px'}" v-for="item in tagList" v-bind:key=item.id @click="jumpToArticlePage(item.name)">#{{item.name}}</el-link>
-<!--                            <el-row>-->
-<!--                                <el-col :lg={span:12,offset:6}>-->
-<!--                                    <div id="wordCloudChart" style="width: auto;height: calc(50vh);"></div>-->
-<!--                                </el-col>-->
-<!--                            </el-row>-->
-                        <div></div>
-                    </el-card>
+                            <div class="tag-container">
+                                <el-link class="tag-link" :underline=false type="info" :style="{fontSize:item.value+15+'px', color:randomColor()}" v-for="item in tagList" v-bind:key=item.id @click="jumpToArticlePage(item.name)">#{{item.name}}</el-link>
+                            </div>
+                        </el-card>
                 </transition>
             </el-col>
         </el-row>
@@ -32,8 +28,6 @@
 </template>
 
 <script>
-    // var echarts = require('echarts/lib/echarts');
-    require('echarts-wordcloud');
     import axios from 'axios'
     import { Notification }  from 'element-ui';
     export default {
@@ -43,9 +37,34 @@
                 tagListLoading:false,
                 tagList:[],
                 tagTotal:0,
+                colors:[
+                    '#2ec7c9',
+                    '#b6a2de',
+                    '#5ab1ef',
+                    '#ffb980',
+                    '#d87a80',
+                    '#8d98b3',
+                    '#e5cf0d',
+                    '#97b552',
+                    '#95706d',
+                    '#dc69aa',
+                    '#07a2a4',
+                    '#9a7fd1',
+                    '#588dd5',
+                    '#f5994e',
+                    '#c05050',
+                    '#59678c',
+                    '#c9ab00',
+                    '#7eb00a',
+                    '#6f5553',
+                    '#c14089'
+                ]
             }
         },
         methods:{
+            randomColor(){
+                return  this.colors[Math.round(Math.random() * this.colors.length) ]
+            },
             jumpToArticlePage(tagName){
                 this.$router.push({name:'tagArticle',query:{tagName:tagName}})
             },
@@ -58,7 +77,6 @@
                         let data=result.data;
                         this.tagList=data;
                         this.tagListLoading=false;
-                        this.initWordCloud()
                     }else{
                         Notification({
                             title:'提示',
@@ -68,80 +86,27 @@
                     }
                 })
             },
-            // initWordCloud(){
-            //     let wordCloudChart=echarts.init(document.getElementById("wordCloudChart"), 'walden', {devicePixelRatio:3})
-            //     wordCloudChart.setOption({
-            //         tooltip: {
-            //             triggerOn: "click",
-            //             formatter: (e)=> {
-            //                 this.$router.push({name:'tagArticle',query:{tagName:e.name}})
-            //             }
-            //         },
-            //         series: [{
-            //             type: 'wordCloud',
-            //             // The shape of the "cloud" to draw. Can be any polar equation represented as a
-            //             // callback function, or a keyword present. Available presents are circle (default),
-            //             // cardioid (apple or heart shape curve, the most known polar equation), diamond (
-            //             // alias of square), triangle-forward, triangle, (alias of triangle-upright, pentagon, and star.
-            //
-            //             shape: 'whale',
-            //             // Folllowing left/top/width/height/right/bottom are used for positioning the word cloud
-            //             // Default to be put in the center and has 75% x 80% size.
-            //             left: 'center',
-            //             top: 'center',
-            //             width: '100%',
-            //             height: '100%',
-            //             // Text size range which the value in data will be mapped to.
-            //             // Default to have minimum 12px and maximum 60px size.
-            //             sizeRange: [10, 50],
-            //             // Text rotation range and step in degree. Text will be rotated randomly in range [-90, 90] by rotationStep 45
-            //             rotationRange: [0, 0],
-            //             rotationStep: 45,
-            //             // size of the grid in pixels for marking the availability of the canvas
-            //             // the larger the grid size, the bigger the gap between words.
-            //             gridSize: 10,
-            //             // set to true to allow word being draw partly outside of the canvas.
-            //             // Allow word bigger than the size of the canvas to be drawn
-            //             drawOutOfBound: false,
-            //             // Global text style
-            //             textStyle: {
-            //                 normal: {
-            //                     fontFamily: 'sans-serif',
-            //                     fontWeight: 'bold',
-            //                     // Color can be a callback function or a color string
-            //                     color: function () {
-            //                         // Random color
-            //                         return 'rgb(' + [
-            //                             Math.round(Math.random() * 160),
-            //                             Math.round(Math.random() * 160),
-            //                             Math.round(Math.random() * 160)
-            //                         ].join(',') + ')';
-            //                     }
-            //                 },
-            //                 emphasis: {
-            //                     shadowBlur: 10,
-            //                     shadowColor: '#333'
-            //                 }
-            //             },
-            //             // Data is an array. Each array item must have name and value property.
-            //             data: this.tagList
-            //         }]
-            //     });
-            // },
+        },
+        activated() {
+            document.title="Blog | 标 签"
         },
         created(){
-            document.title="Blog | 标 签"
             this.getTagCloudList()
         }
     }
 </script>
 
 <style scoped>
-    .tag-button-container{
-        padding: 20px 50px 50px;
+    .tag-link{
+        /*color:rgba(128, 191, 255, 0.9);*/
+        padding:0.5rem
     }
-    .tag-button{
-        margin-top:15px;
-        padding: 10px;
+    .tag-link:hover{
+        /*color:rgba(26, 139, 255, 1);*/
+        /*transition: color 300ms;*/
+        text-shadow: 3px 3px 4px rgba(100, 100, 100, 0.6);
+    }
+    .tag-container{
+        padding: 0px 40px 0px 40px;
     }
 </style>

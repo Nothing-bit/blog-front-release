@@ -93,7 +93,7 @@
                 }
             }
         },
-        created(){
+        activated(){
             document.title="Blog | 随 说"
         }
     }

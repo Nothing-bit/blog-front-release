@@ -61,56 +61,10 @@
             <!--            第二列-->
             <el-col :xl="{span:10}" :lg="{span:12}">
                 <h3>日 志</h3>
-                <div v-loading="loading">
-                    <transition-group  name="list-complete"
-                                      tag="div"
-                                      enter-active-class="animate__animated animate__fadeIn">
-                        <el-card shadow="hover" v-for="item in articleList" v-bind:key="item.id" class="article-card" >
-                            <el-tooltip v-if="item.top" content="置 顶" effect="light" placement="left">
-                                <img src="../../assets/top.png" style="position: absolute;right: 20px;top: 12px;"/>
-                            </el-tooltip>
-                            <el-row :gutter=5>
-                                <!--                封面列-->
-                                <el-col :lg="8" :md="24" :sm="24">
-                                    <img :src="baseUrl+item.pictureUrl"  class="article-info-cover">
-                                </el-col>
-                                <!--                简略信息列-->
-                                <el-col :lg="16" :md="24" :sm="24">
-                                    <div class="article-info-title">
-                                        <b @click="articlePage(item.id)">{{item.title}}</b>
-                                    </div>
-                                    <div class="article-info-summary">
-                                        <p>{{item.summary}}</p>
-                                    </div>
-                                    <el-row style="text-align: center">
-                                        <el-col :lg="9" :md="9" :sm="8">
-                                            <div class="article-info-item">
-                                                <span><i class="el-icon-menu"></i>&nbsp;{{item.categoryName}}</span>
-                                            </div>
-                                        </el-col>
-                                        <el-col :lg="9" :md="9" :sm="8">
-                                            <div class="article-info-item">
-                                                <span><i class="el-icon-date"></i>&nbsp;{{item.createBy}}</span>
-                                            </div>
-                                        </el-col>
-                                        <el-col :lg="6" :md="6" :sm="8">
-                                            <div class="article-info-item">
-                                                <span><i class="el-icon-view"></i>&nbsp;{{item.traffic}} 次</span>
-                                            </div>
-                                        </el-col>
-                                    </el-row>
-                                </el-col>
-                            </el-row>
-                            <el-row class="tag-container">
-                                <i class="el-icon-price-tag"></i>
-                                <el-tag size="medium" class="article-tag" v-for="tag in item.tagList" v-bind:key="tag" @click="jumpToArticlePage(tag)">{{tag}}</el-tag>
-                            </el-row>
-                        </el-card>
-                    </transition-group>
-                </div>
+                <ArticleInfoList v-loading="loading" :article-list="this.articleList"></ArticleInfoList>
                 <div class="block pagination">
                     <el-pagination
-                            @current-change="handleCurrentChange"
+                            @current-change="getArticleList"
                             :current-page="1"
                             :page-size=pageSize
                             layout="total, prev, pager, next, jumper"
@@ -124,7 +78,7 @@
                         enter-active-class="animate__animated animate__fadeIn">
                 <el-col :xl="{span:5}" :lg="{span:6}" :md="24">
                     <h3>标签云</h3>
-                    <el-card shadow="hover" class="card">
+                    <el-card shadow="hover" class="card" ref="wordCloudCard">
                         <div id="wordCloudChart" class="tag-cloud"></div>
                     </el-card>
                     <h3>友 链</h3>
@@ -145,34 +99,48 @@
 
 </template>
 <script>
-    import echarts from 'echarts/lib/echarts'
+    import echarts from 'echarts'
+    import ArticleInfoList from "./ArticleInfoList";
     require('echarts-wordcloud');
     import axios from 'axios'
     export default {
         data(){
             return{
-                pageSize:0,
-                total:0,
                 tagList:[],
-                articleList: [],
-                loading:true,
                 notice:'',
                 signature:'',
                 countPublicArticle:0,
                 countTag:0,
                 countCategory:0,
                 time:'',
-                searchValue:'',
                 newsList:[],
                 friendLinkList:[],
-                temp:[]
+                articleList:[],
+                total:0,
+                loading:true,
             }
         },
         methods:{
+            getArticleList(pageNum){
+                this.loading=true
+                let url = this.baseUrl+"/fore/article/list?pageNum="+pageNum;
+                axios.get(url).then((res) => {
+                    let result=res.data;
+                    if(result.code==200){
+                        let data=result.data
+                        this.articleList=data.list;
+                        this.pageSize=data.pageSize
+                        this.total=data.total
+                        this.loading=false
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            },
             queryAllFriendLink(){
-                var url=this.baseUrl+"/fore/friend/link/all"
+                let url=this.baseUrl+"/fore/friend/link/all"
                 axios.get(url).then((res)=>{
-                    var result=res.data;
+                    let result=res.data;
                     if(result.code==200){
                         this.loading=false;
                         this.friendLinkList=result.data;
@@ -189,27 +157,12 @@
                     }
                 })
             },
-            articlePage(id){
-                this.$router.push(
-                    {
-                        name:'article',
-                        query:{
-                            id:id,
-                        },
-                        // params:{
-                        //     title:title
-                        // }
-                    })
-            },
-            jumpToArticlePage(tagName){
-                this.$router.push({name:'tagArticle',query:{tagName:tagName}})
-            },
             initData(){
-                var url=this.baseUrl+"/fore/index/data"
+                let url=this.baseUrl+"/fore/index/data"
                 axios.get(url).then((response)=>{
-                    var result=response.data;
+                    let result=response.data;
                     if(result.code==200){
-                        var data=result.data
+                        let data=result.data
                         this.tagList=data.tagList
                         this.signature=data.signature
                         this.notice=data.notice
@@ -225,22 +178,6 @@
                     }
                 })
             },
-            handleCurrentChange(pageNum){
-                this.loading=true
-                var url = this.baseUrl+"/fore/article/list/?pageNum="+pageNum;
-                axios.get(url).then((res) => {
-                    var result=res.data;
-                    if(result.code==200){
-                        var data=result.data
-                        this.articleList=data.list;
-                        this.pageSize=data.pageSize
-                        this.total=data.total
-                        this.loading=false
-                    }
-                }).catch((error) => {
-                    console.log(error);
-                });
-            },
             initWordCloud(){
                 let wordCloudChart=echarts.init(document.getElementById("wordCloudChart"), 'walden', {devicePixelRatio:3})
                 wordCloudChart.setOption({
@@ -252,38 +189,21 @@
                     },
                     series: [{
                         type: 'wordCloud',
-                        // The shape of the "cloud" to draw. Can be any polar equation represented as a
-                        // callback function, or a keyword present. Available presents are circle (default),
-                        // cardioid (apple or heart shape curve, the most known polar equation), diamond (
-                        // alias of square), triangle-forward, triangle, (alias of triangle-upright, pentagon, and star.
-
                         shape: 'square',
-                        // Folllowing left/top/width/height/right/bottom are used for positioning the word cloud
-                        // Default to be put in the center and has 75% x 80% size.
                         left: 'center',
                         top: 'center',
-                        width: '90%',
-                        height: '90%',
-                        // Text size range which the value in data will be mapped to.
-                        // Default to have minimum 12px and maximum 60px size.
-                        sizeRange: [10, 30],
-                        // Text rotation range and step in degree. Text will be rotated randomly in range [-90, 90] by rotationStep 45
+                        width: '100%',
+                        height: '100%',
+                        sizeRange: [15, 40],
                         rotationRange: [-90, 90],
                         rotationStep: 45,
-                        // size of the grid in pixels for marking the availability of the canvas
-                        // the larger the grid size, the bigger the gap between words.
-                        gridSize: 5,
-                        // set to true to allow word being draw partly outside of the canvas.
-                        // Allow word bigger than the size of the canvas to be drawn
+                        gridSize: 3,
                         drawOutOfBound: false,
-                        // Global text style
                         textStyle: {
                             normal: {
                                 fontFamily: 'sans-serif',
                                 fontWeight: 'bold',
-                                // Color can be a callback function or a color string
                                 color: function () {
-                                    // Random color
                                     return 'rgb(' + [
                                         Math.round(Math.random() * 160),
                                         Math.round(Math.random() * 160),
@@ -296,7 +216,6 @@
                                 shadowColor: '#333'
                             }
                         },
-                        // Data is an array. Each array item must have name and value property.
                         data: this.tagList
                     }]
                 });
@@ -314,14 +233,6 @@
                 let todayHour = today.getHours();
                 let todayMinute = today.getMinutes();
                 let todaySecond = today.getSeconds();
-                /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
-                year - 作为date对象的年份，为4位年份值
-                month - 0-11之间的整数，做为date对象的月份
-                day - 1-31之间的整数，做为date对象的天数
-                hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
-                minutes - 0-59之间的整数，做为date对象的分钟数
-                seconds - 0-59之间的整数，做为date对象的秒数
-                microseconds - 0-999之间的整数，做为date对象的毫秒数 */
                 let t1 = Date.UTC(2019,9,1,0,0,0); //北京时间2016-12-1 00:00:00
                 let t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
                 let diff = t2-t1;
@@ -331,28 +242,24 @@
             }
         },
         updated(){
-                //console.log("Updated!")
         },
         activated(){
-            // this.articleList=this.temp
-            // console.log("Activated")
-            // this.isShow=true
+            document.title="Blog | 首 页"
+            // this.show=true
         },
         deactivated(){
-            // this.temp=this.articleList
-            // this.articleList=[]
-            // console.log("Deactivated")
-            // this.isShow=false
         },
         created(){
-            document.title="Blog | 首 页"
             this.initData()
             this.setTime()
             this.getNews()
             this.queryAllFriendLink()
         },
         mounted() {
-            this.handleCurrentChange(1)
+            this.getArticleList(1)
+        },
+        components:{
+            ArticleInfoList
         }
     }
 </script>

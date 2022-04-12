@@ -218,8 +218,10 @@
                 }
             },
         },
-        created(){
+        activated(){
             document.title="Blog | 关 于"
+        },
+        created(){
             this.getMyInfo()
         },
         data(){

@@ -319,21 +319,6 @@
         text-align: center;
     }
 
-
-    .article-card{
-        padding: 13px;
-        margin-bottom: 15px;
-        text-align: left;
-        position: relative;
-    }
-    .tag-container{
-        height: 20px;
-        vertical-align: center;
-        padding: 10px;
-    }
-    .article-tag{
-        margin-left: 15px;
-    }
     .tag-cloud{
         height: 300px;
     }
@@ -343,33 +328,7 @@
     .card{
         margin-top: 5px;
     }
-    .article-info-cover{
-        text-align: center;
-        border-radius: 2px;
-        width: 95%;
-        /*cursor: pointer;*/
-        /*transition: transform 500ms;*/
-    }
-    .article-info-title{
-        cursor: pointer;
-        font-size: 18px;
 
-    }
-    .article-info-title:hover{
-        color: rgba(64,158,255,0.9);
-        transition: color 500ms;
-    }
-    .article-info-item{
-        padding: 2px;
-    }
-    .article-tag:hover{
-        cursor: pointer;
-    }
-    .article-info-summary{
-        height: 100px;
-        color: rgba(0,0,0,.5);
-        overflow-y: hidden;
-    }
     i{
         font-size: 16px;
         color: rgb(92,182,255);
@@ -404,7 +363,8 @@
     .list-complete-leave-to{
         display: none;
     }
-
+    /** scroll bar custom
+     style
     /* width */
     ::-webkit-scrollbar {
         width: 10px;
