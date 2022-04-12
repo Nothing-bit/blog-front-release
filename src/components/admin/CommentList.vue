@@ -230,6 +230,7 @@
         created(){
             this.getToken()
             this.getCommentList(1)
+            document.title="Blog后台|留言列表"
         }
     }
 </script>

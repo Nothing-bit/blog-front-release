@@ -205,6 +205,7 @@
         created() {
             this.getToken()
             this.getCategoryList(1)
+            document.title="Blog后台|分类列表"
         }
     }
 </script>

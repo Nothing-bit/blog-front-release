@@ -219,7 +219,7 @@
             },
         },
         created(){
-            document.title="关 于"
+            document.title="Blog | 关 于"
             this.getMyInfo()
         },
         data(){

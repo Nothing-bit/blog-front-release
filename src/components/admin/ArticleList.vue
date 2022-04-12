@@ -164,6 +164,7 @@
         },
         created(){
             this.getToken()
+            document.title="Blog后台|日志列表"
         }
     }
 </script>

@@ -55,6 +55,9 @@
             scrollToBottom(){
                 document.getElementById("footer").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
             },
+        },
+        created(){
+            document.title="Blog后台管理"
         }
     }
 </script>

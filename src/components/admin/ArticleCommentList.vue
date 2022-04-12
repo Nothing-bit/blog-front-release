@@ -232,6 +232,7 @@
         created(){
             this.getToken()
             this.getArticleCommentList(1)
+            document.title="Blog后台|日志评论列表"
         }
     }
 </script>

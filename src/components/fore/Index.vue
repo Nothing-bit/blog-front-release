@@ -145,7 +145,7 @@
 
 </template>
 <script>
-    var echarts = require('echarts/lib/echarts');
+    import echarts from 'echarts/lib/echarts'
     require('echarts-wordcloud');
     import axios from 'axios'
     export default {
@@ -242,7 +242,7 @@
                 });
             },
             initWordCloud(){
-                var wordCloudChart=echarts.init(document.getElementById("wordCloudChart"))
+                let wordCloudChart=echarts.init(document.getElementById("wordCloudChart"), 'walden', {devicePixelRatio:3})
                 wordCloudChart.setOption({
                     tooltip: {
                         triggerOn: "click",
@@ -345,7 +345,7 @@
             // this.isShow=false
         },
         created(){
-            document.title="首 页"
+            document.title="Blog | 首 页"
             this.initData()
             this.setTime()
             this.getNews()

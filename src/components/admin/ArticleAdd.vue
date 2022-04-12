@@ -323,6 +323,7 @@
             this.getToken()
             this.getCategoryList()
             this.getTagList()
+            document.title="Blog后台|添加新日志"
         }
     }
 </script>

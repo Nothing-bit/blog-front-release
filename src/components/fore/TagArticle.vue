@@ -123,6 +123,7 @@
         created(){
             this.setTagName()
             this.getArticleList(1)
+            document.title="Blog | "+this.$route.query.tagName
         }
     }
 </script>

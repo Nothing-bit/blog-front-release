@@ -218,6 +218,7 @@
         created(){
             this.getToken()
             this.getSettingAll()
+            document.title="Blog后台|其他设置"
         }
     }
 </script>

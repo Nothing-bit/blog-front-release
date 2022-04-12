@@ -207,6 +207,7 @@
         created() {
             this.getToken();
             this.getTagList(1)
+            document.title="Blog后台|标签列表"
         }
     }
 </script>

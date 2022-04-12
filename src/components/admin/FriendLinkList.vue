@@ -247,6 +247,7 @@
         created(){
             this.getToken()
             this.getFriendLinkList(1)
+            document.title="Blog后台|友链列表"
         }
     }
 </script>

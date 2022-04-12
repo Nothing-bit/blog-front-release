@@ -81,7 +81,7 @@
                 //headerConfig
                 headerConfig:{
                     headers:{
-                        Authorization:''
+                        Authorization:this.getToken()
                     }
                 },
                 //news
@@ -153,7 +153,7 @@
                 //上传图片配置
                         uploadUrl:this.baseUrl+"/admin/upload/images",
                         headers:{
-                            Authorization:''
+                            Authorization:this.getToken()
                         }
                     },
                 }
@@ -257,16 +257,16 @@
             },
             getToken(){
                 let token=this.$cookies.get("zBlogAdminToken")
-                if(token!=null){
-                    this.headerConfig.headers.Authorization=token
-                }else{
+                if(token==null){
                     this.$router.push("/admin/login")
                 }
+                return token
             }
         },
         created(){
             this.getToken()
             this.getList(1)
+            document.title="Blog后台|随说列表"
         }
     }
 </script>

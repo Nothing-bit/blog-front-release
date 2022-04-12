@@ -94,7 +94,7 @@
             }
         },
         created(){
-            document.title="随 说"
+            document.title="Blog | 随 说"
         }
     }
 </script>

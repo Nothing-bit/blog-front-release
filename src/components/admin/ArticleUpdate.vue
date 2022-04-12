@@ -412,6 +412,7 @@
             this.initArticle()
             this.getCategoryList()
             this.getTagList()
+            document.title="Blog后台|修改日志"
         },
         mounted() {
         }

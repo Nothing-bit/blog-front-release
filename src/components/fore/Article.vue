@@ -492,7 +492,7 @@
 
 <style scoped>
     .article-content{
-        padding: 50px;
+        padding: 30px;
     }
     .article-title{
         text-align: center;
