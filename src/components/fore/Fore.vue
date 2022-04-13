@@ -47,6 +47,10 @@
                 </el-row>
             </el-dialog>
 <!--        右下角小菜单-->
+
+        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 240px;right: 40px" @click="$router.go(-1)">
+            <i class="el-icon-back"></i>
+        </div>
 <!--        搜索-->
         <div class="el-backtop animate__animated animate__rollIn"  style="bottom: 190px;right: 40px" @click="drawer=true">
             <i class="el-icon-search"></i>
@@ -355,6 +359,10 @@
         background: white;
         border-top: 1px solid #c6c4ca
     }
+    .el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover{
+        box-shadow: 4px 4px 7px 4px rgba(140, 140, 140, 0.3);
+    }
+
     .nav-menu{
         text-align: center;
         padding: 10px;

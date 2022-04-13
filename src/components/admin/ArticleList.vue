@@ -29,6 +29,7 @@
                 </el-table-column>
                 <el-table-column label="ID" prop="id" width="100" sortable="custom" align="center"></el-table-column>
                 <el-table-column label="标题" prop="title" width="500" sortable="custom" align="center"></el-table-column>
+                <el-table-column label="分类" prop="categoryName" width="500" sortable="custom" align="center"></el-table-column>
                 <el-table-column label="是否置顶" prop="top" sortable="custom" align="center">
                     <template slot-scope="props">
                         <el-tag type="success" v-if="props.row.top">是</el-tag>

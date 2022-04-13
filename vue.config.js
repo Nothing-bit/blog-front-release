@@ -1,8 +1,4 @@
-// const path = require('path');
-//
-// const webpack = require('webpack')
-// const CompressionWebpackPlugin = require('compression-webpack-plugin')
-// const productionGzipExtensions = ['js', 'css']
+
 const bundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
 module.exports = {
     publicPath:'./',

@@ -79,10 +79,10 @@
                 <el-col :xl="{span:5}" :lg="{span:6}" :md="24">
                     <h3>标签云</h3>
                     <el-card shadow="hover" class="card" ref="wordCloudCard">
-                        <div id="wordCloudChart" class="tag-cloud"></div>
+                        <TagContainer :tag-list="tagList" :size-range="[10,50]" padding="0.2rem"></TagContainer>
                     </el-card>
                     <h3>友 链</h3>
-                    <el-card style="text-align: center;" :body-style="{padding:'10px !important'}">
+                    <el-card shadow="hover" style="text-align: center;" :body-style="{padding:'10px !important'}">
                         <el-link class="link" v-for="item in friendLinkList" type="primary" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
                     </el-card>
                     <h3>站点信息</h3>
@@ -99,9 +99,8 @@
 
 </template>
 <script>
-    import echarts from 'echarts'
     import ArticleInfoList from "./ArticleInfoList";
-    require('echarts-wordcloud');
+    import TagContainer from "@/components/fore/TagContainer";
     import axios from 'axios'
     export default {
         data(){
@@ -118,6 +117,7 @@
                 articleList:[],
                 total:0,
                 loading:true,
+                pageSize:0
             }
         },
         methods:{
@@ -163,13 +163,12 @@
                     let result=response.data;
                     if(result.code==200){
                         let data=result.data
-                        this.tagList=data.tagList
+                        this.tagList=data.tagList.sort((a,b)=>a.value-b.value)
                         this.signature=data.signature
                         this.notice=data.notice
                         this.countTag=data.countTag
                         this.countCategory=data.countCategory
                         this.countPublicArticle=data.countPublicArticle
-                        this.initWordCloud()
                     }else{
                         this.$message({
                             message:'加载首页信息出错啦！',
@@ -177,48 +176,6 @@
                         })
                     }
                 })
-            },
-            initWordCloud(){
-                let wordCloudChart=echarts.init(document.getElementById("wordCloudChart"), 'walden', {devicePixelRatio:3})
-                wordCloudChart.setOption({
-                    tooltip: {
-                        triggerOn: "click",
-                        formatter: (e)=> {
-                            this.$router.push({name:'tagArticle',query:{tagName:e.name}})
-                        }
-                    },
-                    series: [{
-                        type: 'wordCloud',
-                        shape: 'square',
-                        left: 'center',
-                        top: 'center',
-                        width: '100%',
-                        height: '100%',
-                        sizeRange: [15, 40],
-                        rotationRange: [-90, 90],
-                        rotationStep: 45,
-                        gridSize: 3,
-                        drawOutOfBound: false,
-                        textStyle: {
-                            normal: {
-                                fontFamily: 'sans-serif',
-                                fontWeight: 'bold',
-                                color: function () {
-                                    return 'rgb(' + [
-                                        Math.round(Math.random() * 160),
-                                        Math.round(Math.random() * 160),
-                                        Math.round(Math.random() * 160)
-                                    ].join(',') + ')';
-                                }
-                            },
-                            emphasis: {
-                                shadowBlur: 10,
-                                shadowColor: '#333'
-                            }
-                        },
-                        data: this.tagList
-                    }]
-                });
             },
             setTime(){
                 let seconds = 1000;
@@ -259,7 +216,8 @@
             this.getArticleList(1)
         },
         components:{
-            ArticleInfoList
+            ArticleInfoList,
+            TagContainer
         }
     }
 </script>

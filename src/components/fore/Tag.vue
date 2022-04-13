@@ -12,14 +12,12 @@
                 <transition appear
                             appear-active-class="animate__animated animate__fadeIn"
                             enter-active-class="animate__animated animate__fadeIn">
-                    <el-card style="height: calc(60vh)" v-loading="tagListLoading">
+                    <el-card style="min-height: calc(60vh)" v-loading="tagListLoading">
                         <div style="text-align: center">
                             <h2>当前共有{{tagList.length}}个标签</h2>
                         </div>
                         <el-divider></el-divider>
-                            <div class="tag-container">
-                                <el-link class="tag-link" :underline=false type="info" :style="{fontSize:item.value+15+'px', color:randomColor()}" v-for="item in tagList" v-bind:key=item.id @click="jumpToArticlePage(item.name)">#{{item.name}}</el-link>
-                            </div>
+                        <TagContainer class="tag-container" :tag-list="tagList" :size-range="[15,50]"/>
                         </el-card>
                 </transition>
             </el-col>
@@ -30,44 +28,20 @@
 <script>
     import axios from 'axios'
     import { Notification }  from 'element-ui';
+    import TagContainer from "@/components/fore/TagContainer";
     export default {
         name: "Tag",
+        components:{
+          TagContainer
+        },
         data(){
             return{
                 tagListLoading:false,
                 tagList:[],
                 tagTotal:0,
-                colors:[
-                    '#2ec7c9',
-                    '#b6a2de',
-                    '#5ab1ef',
-                    '#ffb980',
-                    '#d87a80',
-                    '#8d98b3',
-                    '#e5cf0d',
-                    '#97b552',
-                    '#95706d',
-                    '#dc69aa',
-                    '#07a2a4',
-                    '#9a7fd1',
-                    '#588dd5',
-                    '#f5994e',
-                    '#c05050',
-                    '#59678c',
-                    '#c9ab00',
-                    '#7eb00a',
-                    '#6f5553',
-                    '#c14089'
-                ]
             }
         },
         methods:{
-            randomColor(){
-                return  this.colors[Math.round(Math.random() * this.colors.length) ]
-            },
-            jumpToArticlePage(tagName){
-                this.$router.push({name:'tagArticle',query:{tagName:tagName}})
-            },
             getTagCloudList(){
                 this.tagListLoading=true;
                 let url=this.baseUrl+"/fore/tag/cloud"
@@ -97,15 +71,6 @@
 </script>
 
 <style scoped>
-    .tag-link{
-        /*color:rgba(128, 191, 255, 0.9);*/
-        padding:0.5rem
-    }
-    .tag-link:hover{
-        /*color:rgba(26, 139, 255, 1);*/
-        /*transition: color 300ms;*/
-        text-shadow: 3px 3px 4px rgba(100, 100, 100, 0.6);
-    }
     .tag-container{
         padding: 0px 40px 0px 40px;
     }

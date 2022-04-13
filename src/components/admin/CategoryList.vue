@@ -12,6 +12,13 @@
                 </el-col>
             </el-row>
             <el-table :data="categoryList" stripe border @sort-change="orderCategoryList" v-loading="categoryListLoading">
+                <el-table-column type="expand">
+                    <template slot-scope="props">
+                        <el-row v-for="(item, idx) in props.row.infoList" v-bind:key=idx>
+                            <el-link style="padding: 0.1rem" @click="updateArticle(item.articleId)">{{idx+1}}  {{item.title}}</el-link>
+                        </el-row>
+                    </template>
+                </el-table-column>
                 <el-table-column label="id" sortable="custom" prop="id" width="100" align="center"></el-table-column>
                 <el-table-column label="分类名称" sortable="custom" align="center" prop="name"></el-table-column>
                 <el-table-column label="引用次数" sortable="custom" prop="number" align="center"></el-table-column>
@@ -94,6 +101,9 @@
             }
         },
         methods:{
+            updateArticle(id){
+                this.$router.push({name:'articleUpdate',query:{id:id}})
+            },
             addCategory(){
                 let url=this.baseUrl+"/admin/category"
                 axios.post(url,this.category,this.headerConfig).then(res=>{

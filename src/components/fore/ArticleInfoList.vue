@@ -11,7 +11,9 @@
                     <el-row :gutter=5>
                         <!--                封面列-->
                         <el-col :lg="8" :md="24" :sm="24">
-                            <img :src="baseUrl+item.pictureUrl"  class="article-info-cover">
+                            <div style="width: 95%; overflow:hidden;">
+                                <img :src="baseUrl+item.pictureUrl" @click="articlePage(item.id)" class="article-info-cover">
+                            </div>
                         </el-col>
                         <!--                简略信息列-->
                         <el-col :lg="16" :md="24" :sm="24">
@@ -21,7 +23,7 @@
                             <div class="article-info-summary">
                                 <p>{{item.summary}}</p>
                             </div>
-                            <el-row style="text-align: center">
+                            <el-row>
                                 <el-col :lg="9" :md="9" :sm="8">
                                     <div class="article-info-item">
                                         <span><i class="el-icon-menu"></i>&nbsp;{{item.categoryName}}</span>
@@ -98,18 +100,28 @@
     .article-info-cover{
         text-align: center;
         border-radius: 2px;
-        width: 95%;
+        width: 100%;
         /*cursor: pointer;*/
         /*transition: transform 500ms;*/
+        transform: scale(1) ;
+        transition: 500ms ease-out;
+    }
+    .article-info-cover:hover{
+        transform: scale(1.07) ;
+        transition: 500ms ease-in;
+        cursor: pointer;
     }
     .article-info-title{
         cursor: pointer;
         font-size: 18px;
-        color:rgba(0,0,0,0.8)
+        color:rgba(0,0,0,0.8);
+        /*transform: scale(1) ;*/
+        transition: all 500ms ease-out;
     }
     .article-info-title:hover{
         color: rgba(64,158,255,0.9);
-        transition: color 500ms;
+        /*transform: scale(1.05) ;*/
+        transition: all 500ms ease-in;
     }
     .article-info-item{
         padding: 2px;
@@ -118,7 +130,7 @@
         cursor: pointer;
     }
     .article-info-summary{
-        height: 100px;
+        height: 110px;
         color: rgba(0,0,0,.5);
         overflow-y: hidden;
     }

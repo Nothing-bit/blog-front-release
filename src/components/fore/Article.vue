@@ -172,9 +172,6 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <div  class="el-backtop animate__animated animate__rollIn"  style="bottom: 240px;right: 40px" @click="$router.go(-1)">
-            <i class="el-icon-back"></i>
-        </div>
     </div>
 </template>
 <script type="text/jsx">
