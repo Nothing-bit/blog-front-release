@@ -332,10 +332,21 @@
     .card{
         margin-top: 5px;
     }
+    .el-link--inner{
+        transition: all 500ms;
+    }
 
     i{
         font-size: 16px;
         color: rgb(92,182,255);
+    }
+    .el-timeline-item__timestamp.is-top{
+        margin-bottom: 8px;
+        padding-top: 3px;
+
+    }
+    .el-timeline-item__wrapper{
+        padding: 0px 20px;
     }
     .el-timeline-item__tail{position:absolute;left:4px;height:100%;border-left:2px solid #accaf7}
     .el-card{
@@ -360,7 +371,7 @@
         border-top: 1px solid #c6c4ca
     }
     .el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover{
-        box-shadow: 4px 4px 7px 4px rgba(140, 140, 140, 0.3);
+        box-shadow: 4px 4px 6px 3px rgba(140, 140, 140, 0.2);
     }
 
     .nav-menu{

@@ -104,11 +104,11 @@
         /*cursor: pointer;*/
         /*transition: transform 500ms;*/
         transform: scale(1) ;
-        transition: 500ms ease-out;
+        transition: 300ms ease-out;
     }
     .article-info-cover:hover{
         transform: scale(1.07) ;
-        transition: 500ms ease-in;
+        transition: 300ms ease-in;
         cursor: pointer;
     }
     .article-info-title{
@@ -116,12 +116,12 @@
         font-size: 18px;
         color:rgba(0,0,0,0.8);
         /*transform: scale(1) ;*/
-        transition: all 500ms ease-out;
+        transition: all 300ms ease-out;
     }
     .article-info-title:hover{
         color: rgba(64,158,255,0.9);
         /*transform: scale(1.05) ;*/
-        transition: all 500ms ease-in;
+        transition: all 300ms ease-in;
     }
     .article-info-item{
         padding: 2px;

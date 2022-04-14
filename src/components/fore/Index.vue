@@ -83,7 +83,7 @@
                     </el-card>
                     <h3>友 链</h3>
                     <el-card shadow="hover" style="text-align: center;" :body-style="{padding:'10px !important'}">
-                        <el-link class="link" v-for="item in friendLinkList" type="primary" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
+                        <el-link class="link" :underline=false v-for="item in friendLinkList" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
                     </el-card>
                     <h3>站点信息</h3>
                     <el-card shadow="hover" class="card">
@@ -163,7 +163,7 @@
                     let result=response.data;
                     if(result.code==200){
                         let data=result.data
-                        this.tagList=data.tagList.sort((a,b)=>a.value-b.value)
+                        this.tagList=data.tagList.sort((a,b)=>b.value-a.value)
                         this.signature=data.signature
                         this.notice=data.notice
                         this.countTag=data.countTag

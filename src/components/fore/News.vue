@@ -1,7 +1,7 @@
 <template>
     <div>
         <!--                面包屑导航-->
-        <el-row>
+        <el-row >
             <el-col :xl="{span:14,offset:5}" :lg="{span:16,offset:4}" :md="{span:24}">
                 <div class="breadcrumb">
                     <el-breadcrumb separator="/">
@@ -11,7 +11,7 @@
                 </div>
             </el-col>
         </el-row>
-        <el-row>
+        <el-row :gutter="20">
 <!--            <el-button @click="$forceUpdate">test fresh</el-button>-->
             <el-col :xl="{span:14,offset:5}" :lg="{span:16,offset:4}" :md="{span:24}">
                 <!--                时间轴部分-->
@@ -36,7 +36,7 @@
                                 </el-card>
                             </el-timeline-item>
                         </transition-group>
-                        <el-card class="last-card" shadow="hover">
+                        <el-card class="last-card" shadow="never">
                             <h3 style="text-align: center" v-if="listLoading"><i class="el-icon-loading"></i>努力加载中····</h3>
                             <h3 style="text-align: center" v-if="!pageInfo.hasNextPage"><i class="el-icon-more"></i>很久很久以前，那遥不可及的地方<i class="el-icon-more"></i></h3>
                         </el-card>

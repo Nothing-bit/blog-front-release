@@ -20,7 +20,7 @@
                                       appear
                                       appear-active-class="animate__animated animate__fadeInLeft"
                                       enter-active-class="animate__animated animate__fadeInLeft">
-                        <el-card>
+                        <el-card shadow="hover">
                             <transition-group name="list-complete"
                                               tag="div"
                                               appear
