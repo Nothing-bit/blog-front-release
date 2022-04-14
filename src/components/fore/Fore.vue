@@ -333,7 +333,7 @@
         margin-top: 5px;
     }
     .el-link--inner{
-        transition: all 500ms;
+        /*transition: all 500ms;*/
     }
 
     i{

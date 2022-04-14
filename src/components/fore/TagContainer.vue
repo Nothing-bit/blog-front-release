@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <el-link :underline=false type="info" class="tag-link"  :style="{padding: padding, fontSize:item.fontSize, color:randomColor()}" v-for="(item, idx) in tagListTemp" v-bind:key=idx @click="jumpToArticlePage(item.name)">{{item.name}}</el-link>
+    <div class="tag-container">
+        <span  class="tag-link"  :style="{padding: padding, fontSize:item.fontSize, color:randomColor()}" v-for="(item, idx) in tagListTemp" v-bind:key=idx @click="jumpToArticlePage(item.name)">{{item.name}}</span>
     </div>
 </template>
 <script>
@@ -125,11 +125,23 @@
 </script>
 
 <style scoped>
+    .tag-container{
+    }
     .tag-link{
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+        position: relative;
+        text-decoration: none;
+        outline: 0;
+        padding: 0;
     }
     .tag-link:hover{
         text-shadow: 5px 5px 2px rgba(100, 100, 100, 0.6);
         transform: scale(1.2, 1.2);
         transition: 500ms;
+        cursor: pointer;
     }
 </style>

@@ -83,7 +83,7 @@
                     </el-card>
                     <h3>友 链</h3>
                     <el-card shadow="hover" style="text-align: center;" :body-style="{padding:'10px !important'}">
-                        <el-link class="link" :underline=false v-for="item in friendLinkList" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
+                        <el-link icon="el-icon-link" class="link" :underline=true v-for="item in friendLinkList" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
                     </el-card>
                     <h3>站点信息</h3>
                     <el-card shadow="hover" class="card">
