@@ -40,7 +40,7 @@
                                    layout="prev,next"></el-pagination>
                 </el-col>
 <!--                    日志-->
-                <el-col :xl="{span:10,offset:8}" :lg="{span:12,offset:6}" v-loading="articleListLoading">
+                <el-col :xl="{span:10,offset:8}" :lg="{span:12,offset:6}">
                     <ArticleInfoList v-loading="articleListLoading" :article-list="articleList"></ArticleInfoList>
                     <div class="block pagination">
                         <el-pagination

@@ -15,7 +15,7 @@
                     </div>
                     <el-divider></el-divider>
                     <!--                    日志-->
-                    <el-col :lg={span:12,offset:6} v-loading="articleListLoading">
+                    <el-col :lg={span:12,offset:6}>
                         <ArticleInfoList :article-list="articleList" v-loading="articleListLoading"></ArticleInfoList>
                         <el-pagination  class="pagination" :total=articleTotal
                                         :page-size=articlePageSize
