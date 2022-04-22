@@ -162,6 +162,9 @@
                     let result =res.data
                     if(result.code==200){
                         let data=result.data;
+                        data.list.forEach(value => {
+                            value.content=value.content.replace(/(?<=src=")\/images\//g,this.baseUrl+'/images/')
+                        })
                         this.newsList=data.list;
                     }
                 })
