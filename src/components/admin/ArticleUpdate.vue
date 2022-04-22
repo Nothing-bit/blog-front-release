@@ -211,7 +211,7 @@
                                         message:'内容已同步至服务端！',
                                         type:'success',
                                         duration:5000,
-                                        showClose:false,
+                                        showClose:true,
                                         position:'top-right'
                                     })
                                 }else{
@@ -220,7 +220,7 @@
                                         message:'同步内容出错！',
                                         type:'error',
                                         duration:5000,
-                                        showClose:false,
+                                        showClose:true,
                                         position:'top-right'
                                     })
                                 }

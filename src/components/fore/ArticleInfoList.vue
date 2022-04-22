@@ -88,6 +88,12 @@
         margin-bottom: 15px;
         text-align: left;
         position: relative;
+        /*transform:translateZ(0)  scale(1.0);*/
+        /*transition: all 300ms;*/
+    }
+    .article-card:hover{
+        /*transform: translateZ(0) scale(1.01);*/
+        /*transition: all 300ms;*/
     }
     .tag-container{
         height: 20px;

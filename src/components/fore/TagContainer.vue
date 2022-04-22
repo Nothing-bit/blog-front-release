@@ -51,7 +51,8 @@
         },
         methods:{
             randomColor(){
-                return this.colors[Math.round(Math.random() * this.colors.length) ]
+                let color = this.colors[Math.floor(Math.random() * this.colors.length) ]
+                return color
             },
             linearMap(val, domain, range, clamp) {
                 let subDomain = domain[1] - domain[0];
@@ -137,6 +138,8 @@
         text-decoration: none;
         outline: 0;
         padding: 0;
+        transform: scale(1.0, 1.0);
+        transition: 500ms;
     }
     .tag-link:hover{
         text-shadow: 5px 5px 2px rgba(100, 100, 100, 0.6);

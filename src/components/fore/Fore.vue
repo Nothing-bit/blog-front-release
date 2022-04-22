@@ -1,6 +1,6 @@
 <template>
     <el-container id="header">
-        <el-header  style="height:65px;position:fixed;background: rgb(255,255,255);z-index: 2;width:100%;border-bottom: 1px solid #c6c4ca;">
+        <el-header class="header">
             <el-row type="flex" align="middle" justify="center">
                 <el-menu default-active="/fore/index" active-text-color="rgb(64,158,255)" mode="horizontal"  router>
                     <el-menu-item index="/fore/index" class="nav-bar-item" ><i class="el-icon-s-promotion"></i>首 页</el-menu-item>
@@ -34,14 +34,9 @@
                     <h1>登 录</h1>
                     <span>选择以下方式第三方进行登录</span>
                     <el-divider></el-divider>
-                    <el-tooltip content="Github">
-                        <el-button @click="login('github')"><img src="../../assets/login-github.png" ></el-button>
-                    </el-tooltip>
-                    <el-tooltip content="QQ">
-                        <el-button @click="login('qq')"><img src="../../assets/login-qq.png"></el-button>
-                    </el-tooltip>
-                    <el-tooltip content="Gitee">
-                        <el-button @click="login('gitee')"><img src="../../assets/login-gitee.png"></el-button></el-tooltip>
+                    <img class="login-icon" src="../../assets/login-github.png" @click="login('github')">
+                    <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">
+                    <img class="login-icon" src="../../assets/login-gitee.png" @click="login('gitee')">
                     <el-divider></el-divider>
                     <span>TIP:只获取你的昵称和头像~</span>
                 </el-row>
@@ -290,6 +285,18 @@
         padding-left: 5px !important;
     }
 
+    .login-icon{
+        border: #8c939d solid 1px;
+        border-radius: 10px;
+        margin: 0px 10px;
+        transform: scale(1.0);
+        transition: all 300ms;
+    }
+    .login-icon:hover{
+        cursor: pointer;
+        transform: scale(1.1);
+        transition: all 300ms;
+    }
 
     .overflow-box{
         overflow: auto;
@@ -359,7 +366,12 @@
         padding: 0 20px;
         box-sizing: border-box;
         flex-shrink: 0;
-        border-bottom: 1px solid #c6c4ca;
+        height:65px !important;
+        position:fixed;
+        background: rgb(255,255,255);
+        z-index: 2;
+        width:100%;
+        box-shadow: 2px 2px 5px 1px rgba(140, 140, 140, 0.3);
     }
     .el-menu.el-menu--horizontal {
         border-bottom: none;

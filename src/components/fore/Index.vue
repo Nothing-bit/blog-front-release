@@ -85,12 +85,19 @@
                     <el-card shadow="hover" style="text-align: center;" :body-style="{padding:'10px !important'}">
                         <el-link icon="el-icon-link" class="link" :underline=true v-for="item in friendLinkList" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
                     </el-card>
+                    <h3>最多阅读</h3>
+                    <el-card shadow="hover" class="card">
+                        <el-row v-for="(item) in hotArticleList" v-bind:key="item.id" style="padding: 5px">
+                            <el-link  type="primary" @click="selectHandler(item)">{{"  "+item.title}}</el-link>
+                        </el-row>
+                    </el-card>
                     <h3>站点信息</h3>
                     <el-card shadow="hover" class="card">
                         <p><i class="el-icon-time"></i> 运行时间：{{time}}</p>
                         <p><i class="el-icon-document"></i> 日志数量：{{countPublicArticle}} 篇</p>
                         <p><i class="el-icon-menu"></i> 分类数量：{{countCategory}} 个</p>
                         <p><i class="el-icon-price-tag"></i> 标签数量：{{countTag}} 个</p>
+                        <p><i class="el-icon-user"></i> 在线人数：{{countVisitor}} 位</p>
                     </el-card>
                 </el-col>
             </transition>
@@ -111,13 +118,15 @@
                 countPublicArticle:0,
                 countTag:0,
                 countCategory:0,
+                countVisitor:0,
                 time:'',
                 newsList:[],
                 friendLinkList:[],
                 articleList:[],
                 total:0,
                 loading:true,
-                pageSize:0
+                pageSize:0,
+                hotArticleList:[]
             }
         },
         methods:{
@@ -157,6 +166,10 @@
                     }
                 })
             },
+            selectHandler(item){
+                this.$router.push({name:'article',query:{id:item.id}})
+                this.drawer=false
+            },
             initData(){
                 let url=this.baseUrl+"/fore/index/data"
                 axios.get(url).then((response)=>{
@@ -169,6 +182,8 @@
                         this.countTag=data.countTag
                         this.countCategory=data.countCategory
                         this.countPublicArticle=data.countPublicArticle
+                        this.countVisitor = data. countVisitor
+                        this.hotArticleList = data.hotArticleList
                     }else{
                         this.$message({
                             message:'加载首页信息出错啦！',
@@ -223,6 +238,13 @@
 </script>
 <style >
     @import "~@/assets/css/ckeditor-content.css";
+    .icon {
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        fill: currentColor;
+        overflow: hidden;
+    }
     .self-info-card{
         text-align: center;
     }

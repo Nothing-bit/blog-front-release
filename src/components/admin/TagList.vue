@@ -12,12 +12,24 @@
                 </el-col>
             </el-row>
             <el-table :data="tagList" stripe border @sort-change="orderTagList" v-loading="tagListLoading">
-                <el-table-column label="id" sortable="custom" prop="id" width="100" align="center"></el-table-column>
-                <el-table-column label="标签名称" sortable="custom" align="center" prop="name">
+                <el-table-column type="expand">
                     <template slot-scope="props">
-                        <el-tag>{{props.row.name}}</el-tag>
+                        <el-table :data="props.row.infoList" stripe border>
+                            <el-table-column width="800" label="标题">
+                                <template slot-scope="child_props">
+                                    <el-link style="padding: 0.1rem" @click="updateArticle(child_props.row.articleId)">{{child_props.row.title}}</el-link>
+                                </template>
+                            </el-table-column>
+                            <el-table-column width="100" label="操作">
+                                <template slot-scope="child_props">
+                                    <el-button type="danger" size="mini" @click="deleteArticleTag(child_props.row.title, child_props.row.articleId, props.row.id)">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </template>
                 </el-table-column>
+                <el-table-column label="id" sortable="custom" prop="id" width="100" align="center"></el-table-column>
+                <el-table-column label="标签名称" sortable="custom" align="center" prop="name"> </el-table-column>
                 <el-table-column label="引用次数" sortable="custom" prop="number" align="center"></el-table-column>
                 <el-table-column label="创建时间" sortable="custom" prop="createBy" align="center"></el-table-column>
                 <el-table-column align="center" label="操作">
@@ -97,6 +109,34 @@
             }
         },
         methods:{
+            deleteArticleTag(title, articleId, tagId){
+                this.$confirm("此操作将会删除日志"+title+"对该标签的引用,并且无法恢复!","提示",{
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消'
+                }).then(()=>{
+                    let url=this.baseUrl+"/admin/article/tag?articleId="+articleId+"&tagId="+tagId;
+                    axios.delete(url,this.headerConfig).then(res=>{
+                        let result=res.data;
+                        if(result.code==200){
+                            Notification({
+                                title:'提示',
+                                message:'删除标签引用成功!',
+                                type:'success'
+                            })
+                            this.getTagList(this.pageNum)
+                        }else{
+                            Notification({
+                                title:'提示',
+                                message:'删除标签引用失败!',
+                                type:'error'
+                            })
+                        }
+                    })
+                })
+            },
+            updateArticle(id){
+                this.$router.push({name:'articleUpdate',query:{id:id}})
+            },
             addTag(){
                 let url=this.baseUrl+"/admin/tag"
                 axios.post(url,this.tag,this.headerConfig).then(res=>{
