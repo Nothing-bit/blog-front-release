@@ -1,5 +1,3 @@
-
-const bundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
 module.exports = {
     publicPath:'./',
     devServer:{
@@ -12,10 +10,5 @@ module.exports = {
             }
         }
     },
-    productionSourceMap: false,
-    configureWebpack:{
-        plugins: [
-            new bundleAnalyzerPlugin()
-        ]
-    }
+    productionSourceMap: false
 }
