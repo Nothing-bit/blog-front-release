@@ -93,16 +93,19 @@
 <script>
     import CKEditor from "@ckeditor/ckeditor5-vue"
     import Editor from '@ckeditor/ckeditor5-build-classic';
-    import axios from 'axios'
-    import {Notification} from 'element-ui'
+    import baseURL from "@/config/baseURL";
+    import articleAPI from "@/api/admin/article";
+    import tokenName from "@/config/tokenName";
+    import tagAPI from "@/api/admin/tag";
+    import categoryAPI from "@/api/admin/category";
+    import checkerUtil from "@/utils/checker";
     let staticToken;
     let staticArticleId;
-    let staticBaseUrl;
     export default {
         name: "ArticleUpdate",
         data(){
             return {
-                uploadUrl:this.baseUrl+"/admin/upload/images",
+                uploadUrl:baseURL+"/admin/upload/images",
                 editor:Editor,
                 editorConfig:{
                     language:'zh-cn',
@@ -138,13 +141,11 @@
                     },
                     simpleUpload:{
                         headers:{
-                            Authorization:''
+                            Authorization:'',
+                            baseURL:baseURL
                         },
-                        uploadUrl: this.baseUrl+"/admin/upload/images"
+                        uploadUrl: baseURL+"/admin/upload/images"
                     },
-                    // fontFamily: {
-                    //     supportAllValues: true
-                    // },
                     toolbar: {
                         items: [
                             'undo',
@@ -197,35 +198,8 @@
                     autosave:{
                         waitingTime:10000,
                         save(editor){
-                            let url=staticBaseUrl+"/admin/article/content?id="+staticArticleId
-                            axios.put(url,editor.getData(),{
-                                headers:{
-                                    Authorization:staticToken,
-                                    "Content-Type":"text/plain"
-                            }
-                            }).then(res=>{
-                                let result=res.data
-                                if(result.code==200){
-                                    Notification({
-                                        title:'提示',
-                                        message:'内容已同步至服务端！',
-                                        type:'success',
-                                        duration:5000,
-                                        showClose:true,
-                                        position:'top-right'
-                                    })
-                                }else{
-                                    Notification({
-                                        title:'提示',
-                                        message:'同步内容出错！',
-                                        type:'error',
-                                        duration:5000,
-                                        showClose:true,
-                                        position:'top-right'
-                                    })
-                                }
-                            })
-
+                            articleAPI.autoSave(staticToken, staticArticleId, editor.getData()).then(()=>{
+                            },reason => console.error(reason))
                         },
                     }
                 },
@@ -244,157 +218,37 @@
                 },
                 categoryList:[],
                 tagList:[],
-                //headerConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:'',
-                    }
-                }
             }
         },
         methods:{
             initArticle(){
                 let id=this.$route.query.id;
-                let url=this.baseUrl+"/admin/article/detail?id="+id
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.article=data;
-                        // console.log(data)
-                    }else{
-                        Notification({
-                            title:"提示",
-                            message:'获取id为'+id+"的日志信息失败！",
-                            type:'error'
-                        })
-                    }
-                })
+                articleAPI.getArticleDetail(this.token, id).then(data=>{
+                    this.article = data
+                },error => console.error(error))
             },
             getTagList(){
-                let url=this.baseUrl+"/admin/tag/all"
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result= res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.tagList=data;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取标签列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                tagAPI.getTagAll(this.token).then(data=>this.tagList=data, reason => console.error(reason))
             },
             getCategoryList(){
-                let url=this.baseUrl+"/admin/category/all"
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.categoryList=data;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取分类列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                categoryAPI.getCategoryAll(this.token).then(data=>this.categoryList=data, reason => console.error(reason))
             },
             upload(param){
-                let url=param.action
-                let formData=new FormData();
-                let file=param.file
-                formData.append("upload",file)
-                console.log(formData)
-                axios.post(url,formData,this.headerConfig).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let url=result.url
-                        this.article.pictureUrl=url;
-                        Notification({
-                            title:'提示',
-                            message:'上传封面成功！',
-                            type:'success'
-                        })
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'上传封面出错!',
-                            type:'error'
-                        })
-                    }
-                })
+                articleAPI.uploadCover(this.token, param).then(data=>this.article.pictureUrl=data.url,reason => console.error(reason))
             },
             submit(){
-                // console.log(this.article)
-                if(this.article.title==''){
-                    Notification({
-                        title:'提示',
-                        message:'请填写标题',
-                        type:'warning'
-                    })
-                }else if(this.article.summary==''){
-                    Notification({
-                        title:'提示',
-                        message:'请填写简述',
-                        type:'warning'
-                    })
-                }else if(this.article.categoryId==''){
-                    Notification({
-                        title:'提示',
-                        message:'请选择分类',
-                        type:'warning'
-                    })
-                }else if(this.article.pictureUrl==''){
-                    Notification({
-                        title:'提示',
-                        message:'请上传封面',
-                        type:'warning'
-                    })
-                }else if(this.article.content==''){
-                    Notification({
-                        title:'提示',
-                        message:'请填写内容',
-                        type:'warning'
-                    })
-                }else if(this.article.tagList==''){
-                    Notification({
-                        title:'提示',
-                        message:'请选择标签',
-                        type:'warning'
-                    })
-                }else{
-                    let url=this.baseUrl+"/admin/article"
-                    axios.put(url,this.article,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'日志已成功更新！',
-                                type:'success'
-                            })
-                            this.back()
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'日志更新失败！',
-                                type:'error'
-                            }
-                            )
-                        }
-                    })
+                if(checkerUtil.articleChecker(this.article)){
+                    articleAPI.updateArticle(this.token, this.article).then(()=>this.back(), error => console.error(error))
                 }
             },
             back(){
                 this.$router.back();
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
+                let token=this.$cookies.get(tokenName.admin)
+                staticToken = token
+                this.token = token
                 if(token!=null){
-                    this.headerConfig.headers.Authorization=token
                     this.editorConfig.simpleUpload.headers.Authorization=token
                 }else{
                     this.$router.push("/admin/login")
@@ -405,9 +259,7 @@
             ckeditor:CKEditor.component
         },
         created(){
-            staticToken=this.$cookies.get("zBlogAdminToken");
             staticArticleId=this.$route.query.id
-            staticBaseUrl=this.baseUrl
             this.getToken()
             this.initArticle()
             this.getCategoryList()

@@ -8,10 +8,10 @@
                     <el-button type="primary" @click="news.content='';addDialogDisplay=true">添加</el-button>
                 </el-col>
                 <el-col :lg={span:4}>
-                    <el-input placeholder="请输入关键字" v-model="searchValue" @change="getList(1)"/>
+                    <el-input placeholder="请输入关键字" v-model="searchValue" @change="getNewsList(1)"/>
                 </el-col>
             </el-row>
-            <el-table :data="list" stripe border @sort-change="orderList" v-loading="listLoading">
+            <el-table :data="newsList" stripe border @sort-change="orderList" v-loading="newsListLoading">
                 <el-table-column type="expand">
                     <template scope="props">
                         <div v-html="props.row.content" class="article-content ck-content"></div>
@@ -32,7 +32,7 @@
                 :total="total"
                 :current-page="pageNum"
                 :page-size="pageSize"
-                @current-change="getList">
+                @current-change="getNewsList">
         </el-pagination>
         <!--        添加随说对话框-->
         <el-dialog :visible.sync="addDialogDisplay" :close-on-click-modal="false" width="50%" title="添加新随说">
@@ -41,7 +41,7 @@
                     <ckeditor :editor="editor" :config="editorConfig" v-model="news.content"/>
                 </el-form-item>
                 <el-form-item>
-                    <el-button class="el-button--primary" @click="add">提交</el-button>
+                    <el-button class="el-button--primary" @click="submitAdd">提交</el-button>
                     <el-button @click="addDialogDisplay=false">取消</el-button>
                 </el-form-item>
             </el-form>
@@ -53,7 +53,7 @@
                     <ckeditor :editor="editor" :config="editorConfig" v-model="news.content"/>
                 </el-form-item>
                 <el-form-item>
-                    <el-button class="el-button--primary" @click="update">提交</el-button>
+                    <el-button class="el-button--primary" @click="submitUpdate">提交</el-button>
                     <el-button @click="updateDialogDisplay=false">取消</el-button>
                 </el-form-item>
             </el-form>
@@ -62,28 +62,24 @@
 </template>
 
 <script>
-    import axios from 'axios'
-    import {Notification} from 'element-ui'
     import CKEditor from "@ckeditor/ckeditor5-vue"
     import Editor from '@ckeditor/ckeditor5-build-classic';
+    import tokenName from "@/config/tokenName";
+    import newsAPI from "@/api/admin/news";
+    import baseURL from "@/config/baseURL";
+    import checkerUtil from "@/utils/checker";
     export default {
         name: "NewsList",
         data(){
             return {
                 searchValue:'',
-                listLoading:true,
-                list:[],
+                newsListLoading:true,
+                newsList:[],
                 orderDirection:"desc",
                 orderProperty:"create_by",
                 pageSize:5,
                 pageNum:1,
                 total:0,
-                //headerConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:this.getToken()
-                    }
-                },
                 //news
                 news:{
                     id:0,
@@ -151,9 +147,10 @@
                     },
                     simpleUpload:{
                 //上传图片配置
-                        uploadUrl:this.baseUrl+"/admin/upload/images",
+                        uploadUrl:baseURL+"/admin/upload/images",
                         headers:{
-                            Authorization:this.getToken()
+                            Authorization:'',
+                            baseURL:baseURL
                         }
                     },
                 }
@@ -163,47 +160,25 @@
             ckeditor:CKEditor.component
         },
         methods:{
-            add(){
-                let url=this.baseUrl+"/admin/news"
-                axios.post(url,this.news,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'添加新随说成功!',
-                            type:'success'
-                        })
-                        this.addDialogDisplay=false
-                        this.getList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'添加新随说失败!',
-                            type:'error'
-                        })
-                    }
-                })
+            submitAdd(){
+                if(checkerUtil.newsChecker(this.news)){
+                    newsAPI.addNews(this.token, this.news).then(
+                        ()=>{
+                            this.addDialogDisplay=false
+                            this.getNewsList(this.pageNum)
+                        },reason => console.error(reason)
+                    )
+                }
             },
-            update(){
-                let url=this.baseUrl+"/admin/news"
-                axios.put(url,this.news,this.headerConfig).then(res=>{
-                    let result=res.data
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'修改随说成功!id:'+this.news.id,
-                            type:'success'
-                        })
-                        this.updateDialogDisplay=false
-                        this.getList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'修改随说失败!',
-                            type:'error'
-                        })
-                    }
-                })
+            submitUpdate(){
+                if(checkerUtil.newsChecker(this.news)){
+                    newsAPI.updateNews(this.token, this.news).then(
+                        ()=>{
+                            this.updateDialogDisplay=false
+                            this.getNewsList(this.pageNum)
+                        },reason => console.error(reason)
+                    )
+                }
             },
             deleteNews(id){
                 this.$confirm("此操作将会删除id:"+id+"的随说,并且无法恢复!","提示",{
@@ -211,62 +186,43 @@
                     cancelButtonText:'取消',
                     type:'warning'
                 }).then(()=>{
-                    let url=this.baseUrl+"/admin/news?id="+id;
-                    axios.delete(url,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'删除id:'+id+'随说成功!',
-                                type:'success'
-                            })
-                            this.getList(this.pageNum)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'删除随说失败!',
-                                type:'error'
-                            })
-                        }
-                    })
+                    newsAPI.deleteNews(this.token, id).then(
+                        ()=>{
+                            this.getNewsList(this.pageNum)
+                        },reason => console.error(reason)
+                    )
                 }).catch(()=>{})
             },
             orderList(params){
                 this.pageNum=1
                 this.orderProperty=params.prop;
                 this.orderDirection=params.order;
-                this.getList(1);
+                this.getNewsList(1);
             },
-            getList(pageNum){
-                this.listLoading=true;
-                let url=this.baseUrl+"/admin/news/list?pageNum="+pageNum+
-                    "&pageSize="+this.pageSize+
-                    "&orderProperty="+this.orderProperty+
-                    "&orderDirection="+this.orderDirection
-
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result= res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.list=data.list
-                        this.total=data.total
-                        this.pageNum=data.pageNum
-                        this.listLoading=false
-                    }
-                })
+            getNewsList(pageNum){
+                this.newsListLoading=true;
+                newsAPI.getNewsList(this.token, pageNum, this.pageSize, this.searchValue, this.orderProperty, this.orderDirection).then(
+                    data=>{
+                        this.newsList=data.list
+                        this.pageNum=pageNum;
+                        this.total=data.total;
+                        this.newsListLoading=false;
+                    },error => console.error(error)
+                )
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
+                let token = this.$cookies.get(tokenName.admin)
                 if(token==null){
                     this.$router.push("/admin/login")
+                }else{
+                    this.token = token
+                    this.editorConfig.simpleUpload.headers.Authorization=token
                 }
-                return token
             }
         },
         created(){
             this.getToken()
-            this.getList(1)
-            document.title="Blog后台|随说列表"
+            this.getNewsList(1)
         }
     }
 </script>

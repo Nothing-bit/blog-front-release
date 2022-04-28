@@ -28,6 +28,13 @@
                 <el-col :lg={span:8}>
                     <h1>系统配置</h1>
                     <el-divider></el-divider>
+<!--                    <el-form>-->
+<!--                        <el-form-item label="邮件通知地址">-->
+<!--                            <el-tooltip content="当有新回复、评论和留言将会发送邮件到配置地址进行提醒">-->
+<!--                                <el-input v-model="settings.mailAddress"></el-input>-->
+<!--                            </el-tooltip>-->
+<!--                        </el-form-item>-->
+<!--                    </el-form>-->
                     <el-form>
                         <el-form-item label="邮件通知地址">
                             <el-tooltip content="当有新回复、评论和留言将会发送邮件到配置地址进行提醒">
@@ -41,17 +48,18 @@
                 <ckeditor :editor="editor" v-model="settings.myInfo"  :config="editorConfig"></ckeditor>
             </el-row>
             <div style="text-align: center;margin-top: 10px;">
-                <el-button class="el-button--primary" @click="updateSetting">保存</el-button>
+                <el-button class="el-button--primary" @click="updateSettingAll">保存</el-button>
             </div>
         </el-card>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
-    import {Notification} from 'element-ui'
     import CKEditor from "@ckeditor/ckeditor5-vue";
     import Editor from "@ckeditor/ckeditor5-build-classic";
+    import tokenName from "@/config/tokenName";
+    import settingAPI from "@/api/admin/setting";
+    import baseURL from "@/config/baseURL";
     export default {
         name: "other",
         data(){
@@ -64,26 +72,10 @@
                     musicURL:'',
                     myInfo:""
                 },
-                headerConfig:{
-                    headers:{
-                        Authorization:''
-                    }
-                },
                 editorConfig:{
                     language:'zh-cn',
                     codeBlock:{
-                        languages:[
-                            {language: 'java',label: 'Java'},
-                            {language: 'javascript',label: 'JavaScript'},
-                            {language: 'sql', label: 'SQL'},
-                            {language: 'python', label: 'Python'},
-                            {language: 'html',label: 'HTML'},
-                            {language: 'css',label: 'CSS'},
-                            {language: 'xml',label: 'XML'},
-                            { language: 'c', label: 'C' },
-                            {language: 'c++', label: 'C++'},
-                            {language: 'json',label: 'JSON'}
-                        ]
+                        languages:this.languages
                     },
                     image: {
                         toolbar: [
@@ -111,10 +103,12 @@
                         ]
                     },
                     simpleUpload:{
+                        //上传图片配置
+                        uploadUrl:baseURL+"/admin/upload/images",
                         headers:{
-                            Authorization:''
-                        },
-                        uploadUrl: this.baseUrl+"/admin/upload/images"
+                            Authorization:'',
+                            baseURL:baseURL
+                        }
                     },
                     toolbar: {
                         items: [
@@ -143,7 +137,6 @@
                             'specialCharacters',
                             '|',
                             'link',
-                            'anchor',
                             'bulletedList',
                             'numberedList',
                             'todoList',
@@ -166,49 +159,23 @@
             }
         },
         methods:{
-            updateSetting(){
-                let url=this.baseUrl+"/admin/setting/all"
-                axios.put(url,this.settings,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        Notification({
-                            title:"提示",
-                            message:'保存设置成功！',
-                            type:'success'
-                        })
-                    }else{
-                        Notification({
-                            title:"提示",
-                            message:'保存设置失败！',
-                            type:'error'
-                        })
-                    }
-                })
+            updateSettingAll(){
+              settingAPI.updateSetting(this.token, this.settings).then(()=>{
+                  this.$router.back()
+              },reason => console.error(reason))
             },
             getSettingAll(){
-                let url=this.baseUrl+"/admin/setting/all"
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data =result.data;
-                        this.settings=data;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取设置项错误！',
-                            type:'error'
-                        })
-                    }
-                })
-
+                settingAPI.getSettingAll(this.token).then(data=>{
+                    this.settings = data
+                },reason => console.error(reason))
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
-                if(token!=null){
-                    this.headerConfig.headers.Authorization=token
-                    this.editorConfig.simpleUpload.headers.Authorization=token
-                }else{
+                let token = this.$cookies.get(tokenName.admin)
+                if(token==null){
                     this.$router.push("/admin/login")
+                }else{
+                    this.editorConfig.simpleUpload.headers.Authorization=token
+                    this.token = token
                 }
             }
         },
@@ -218,7 +185,6 @@
         created(){
             this.getToken()
             this.getSettingAll()
-            document.title="Blog后台|其他设置"
         }
     }
 </script>

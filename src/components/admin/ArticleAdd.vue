@@ -70,15 +70,19 @@
 <script>
     import CKEditor from "@ckeditor/ckeditor5-vue"
     import Editor from '@ckeditor/ckeditor5-build-classic';
-    import axios from 'axios'
-    import {Notification} from 'element-ui'
+    import baseURL from "@/config/baseURL";
+    import tagAPI from "@/api/admin/tag";
+    import categoryAPI from "@/api/admin/category";
+    import articleAPI from "@/api/admin/article";
+    import checkerUtil from "@/utils/checker";
+    import tokenName from "@/config/tokenName";
     export default {
         name: "ArticleAdd",
         data(){
             return {
-                uploadUrl:this.baseUrl+"/admin/upload/images",
+                uploadUrl:baseURL+"/admin/upload/images",
                 editor:Editor,
-                editorConfig:{
+                editorConfig: {
                     language:'zh-cn',
                     codeBlock:{
                         languages:this.languages
@@ -112,9 +116,10 @@
                     },
                     simpleUpload:{
                         headers:{
-                            Authorization:''
+                            Authorization:'',
+                            baseURL:baseURL
                         },
-                        uploadUrl: this.baseUrl+"/admin/upload/images"
+                        uploadUrl: baseURL+"/admin/upload/images"
                     },
                     toolbar: {
                         items: [
@@ -155,7 +160,7 @@
                             'indent',
                             'horizontalLine',
                         ],
-                     shouldNotGroupWhenFull: true
+                        shouldNotGroupWhenFull: true
                     },
                     blockToolbar: [
                         'paragraph', 'heading1', 'heading2', 'heading3',
@@ -178,138 +183,32 @@
                 },
                 categoryList:[],
                 tagList:[],
-                //headerConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:''
-                    }
-                }
 
             }
         },
         methods:{
             getTagList(){
-                let url=this.baseUrl+"/admin/tag/all"
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result= res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.tagList=data;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取标签列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                tagAPI.getTagAll(this.token).then(data=>this.tagList=data, reason => console.error(reason))
             },
             getCategoryList(){
-                let url=this.baseUrl+"/admin/category/all"
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.categoryList=data;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取分类列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                categoryAPI.getCategoryAll(this.token).then(data=>this.categoryList=data, reason => console.error(reason))
             },
             upload(param){
-                let url=param.action
-                let formData=new FormData();
-                let file=param.file
-                formData.append("upload",file)
-                console.log(formData)
-                axios.post(url,formData,this.headerConfig).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let url=result.url
-                        this.article.pictureUrl=url;
-                        Notification({
-                            title:'提示',
-                            message:'上传封面成功！',
-                            type:'success'
-                        })
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'上传封面出错!',
-                            type:'error'
-                        })
-                    }
-                })
+                articleAPI.uploadCover(this.token, param).then(data=>this.article.pictureUrl=data.url,reason => console.error(reason))
             },
             submit(){
-                if(this.article.title==''){
-                    Notification({
-                        title:'提示',
-                        message:'请填写标题',
-                        type:'warning'
-                    })
-                }else if(this.article.summary==''){
-                    Notification({
-                        title:'提示',
-                        message:'请填写简述',
-                        type:'warning'
-                    })
-                }else if(this.article.categoryId==''){
-                    Notification({
-                        title:'提示',
-                        message:'请选择分类',
-                        type:'warning'
-                    })
-                }else if(this.article.pictureUrl==''){
-                    Notification({
-                        title:'提示',
-                        message:'请上传封面',
-                        type:'warning'
-                    })
-                }else if(this.article.content==''){
-                    Notification({
-                        title:'提示',
-                        message:'请填写内容',
-                        type:'warning'
-                    })
-                }else if(this.article.tagList==''){
-                    Notification({
-                        title:'提示',
-                        message:'请选择标签',
-                        type:'warning'
-                    })
-                }else{
-                    let url=this.baseUrl+"/admin/article"
-                    axios.post(url,this.article,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'日志已成功提交！',
-                                type:'success'
-                            })
-                            this.back()
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'日志提交失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                if(checkerUtil.articleChecker(this.article)){
+                    console.log(this.article)
+                    articleAPI.addArticle(this.token, this.article).then(()=>this.back(), reason => console.log(reason))
                 }
             },
             back(){
                 this.$router.back();
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
+                let token=this.$cookies.get(tokenName.admin)
+                this.token = token
                 if(token!=null){
-                    this.headerConfig.headers.Authorization=token
                     this.editorConfig.simpleUpload.headers.Authorization=token
                 }else{
                     this.$router.push("/admin/login")
@@ -323,7 +222,6 @@
             this.getToken()
             this.getCategoryList()
             this.getTagList()
-            document.title="Blog后台|添加新日志"
         }
     }
 </script>

@@ -55,9 +55,9 @@
                                         <el-tooltip class="item" effect="light" content="发表评论" placement="top">
                                             <el-button  size="small" icon="el-icon-chat-dot-square" @click="toComment"></el-button>
                                         </el-tooltip>
-                                        <el-tooltip class="item" effect="light" content="导出PDF文档" placement="top">
-                                            <el-button  size="small" icon="el-icon-download" @click="exportPDF"></el-button>
-                                        </el-tooltip>
+<!--                                        <el-tooltip class="item" effect="light" content="导出PDF文档" placement="top">-->
+<!--                                            <el-button  size="small" icon="el-icon-download" @click="exportPDF"></el-button>-->
+<!--                                        </el-tooltip>-->
                                         <el-tooltip class="item" effect="light" content="分 享" placement="top">
                                             <el-button size="small" icon="el-icon-share" @click="copyLink"></el-button>
                                         </el-tooltip>
@@ -71,10 +71,10 @@
                         <div style="text-align: center">
                             <el-row>
                                 <el-col :lg="12" :md="12">
-                                    <a   @click="refreshPage(articleData.preId)">上一篇：{{articleData.preTitle}}</a>
+                                    <el-link><i class="el-icon-arrow-left"></i>&nbsp;&nbsp;上一篇：{{articleData.preTitle}}</el-link>
                                 </el-col>
                                 <el-col :lg="12" :md="12">
-                                    <a  @click="refreshPage(articleData.nextId)">下一篇：{{articleData.nextTitle}}</a>
+                                    <el-link>下一篇：{{articleData.nextTitle}}&nbsp;&nbsp;<i class="el-icon-arrow-right"></i></el-link>
                                 </el-col>
                             </el-row>
                         </div>
@@ -175,13 +175,15 @@
     </div>
 </template>
 <script type="text/jsx">
-    import axios from 'axios'
-    import { Notification }  from 'element-ui';
-    import html2pdf from 'html2pdf.js'
+    // import html2pdf from 'html2pdf.js'
     import 'viewerjs/dist/viewer.css'
     import { directive as viewer } from "v-viewer"
     import copy from 'copy-to-clipboard';
-    import { Message } from 'element-ui';
+    import articleAPI from "@/api/fore/article";
+    import messageUtil from "@/utils/message";
+    import articleCommentAPI from "@/api/fore/articleComment";
+    import checkerUtil from "@/utils/checker";
+    import tokenName from "@/config/tokenName";
     export default {
         name: "Article",
         directives: {
@@ -304,24 +306,12 @@
             },
             //校验输入格式
             checkInput(){
-                if(this.form.content.length<2){//检验输入
-                    Notification({
-                        title:"提示",
-                        message:'请输入评论内容或者评论内容过短',
-                        type:'warning'
-                    })
+                if(!checkerUtil.contentChecker(this.form.content)){//检验输入
+                    messageUtil.error("请输入有效的评论内容！")
                     return false;
                 }
                 if(this.form.inform==true){//按需求检验邮箱格式
-                    let filter = /^\w{3,}@\w{2,}\.(com|cn|net|com\.cn)$/;
-                    if(filter.test(this.form.email)==false){
-                        Notification({
-                            title:"提示",
-                            message:'请输入格式正确的邮件地址',
-                            type:'warning'
-                        })
-                        return false;
-                    }
+                    return checkerUtil.emailChecker(this.form.email)
                 }
                 return true;
             },
@@ -337,16 +327,17 @@
             copyLink(){
                 copy(window.location.href)
                 // console.log(block)
-                Message.success({message:"复制分享链接成功！", offset:100})
+                messageUtil.success("复制分享链接成功！")
             },
             //导出PDF
-            exportPDF(){
-                html2pdf().set({
-                    pagebreak:{mode:'avoid-all'},
-                    margin: 10,
-                    }).from(this.articleData.content).toPdf().save(this.articleData.title+this.articleData.modifiedBy);
-                 Message.success({message:"导出PDF文件成功！", offset:100})
-            },
+            // exportPDF(){
+            //     html2pdf().set({
+            //         pagebreak:{mode:'avoid-all'},
+            //         margin: 10,
+            //         }).from(this.articleData.content).toPdf().save(this.articleData.title+this.articleData.modifiedBy);
+            //      // Message.success({message:"导出PDF文件成功！", offset:100})
+            //     messageUtil.success()
+            // },
             reply(targetUserId,parentId,targetUsername){
                 this.replyDialogDisplay=true
                 this.form.targetUserId=targetUserId
@@ -355,76 +346,35 @@
             },
             submitComment(){
                 if(this.checkInput()==true){
-                    var token=this.$cookies.get("zBlogToken")
-                    if(token!=null){
-                        var url=this.baseUrl+"/fore/article/comment"
-                        this.formLoading=true;
-                        axios.post(url,this.form,{headers:{Authorization:token}}).then((res)=>{
-                            var result=res.data;
-                            if(result.code==200){
-                                Notification({
-                                    title:'提示',
-                                    message:'已成功提交评论，待审核后将会予以展示。',
-                                    type:'success'
-                                })
-                                this.formLoading=false;
-                                this.$refs['form'].resetFields();
-                            }else{
-                                Notification({
-                                    title:'错误',
-                                    message:'未能成功提交评论！',
-                                    type:'error'
-                                })
-                                this.formLoading=false;
-                            }
-                        })
-                    }else{
-                        Notification({
-                            title:'注意',
-                            message:'您需要登录后才能进行评论！',
-                            type:'warning'
-                        })
-                    }
+                    let token=this.$cookies.get(tokenName.fore)
+                    articleCommentAPI.submitArticleComment(token, this.form).then(()=>{
+                        this.formLoading=false;
+                        this.$refs['form'].resetFields();
+                        this.replyDialogDisplay=false
+                    },error => console.error(error))
                 }
             },
             getArticleDetail(){
                 this.articleLoading=true
-                var id=this.$route.query.id
-                var url=this.baseUrl+"/fore/article/detail?id="+id
-                axios.get(url).then((res)=>{
-                    var result=res.data;
-                    if(result.code==200){
-                        let content = this.generateDirectory(result.data.content)
-                        content = content.replace(/(?<=src=")\/images\//g,this.baseUrl+"/images/")
-                        result.data.content = content
-                        this.articleData=result.data
-                        document.title = this.articleData.title
-                        this.articleLoading=false
-                        this.form.articleId=id;
-                    }
-                })
+                let id=this.$route.query.id
+                articleAPI.getArticleDetail(id).then(data=>{
+                    data.content = this.generateDirectory(data.content)
+                    this.articleData = data
+                    document.title = this.articleData.title
+                    this.articleLoading=false
+                    this.form.articleId=id;
+                }, error => console.error(error))
             },
             getArticleComment(){
                 if(this.hasNextPage){
                     this.commentLoading=true
                     let articleId=this.$route.query.id
-                    let url=this.baseUrl+"/fore/article/comment/list?articleId="+articleId+"&pageNum="+this.pageNum
-                    axios.get(url).then((res)=>{
-                        var result=res.data;
-                        if(result.code==200){
-                            let data=result.data;
-                            this.list=this.list.concat(data.list)
-                            this.pageNum++
-                            this.hasNextPage=data.hasNextPage
-                            this.commentLoading=false
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'获取评论列表失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                    articleCommentAPI.getArticleCommentList(articleId, this.pageNum, 5).then(data=>{
+                        this.list=this.list.concat(data.list)
+                        this.pageNum++
+                        this.hasNextPage=data.hasNextPage
+                        this.commentLoading=false
+                    }, error => console.error(error))
                 }
             },
             refreshPage(id) {

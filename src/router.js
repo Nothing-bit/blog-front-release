@@ -2,15 +2,20 @@ import Router from 'vue-router'
 import Vue from 'vue'
 Vue.use(Router)
 const originalPush = Router.prototype.push
+
 Router.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err)
 }
-export default new Router({
-    mode: 'hash',
+const router = new Router({
+    // mode: 'history',
+    // base: process.env.BASE_URL,
     routes: [
         {//admin login
             path:'/admin/login',
             name:'adminLogin',
+            meta:{
+               title:"ZBlog后台 | 登录"
+            },
             // component: ()=>import("@/components/admin/AdminLogin"),
             component:resolve =>require(["@/components/AdminLogin"],resolve)
         },
@@ -24,6 +29,7 @@ export default new Router({
                     path:"news/list",
                     name:'newsList',
                     meta:{
+                        title:"ZBlog后台 | 随说列表",
                         keepAlive:true,
                     },
                     // component:()=>import("@/components/admin/NewsList")
@@ -33,6 +39,7 @@ export default new Router({
                     path:'article/list',
                     name:'articleList',
                     meta:{
+                        title: "ZBlog后台 | 日志列表",
                         keepAlive:true,
                     },
                     // component:()=>import("@/components/admin/ArticleList")
@@ -41,12 +48,18 @@ export default new Router({
                 {//日志添加
                     path:'article/add',
                     name:'articleAdd',
+                    meta: {
+                        title: "ZBlog后台 | 添加日志",
+                    },
                     // component:()=>import("@/components/admin/ArticleAdd")
                     component:resolve =>require(["@/components/admin/ArticleAdd"],resolve)
                 },
                 {//日志修改
                     path:'article/update',
                     name:'articleUpdate',
+                    meta:{
+                        title: "ZBlog后台 | 修改日志",
+                    },
                     // component:()=>import("@/components/admin/ArticleUpdate")
                     component:resolve =>require(["@/components/admin/ArticleUpdate"],resolve)
                 },
@@ -54,6 +67,7 @@ export default new Router({
                     path:'category/list',
                     name:'categoryList',
                     meta:{
+                        title: "ZBlog后台 | 分类列表",
                         keepAlive:true,
                     },
                     // component:()=>import("@/components/admin/CategoryList")
@@ -63,6 +77,7 @@ export default new Router({
                     path:'tag/list',
                     name:'tagList',
                     meta:{
+                        title: "ZBlog后台 | 标签列表",
                         keepAlive:true,
                     },
                     // component:()=>import("@/components/admin/TagList")
@@ -72,6 +87,7 @@ export default new Router({
                     path: 'article/comment/list',
                     name:'articleCommentList',
                     meta:{
+                        title: "ZBlog后台 | 评论列表",
                         keepAlive:true,
                     },
                     // component:()=>import("@/components/admin/ArticleCommentList")
@@ -81,6 +97,7 @@ export default new Router({
                     path: "comment/list",
                     name:'commentList',
                     meta:{
+                        title: "ZBlog后台 | 留言列表",
                         keepAlive:true,
                     },
                     // component:()=>import("@/components/admin/CommentList")
@@ -90,6 +107,7 @@ export default new Router({
                     path: 'friend/link/list',
                     name:'friendLinkList',
                     meta:{
+                        title: "ZBlog后台 | 友链列表",
                         keepAlive:true,
                     },
                     // component:()=>import("@/components/admin/FriendLinkList")
@@ -98,6 +116,9 @@ export default new Router({
                 {//其他
                     path:'other',
                     name:'other',
+                    meta:{
+                        title: "ZBlog后台 | 其他设置",
+                    },
                     // component:()=>import("@/components/admin/Other")
                     component:resolve =>require(["@/components/admin/Other"],resolve)
                 }
@@ -116,7 +137,9 @@ export default new Router({
                     // component:()=>import('@/components/fore/Index')
                     meta:{
                         keepAlive:true,
+                        title:'ZBlog | 首 页'
                     },
+                    // component:()=>import('@/components/fore/Index.vue')
                     component:resolve =>require(["@/components/fore/Index"],resolve),
                 },
                 {
@@ -125,6 +148,7 @@ export default new Router({
                     name:'category',
                     meta:{
                         keepAlive:true,
+                        title:'ZBlog | 分 类'
                     },
                     // component:()=>import("@/components/fore/Category")
                     component:resolve =>require(["@/components/fore/Category"],resolve)
@@ -135,6 +159,7 @@ export default new Router({
                     name:'tag',
                     meta:{
                         keepAlive:true,
+                        title:'ZBlog | 标 签'
                     },
                     // component:()=>import("@/components/fore/Tag")
                     component:resolve =>require(["@/components/fore/Tag"],resolve)
@@ -155,6 +180,7 @@ export default new Router({
                     name:'archive',
                     meta:{
                         keepAlive:true,
+                        title:'ZBlog | 归 档'
                     },
                     // component:()=>import("@/components/fore/Archive")
                     component:resolve =>require(["@/components/fore/Archive"],resolve)
@@ -173,6 +199,7 @@ export default new Router({
                     name:'news',
                     meta:{
                         keepAlive:false,
+                        title:'ZBlog | 随 说'
                     },
                     // component:()=>import('@/components/fore/News')
                     component:resolve =>require(["@/components/fore/News"],resolve)
@@ -183,15 +210,56 @@ export default new Router({
                     name:'about',
                     meta:{
                         keepAlive:true,
+                        title:'ZBlog | 关 于'
                     },
                     // component:()=>import('@/components/fore/About')
                     component:resolve =>require(["@/components/fore/About"],resolve)
+                },
+                {
+                    //404页面
+                    path:'404',
+                    name:'404',
+                    meta:{
+                        keepAlive: true,
+                    },
+                    component:resolve => require(["@/components/fore/404"], resolve)
+                },
+                {
+                    //第三方登录回调+验证界面
+                    path:'callback/:platform',
+                    name:'OauthLogin',
+                    meta:{
+                        keepAlive: false,
+                        title:"第三方登录验证"
+                    },
+                    component:resolve => require(["@/components/fore/OauthLogin"], resolve)
                 }
             ]
         },
         {
             path: '/',
             redirect:'/fore/index'
+        },
+        {
+            path:'/admin/*',
+            redirect: '/admin/login'
         }
     ]
 })
+
+router.beforeEach((to, from, next) => {
+    // if (to.meta.requiresAuth) {
+    //     api.login.getToken()
+    //     next()
+    // } else {
+    //     next()
+    // }
+    if (to.meta.title) {
+        document.title = to.meta.title
+        next()
+    } else {
+        next()
+    }
+})
+
+export default router;

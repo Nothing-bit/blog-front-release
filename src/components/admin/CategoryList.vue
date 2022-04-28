@@ -69,8 +69,9 @@
 </template>
 
 <script>
-    import axios from 'axios'
-    import {Notification} from 'element-ui'
+    import categoryAPI from "@/api/admin/category";
+    import tokenName from "@/config/tokenName";
+    import checkerUtil from "@/utils/checker";
     export default {
         name: "Category",
         data(){
@@ -92,12 +93,6 @@
                     id:0,
                     name:'',
                 },
-                //headerConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:''
-                    }
-                }
             }
         },
         methods:{
@@ -105,46 +100,20 @@
                 this.$router.push({name:'articleUpdate',query:{id:id}})
             },
             addCategory(){
-                let url=this.baseUrl+"/admin/category"
-                axios.post(url,this.category,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'添加新分类成功!',
-                            type:'success'
-                        })
-                        this.addDialogDisplay=false
+                if(checkerUtil.categoryChecker(this.category)) {
+                    categoryAPI.addCategory(this.token, this.category).then(()=>{
+                        this.addDialogDisplay = false
                         this.getCategoryList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'添加新分类失败!',
-                            type:'error'
-                        })
-                    }
-                })
+                    },reason => console.error(reason))
+                }
             },
             updateCategory(){
-                let url=this.baseUrl+"/admin/category"
-                axios.put(url,this.category,this.headerConfig).then(res=>{
-                    let result=res.data
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'修改分类成功!id:'+this.category.id,
-                            type:'success'
-                        })
+                if(checkerUtil.categoryChecker(this.category)){
+                    categoryAPI.updateCategory(this.token, this.category).then(()=>{
                         this.updateDialogDisplay=false
                         this.getCategoryList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'修改分类失败!',
-                            type:'error'
-                        })
-                    }
-                })
+                    },reason => console.error(reason))
+                }
             },
             deleteCategory(id){
                 this.$confirm("此操作将会删除id:"+id+"的分类,并且无法恢复!","提示",{
@@ -152,61 +121,32 @@
                     cancelButtonText:'取消',
                     type:'warning'
                 }).then(()=>{
-                    let url=this.baseUrl+"/admin/category?id="+id;
-                    axios.delete(url,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'删除id:'+id+'分类成功!',
-                                type:'success'
-                            })
-                            this.getCategoryList(this.pageNum)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'删除分类失败!',
-                                type:'error'
-                            })
-                        }
-                    })
+                    categoryAPI.deleteCategory(this.token, id).then(()=>{
+                        this.getCategoryList(this.pageNum)
+                    },reason => console.error(reason))
                 }).catch(()=>{})
             },
             orderCategoryList(params){
                 this.pageNum=1
                 this.orderProperty=params.prop;
                 this.orderDirection=params.order;
-                this.getCategoryList(1);
+                this.getCategoryList(this.pageNum);
             },
             getCategoryList(pageNum){
                 this.categoryListLoading=true
-                let url=this.baseUrl+"/admin/category/list?pageNum="+ pageNum+
-                    "&pageSize="+ this.pageSize+
-                    "&searchValue="+ this.searchValue+
-                    "&orderProperty="+this.orderProperty+
-                    "&orderDirection="+this.orderDirection
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
+                categoryAPI.getCategoryList(this.token, pageNum, this.pageSize, this.searchValue, this.orderProperty, this.orderDirection).then(
+                    data=>{
                         this.categoryList=data.list;
                         this.total=data.total;
                         this.pageNum=pageNum
                         this.categoryListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取分类列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                    },reason => console.error(reason)
+                )
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
-                if(token!=null){
-                    this.headerConfig.headers.Authorization=token
-                }else{
+                let token=this.$cookies.get(tokenName.admin)
+                this.token = token
+                if(token==null){
                     this.$router.push("/admin/login")
                 }
             }
@@ -215,7 +155,6 @@
         created() {
             this.getToken()
             this.getCategoryList(1)
-            document.title="Blog后台|分类列表"
         }
     }
 </script>

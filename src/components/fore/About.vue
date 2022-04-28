@@ -117,41 +117,25 @@
 </template>
 
 <script>
-    import {Notification} from "element-ui";
-    import axios from "axios";
+    import checkerUtil from "@/utils/checker";
+    import commentAPI from "@/api/fore/comment";
+    import messageUtil from "@/utils/message";
+    import indexAPI from "@/api/fore";
+    import tokenName from "@/config/tokenName";
 
     export default {
         name: "About",
         methods:{
             getMyInfo(){
-                let url=this.baseUrl+"/fore/myInfo"
-                axios.get(url).then(res=>{
-                    let result=res.data;
-
-                    let myInfo=result.data;
-                    myInfo = myInfo.replace(/(?<=src=")\/images\//g,this.baseUrl+"/images/")
-                    this.myInfo=myInfo;
-                })
+                indexAPI.getMyInfo().then(data=>this.myInfo=data,error => console.error(error))
             },
             checkInput(){
-                if(this.form.content.length<2){//检验输入
-                    Notification({
-                        title:"提示",
-                        message:'请输入留言内容或者留言内容过短',
-                        type:'warning'
-                    })
-                    return false;
+                if(!checkerUtil.contentChecker(this.form.content)){//检验输入
+                    messageUtil.error("请输入有效的留言！")
+                    return false
                 }
-                if(this.form.inform==true){//按需求检验邮箱格式
-                    let filter = /^\w{3,}@\w{2,}\.(com|cn|net|com\.cn)$/;
-                    if(filter.test(this.form.email)==false){
-                        Notification({
-                            title:"提示",
-                            message:'请输入格式正确的邮件地址',
-                            type:'warning'
-                        })
-                        return false;
-                    }
+                if(this.form.inform){//按需求检验邮箱格式
+                   return checkerUtil.emailChecker(this.form.email)
                 }
                 return true;
             },
@@ -163,63 +147,27 @@
             },
             submitComment(){
                 if(this.checkInput()==true){
-                    let token=this.$cookies.get("zBlogToken")
-                    if(token!=null){
-                        let url=this.baseUrl+"/fore/comment"
-                        this.formLoading=true;
-                        axios.post(url,this.form,{headers:{Authorization:token}}).then((res)=>{
-                            var result=res.data;
-                            if(result.code==200){
-                                Notification({
-                                    title:'提示',
-                                    message:'已成功提交留言，待审核后将会予以展示。',
-                                    type:'success'
-                                })
-                                this.formLoading=false;
-                                this.$refs['form'].resetFields();
-                            }else{
-                                Notification({
-                                    title:'错误',
-                                    message:'未能成功提交留言！',
-                                    type:'error'
-                                })
-                                this.formLoading=false;
-                            }
-                        })
-                    }else{
-                        Notification({
-                            title:'注意',
-                            message:'您需要登录后才能进行留言！',
-                            type:'warning'
-                        })
-                    }
+                    let token=this.$cookies.get(tokenName.fore)
+                    commentAPI.submitComment(token, this.form).then(()=>{
+                        this.formLoading=false;
+                        this.$refs['form'].resetFields();
+                        this.replyDialogDisplay = false
+                    },error => {console.error(error)})
                 }
             },
             getComment(){
                 if(this.hasNextPage){
                     this.commentLoading=true
-                    var url=this.baseUrl+"/fore/comment/list?pageNum="+this.pageNum
-                    axios.get(url).then((res) => {
-                        var result=res.data;
-                        if(result.code==200){
-                            var data=result.data;
-                            this.pageNum++
-                            this.hasNextPage=data.hasNextPage
-                            this.commentLoading=false
-                            this.list=this.list.concat(data.list)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'获取留言列表失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                    commentAPI.getCommentList(this.pageNum, 5).then(data=>{
+                        this.pageNum++
+                        this.hasNextPage=data.hasNextPage
+                        this.commentLoading=false
+                        this.list=this.list.concat(data.list)
+                    },error => console.error(error))
                 }
             },
         },
         activated(){
-            document.title="Blog | 关 于"
         },
         created(){
             this.getMyInfo()

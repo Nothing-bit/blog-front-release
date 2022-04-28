@@ -12,7 +12,7 @@
                             <el-input v-model="adminUser.password" show-password></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <el-checkbox v-model="save">记住我</el-checkbox>
+                            <el-checkbox v-model="adminUser.trusted">记住我</el-checkbox>
                         </el-form-item>
                     </el-form>
                     <div style="text-align: center;">
@@ -25,16 +25,20 @@
 </template>
 
 <script>
-    import axios from 'axios'
+    import userInfoAPI from "@/api/fore/auth";
+    import tokenName from "@/config/tokenName";
+    import messageUtil from "@/utils/message";
+    import notifyUtil from "@/utils/notify";
+    import authAPI from "@/api/admin/auth";
     export default {
         name: "Login",
         data(){
             return{
                 adminUser:{
                     username:'',
-                    password:''
+                    password:'',
+                    trusted:false,
                 },
-                save:false,
 
             }
         },
@@ -42,32 +46,19 @@
         },
         methods:{
             login(){
-                let url=this.baseUrl+"/admin/login"
-                axios.post(url,this.adminUser).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        //是否记住我，记住则token延长一段时间
-                        if(this.save){
-                            this.$cookies.set('zBlogAdminToken',data.token,60*60*24*15)
-                        }else{
-                            this.$cookies.set('zBlogAdminToken',data.token,60*60*24*3)
-                        }
-                        this.$message({
-                            type:'success',
-                            message:'登录成功!'
-                        })
-                        this.$router.push('/admin/article/list')
-                    }else{
-                        this.$message({
-                            type:'error',
-                            message:'登录失败，检查用户名或者密码！'
-                        })
-                    }
-                })
+                // console.log(this.adminUser)
+                authAPI.login(this.adminUser).then(data=>{
+                    messageUtil.success("登录成功！")
+                    this.$router.push("/admin/article/list")
+                    this.$cookies.set(tokenName.admin,data.token,60*60*24*data.expire)
+                },reason => console.error(reason))
             }
         },
         created(){
+            authAPI.check(this.$cookies.get(tokenName.admin)).then(data=>{
+                notifyUtil.success("Hello", "欢迎回来，管理员<strong>"+data.username+"</strong>")
+                this.$router.push("/admin/article/list")
+            })
         }
     }
 </script>

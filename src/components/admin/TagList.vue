@@ -77,8 +77,9 @@
     </div>
 </template>
 <script>
-    import axios from 'axios'
-    import {Notification} from 'element-ui'
+    import tokenName from "@/config/tokenName";
+    import tagAPI from "@/api/admin/tag";
+    import checkerUtil from "@/utils/checker";
     export default {
         name: "TagList",
         data(){
@@ -100,12 +101,6 @@
                     id:0,
                     name:'',
                 },
-                //headerConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:''
-                    }
-                }
             }
         },
         methods:{
@@ -114,94 +109,42 @@
                     confirmButtonText:'确定',
                     cancelButtonText:'取消'
                 }).then(()=>{
-                    let url=this.baseUrl+"/admin/article/tag?articleId="+articleId+"&tagId="+tagId;
-                    axios.delete(url,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'删除标签引用成功!',
-                                type:'success'
-                            })
-                            this.getTagList(this.pageNum)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'删除标签引用失败!',
-                                type:'error'
-                            })
-                        }
-                    })
+                    tagAPI.deleteArticleTag(this.token, title, articleId, tagId).then(()=>{
+                        this.getTagList(1)
+                    }, reason => console.error(reason))
                 })
             },
             updateArticle(id){
                 this.$router.push({name:'articleUpdate',query:{id:id}})
             },
             addTag(){
-                let url=this.baseUrl+"/admin/tag"
-                axios.post(url,this.tag,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'添加新标签成功!',
-                            type:'success'
-                        })
-                        this.addDialogDisplay=false
-                        this.getTagList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'添加新标签失败!',
-                            type:'error'
-                        })
-                    }
-                })
+                if(checkerUtil.tagChecker(this.tag)){
+                    tagAPI.addTag(this.token, this.tag).then(
+                        ()=>{
+                            this.addDialogDisplay=false
+                            this.getTagList(this.pageNum)
+                        },reason => console.error(reason)
+                    )
+                }
             },
             updateTag(){
-                let url=this.baseUrl+"/admin/tag"
-                axios.put(url,this.tag,this.headerConfig).then(res=>{
-                    let result=res.data
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'修改标签成功!id:'+this.tag.id,
-                            type:'success'
-                        })
-                        this.updateDialogDisplay=false
-                        this.getTagList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'修改标签失败!',
-                            type:'error'
-                        })
-                    }
-                })
+                if(checkerUtil.tagChecker(this.tag)){
+                    tagAPI.updateTag(this.token, this.tag).then(
+                        ()=>{
+                            this.updateDialogDisplay=false
+                            this.getTagList(this.pageNum)
+                        },reason => console.error(reason)
+                    )
+                }
             },
             deleteTag(id){
                 this.$confirm("此操作将会删除id:"+id+"的标签,并且无法恢复!","提示",{
                     confirmButtonText:'确定',
                     cancelButtonText:'取消'
                 }).then(()=>{
-                    let url=this.baseUrl+"/admin/tag?id="+id;
-                    axios.delete(url,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'删除id:'+id+'标签成功!',
-                                type:'success'
-                            })
-                            this.getTagList(this.pageNum)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'删除标签失败!',
-                                type:'error'
-                            })
-                        }
-                    })
+                    tagAPI.deleteTag(this.token, id).then(()=>{
+                        this.getTagList(this.pageNum)
+                    },reason => console.error(reason))
                 })
             },
             orderTagList(params){
@@ -212,33 +155,19 @@
             },
             getTagList(pageNum){
                 this.tagListLoading=true
-                let url=this.baseUrl+"/admin/tag/list?pageNum="+ pageNum+
-                    "&pageSize="+ this.pageSize+
-                    "&searchValue="+ this.searchValue+
-                    "&orderProperty="+this.orderProperty+
-                    "&orderDirection="+this.orderDirection
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
+                tagAPI.getTagList(this.token, pageNum, this.pageSize, this.searchValue, this.orderProperty, this.orderDirection).then(
+                    data=>{
                         this.tagList=data.list;
                         this.total=data.total;
                         this.pageNum=pageNum
                         this.tagListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取标签列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                    },reason => console.error(reason)
+                )
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
-                if(token!=null){
-                    this.headerConfig.headers.Authorization=token
-                }else{
+                let token=this.$cookies.get(tokenName.admin)
+                this.token = token
+                if(token==null){
                     this.$router.push("/admin/login")
                 }
             }
@@ -247,7 +176,6 @@
         created() {
             this.getToken();
             this.getTagList(1)
-            document.title="Blog后台|标签列表"
         }
     }
 </script>

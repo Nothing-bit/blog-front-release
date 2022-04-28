@@ -12,7 +12,7 @@
                         <!--                封面列-->
                         <el-col :lg="8" :md="24" :sm="24">
                             <div style="width: 95%; overflow:hidden;">
-                                <img :src="baseUrl+item.pictureUrl" @click="articlePage(item.id)" class="article-info-cover">
+                                <img :src="baseURL+item.pictureUrl" @click="articlePage(item.id)" class="article-info-cover">
                             </div>
                         </el-col>
                         <!--                简略信息列-->
@@ -53,14 +53,17 @@
 </template>
 
 <script>
+    import baseURL from '@/config/baseURL';
     export default {
         name: "ArticleInfoList",
         props:["articleList"],
         data(){
             return{
+                baseURL:''
             }
         },
         created(){
+            this.baseURL = baseURL
         },
         methods:{
             articlePage(id){

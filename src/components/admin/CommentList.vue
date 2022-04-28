@@ -53,9 +53,8 @@
 </template>
 
 <script>
-    import axios from "axios";
-    import {Notification} from "element-ui";
-
+    import tokenName from "@/config/tokenName";
+    import commentAPI from "@/api/admin/comment";
     export default {
         name: "CommentList",
         data(){
@@ -78,37 +77,17 @@
                 },
                 //dialog
                 replyDialogDisplay:false,
-                //headerConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:''
-                    }
-                }
             }
         },
         methods:{
             submitReply(){
-                let url=this.baseUrl+"/admin/comment/reply"
-                axios.post(url,this.reply,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'已成功回复!',
-                            type:'success'
-                        })
+                commentAPI.submitReply(this.token, this.reply).then(
+                    ()=>{
                         this.getCommentList(this.pageNum)
-                        this.reply.content=""
                         this.replyDialogDisplay=false
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'回复留言失败!',
-                            type:'error'
-                        })
-                    }
-                })
-
+                        this.reply.content=""
+                    },reason => console.error(reason)
+                )
             },
             replyComment(row){
                 let comment=row
@@ -123,44 +102,10 @@
                 this.replyDialogDisplay=true;
             },
             disableComment(id){
-                let url=this.baseUrl+"/admin/comment/disable?id="+id
-                axios.put(url,{},this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'id：'+id+"的留言已成功隐藏！",
-                            type:'success'
-                        })
-                        this.getCommentList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'隐藏留言失败!',
-                            type:'error'
-                        })
-                    }
-                })
+                commentAPI.disableComment(this.token, id).then(()=>this.getCommentList(this.pageNum),reason => console.error(reason))
             },
             enableComment(id){
-                let url=this.baseUrl+"/admin/comment/enable?id="+id
-                axios.put(url,{},this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        Notification({
-                            title:'提示',
-                            message:'id：'+id+"的留言已成功展示！",
-                            type:'success'
-                        })
-                        this.getCommentList(this.pageNum)
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'展示留言失败!',
-                            type:'error'
-                        })
-                    }
-                })
+                commentAPI.enableComment(this.token, id).then(()=>this.getCommentList(this.pageNum),reason => console.error(reason))
             },
             deleteComment(id){
                 this.$confirm("此操作将会删除id:"+id+"的留言,并且无法恢复!","提示",{
@@ -168,24 +113,9 @@
                     cancelButtonText:'取消',
                     type:"warning"
                 }).then(()=>{
-                    let url=this.baseUrl+"/admin/comment?id="+id;
-                    axios.delete(url,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'删除id:'+id+'留言成功!',
-                                type:'success'
-                            })
-                            this.getCommentList(this.pageNum)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'删除留言失败!',
-                                type:'error'
-                            })
-                        }
-                    })
+                    commentAPI.deleteComment(this.token, id).then(
+                        ()=>this.getCommentList(this.pageNum),reason => console.error(reason)
+                    )
                 }).catch(()=>{})
             },
             orderCommentList(params){
@@ -196,41 +126,27 @@
             },
             getCommentList(pageNum){
                 this.commentListLoading=true
-                let url=this.baseUrl+"/admin/comment/list?pageNum="+ pageNum+
-                    "&pageSize="+ this.pageSize+
-                    "&searchValue="+ this.searchValue+
-                    "&orderProperty="+this.orderProperty+
-                    "&orderDirection="+this.orderDirection
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
+                commentAPI.getCommentList(this.token, pageNum, this.pageSize, this.searchValue, this.orderProperty, this.orderDirection).then(
+                    data=>{
                         this.commentList=data.list;
                         this.total=data.total;
                         this.pageNum=pageNum
                         this.commentListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取分类列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                    },reason => console.error(reason)
+                )
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
-                if(token!=null){
-                    this.headerConfig.headers.Authorization=token
-                }else{
+                let token = this.$cookies.get(tokenName.admin)
+                if(token==null){
                     this.$router.push("/admin/login")
+                }else{
+                    this.token = token
                 }
             }
         },
         created(){
             this.getToken()
             this.getCommentList(1)
-            document.title="Blog后台|留言列表"
         }
     }
 </script>

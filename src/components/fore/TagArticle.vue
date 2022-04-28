@@ -6,7 +6,8 @@
                 <div class="breadcrumb">
                     <el-breadcrumb separator="/">
                         <el-breadcrumb-item :to="{path:'/fore/index'}"><a class="breadcrumb-item">首 页</a></el-breadcrumb-item>
-                        <el-breadcrumb-item><a class="breadcrumb-item">标 签</a></el-breadcrumb-item>
+                        <el-breadcrumb-item :to="{path:'/fore/tag'}"><a class="breadcrumb-item">标 签</a></el-breadcrumb-item>
+                        <el-breadcrumb-item><a class="breadcrumb-item">{{tagName}}</a></el-breadcrumb-item>
                     </el-breadcrumb>
                 </div>
                 <div style="min-height: 700px;" >
@@ -17,7 +18,9 @@
                     <!--                    日志-->
                     <el-col :lg={span:12,offset:6}>
                         <ArticleInfoList :article-list="articleList" v-loading="articleListLoading"></ArticleInfoList>
-                        <el-pagination  class="pagination" :total=articleTotal
+                        <el-pagination  class="pagination"
+                                        background
+                                        :total=articleTotal
                                         :page-size=articlePageSize
                                         :current-page=1
                                         @current-change="getArticleList"></el-pagination>
@@ -29,9 +32,8 @@
 </template>
 
 <script>
-    import axios from "axios"
-    import {Notification} from 'element-ui'
     import ArticleInfoList from "./ArticleInfoList";
+    import articleAPI from "@/api/fore/article";
     export default {
         name: "TagArticle",
         components:{
@@ -52,28 +54,16 @@
             },
             getArticleList(pageNum){
                 this.articleListLoading=true;
-                let url=this.baseUrl+"/fore/tag/article/list?tagName="+this.tagName+"&pageNum="+pageNum
-                axios.get(url).then((res)=>{
-                    let result =res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.articleList=data.list
-                        this.articlePageSize=data.pageSize
-                        this.articleTotal=data.total
-                        this.articleListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取日志列表失败',
-                            type:'error'
-                        })
-                    }
+                articleAPI.getArticleListByTagName(this.tagName, pageNum, 5).then(data=>{
+                    this.articleList=data.list
+                    this.articlePageSize=data.pageSize
+                    this.articleTotal=data.total
+                    this.articleListLoading=false;
                 })
-
             }
         },
         activated(){
-            document.title="Blog | "+this.$route.query.tagName
+            document.title="ZBlog | "+this.$route.query.tagName
         },
         created(){
             this.setTagName()

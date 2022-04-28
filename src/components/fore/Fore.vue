@@ -34,9 +34,11 @@
                     <h1>登 录</h1>
                     <span>选择以下方式第三方进行登录</span>
                     <el-divider></el-divider>
-                    <img class="login-icon" src="../../assets/login-github.png" @click="login('github')">
-                    <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">
                     <img class="login-icon" src="../../assets/login-gitee.png" @click="login('gitee')">
+                    <img class="login-icon" src="../../assets/login-github.png" @click="login('github')">
+<!--                    <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">-->
+                    <img class="login-icon" src="../../assets/login-tencentCloud.png" @click="login('coding')">
+                    <img class="login-icon" src="../../assets/login-huawei.png" @click="login('huawei')">
                     <el-divider></el-divider>
                     <span>TIP:只获取你的昵称和头像~</span>
                 </el-row>
@@ -110,8 +112,11 @@
 </template>
 
 <script>
-    import axios from 'axios'
-    import { Notification }  from 'element-ui';
+    import baseURL from "@/config/baseURL";
+    import articleAPI from "@/api/fore/article";
+    import userInfoAPI from "@/api/fore/auth";
+    import notifyUtil from "@/utils/notify";
+    import tokenName from "@/config/tokenName";
     export default {
         name:'fore',
         data() {
@@ -153,15 +158,10 @@
                 })
             },
             queryArticle(){
-                this.showSearchValue=this.form.searchValue
+                this.showSearchValue=this.form.searchValue.trim()
                 if(this.showSearchValue!=null&&this.showSearchValue!=''){
-                    let url=this.baseUrl+"/fore/article/all?searchValue="+this.form.searchValue;
-                    axios.get(url).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            // console.log(result.data)
-                            this.searchResultList=result.data
-                        }
+                    articleAPI.queryArticle(this.showSearchValue).then(data=>{
+                        this.searchResultList=data
                     })
                 }else{
                     this.showSearchValue=''
@@ -173,80 +173,62 @@
                 this.drawer=false
             },
             logout(){
-                this.$cookies.remove("zBlogToken");
-                Notification({
-                    title:'提示',
-                    message:'你已成功退出登录！',
-                    type:'success'
-                })
+                this.$cookies.remove(tokenName.fore);
+                notifyUtil.success("提示","您已成功退出登录！")
                 this.userInfoDisplay=false;
             },
             check(){//检查token是否有效，有效则获取用户信息，无效则需要重新登录
-                 var url=this.baseUrl+"/oauth/check"
-                 var token=this.$cookies.get("zBlogToken")
-                 axios.get(url,{headers:{Authorization:token}}).then((res)=>{
-                     var result=res.data;
-                     if(result.code==200){//有效则保存用户信息，并渲染出来
-                         this.userInfo=result.data;
-                         var message="欢迎回来！来自"+result.data.source+"的"+result.data.username
-                        Notification({
-                            title:'提示',
-                            message:message,
-                            type:'success'
-                        })
-                         this.userInfoDisplay=true;
-                     }else if(result.code==201){//无效则渲染出登录按钮
-                         this.userInfoDisplay=false;
-                         this.$cookies.remove("zBlogToken")
-                     }
+                 let token=this.$cookies.get(tokenName.fore)
+                 userInfoAPI.check(token).then(data=>{
+                     this.userInfo=data;
+                     let content="欢迎回来！来自 <strong>"+data.source+"</strong> 的 <strong>"+data.username+"</strong>"
+                     notifyUtil.success("Hello!", content)
+                     this.userInfoDisplay=true;
+                 },error => {
+                     console.error(error)
+                     this.userInfoDisplay=false;
+                     this.$cookies.remove(tokenName.fore)
                  })
+
             },
             loginDialog(){
                 this.loginDialogDisplay=true
             },
             getUserInfo(e){
-                var userInfo=e.data;
-                if(e.data!=null){
-                    var message="来自"+userInfo.source+"的"+userInfo.username+",你已成功登录！"
-                    Notification({
-                        title:'提示：',
-                        message:message,
-                        type:'success'
-                    })
-                    this.userInfo=userInfo;
+                let userInfo=e.data;
+                if(!(typeof(userInfo)=="undefined")&&typeof(userInfo.type)=="undefined"){
+                    let content = "来自 <strong>"+userInfo.source+"</strong> 的 <strong>"+userInfo.username+"</strong>"
+                    notifyUtil.success("Hello!", content)
                     this.userInfoDisplay=true;
-                    this.$cookies.set("zBlogToken",userInfo.token,60*60*24*7);
+                    this.$cookies.set(tokenName.fore,userInfo.token,60*60*24*7);
+                    window.removeEventListener("message", this.getUserInfo)
                 }else{
-                    Notification({
-                        title:'提示：',
-                        message:'糟糕，登录出现了问题!',
-                        type:'error'
-                    })
+                    notifyUtil.error("出错了", "糟糕，登录出现了问题!")
                     this.userInfoDisplay=false;
                 }
-                window.removeEventListener('message',this.getUserInfo,false)
             },
-            login(platform){//登录操作
-                this.loginDialogDisplay=false;
-                var url=this.baseUrl+"/oauth/login/"+platform
-                window.open(url,'newwindow', 'height=500, width=500, top=50, left=50, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no')
+            login(platform) {//登录操作
+                this.loginDialogDisplay = false;
+                let url = baseURL +"/oauth/login/"+platform
+                window.open(url, 'newwindow', 'height=500, width=500, top=50, left=50, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no')
                 window.addEventListener('message', this.getUserInfo,false)
             },
-            getMusicURL(){//获取音乐URL
-                let url=this.baseUrl+"/fore/setting?name=musicURL"
-                axios.get(url).then(res=>{
-                    let result= res.data;
-                    if(result.code==200){
-                        this.musicURL=result.data;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'未能获取到背景音乐的链接！',
-                            type:'warning'
-                        })
-                    }
-                })
-            }
+            // getMusicURL(){//获取音乐URL
+            //     let url=this.baseUrl+"/fore/setting?name=musicURL"
+            //     axios.get(url).then(res=>{
+            //         let result= res.data;
+            //         if(result.code==200){
+            //             this.musicURL=result.data;
+            //         }else{
+            //             Notification({
+            //                 title:'提示',
+            //                 message:'未能获取到背景音乐的链接！',
+            //                 type:'warning',
+            //                 offset:60
+            //             })
+            //         }
+            //     })
+            // }
         },
         components:{
         },
@@ -261,7 +243,7 @@
         },
         created(){
             this.check()
-            this.getMusicURL()
+            // this.getMusicURL()
         },
     }
 </script>
@@ -286,7 +268,7 @@
     }
 
     .login-icon{
-        border: #8c939d solid 1px;
+        border: #8c939d dotted 1px;
         border-radius: 10px;
         margin: 0px 10px;
         transform: scale(1.0);

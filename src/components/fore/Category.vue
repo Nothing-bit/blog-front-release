@@ -27,7 +27,7 @@
                                               appear-active-class="animate__animated animate__fadeInLeft"
                                               enter-active-class="animate__animated animate__fadeInLeft">
                                 <div class="nav-menu" v-for="item in categoryList" v-bind:key="item.id">
-                                    <el-link class="nav-item" @click="getArticleListByCategoryId(item.id)">{{item.name}}</el-link>
+                                    <el-link class="nav-item" @click="getArticleListByCategoryId(item.id, 1)">{{item.name}}</el-link>
                                     <br>
                                 </div>
                             </transition-group>
@@ -44,6 +44,7 @@
                     <ArticleInfoList v-loading="articleListLoading" :article-list="articleList"></ArticleInfoList>
                     <div class="block pagination">
                         <el-pagination
+                                background
                                 @current-change="getArticleList"
                                 :current-page="1"
                                 :page-size=articlePageSize
@@ -58,9 +59,9 @@
 </template>
 
 <script>
-    import axios from "axios"
-    import {Notification} from 'element-ui'
     import ArticleInfoList from "./ArticleInfoList";
+    import articleAPI from "@/api/fore/article";
+    import categoryAPI from "@/api/fore/category";
     export default {
         name: "Category",
         data(){
@@ -83,59 +84,38 @@
           ArticleInfoList
         },
         methods:{
-            getArticleListByCategoryId(categoryId){
-                this.categoryId=categoryId
-                this.getArticleList(1);
-            },
             getArticleList(pageNum){
-                let url=this.baseUrl+"/fore/category/article/list?categoryId="+this.categoryId+"&pageNum="+pageNum
+                this.articleListLoading = true;
+                articleAPI.getArticleListByCategoryId(this.categoryId, pageNum, 5).then(data=>{
+                    this.articleList=data.list;
+                    this.articlePageSize=data.pageSize;
+                    this.articleTotal=data.total;
+                    this.articleListLoading=false;
+                }, ()=>{})
+            },
+            getArticleListByCategoryId(categoryId, pageNum){
                 this.articleListLoading=true;
-                axios.get(url).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data
-                        this.articleList=data.list;
-                        this.articlePageSize=data.pageSize;
-                        this.articleTotal=data.total;
-                        this.articleListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取日志列表失败',
-                            type:'error'
-                        })
-                    }
-                })
+                articleAPI.getArticleListByCategoryId(categoryId, pageNum, 5).then(data=>{
+                    this.articleList=data.list;
+                    this.articlePageSize=data.pageSize;
+                    this.articleTotal=data.total;
+                    this.categoryId = categoryId
+                    this.articleListLoading=false;
+                }, ()=>{})
             },
             getCategoryList(pageNum){
-                let url=this.baseUrl+"/fore/category/list?pageNum="+pageNum
-                    +"&pageSize="+10;
                 this.categoryListLoading=true;
-                axios.get(url).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.categoryList=data.list
-                        this.categoryTotal=data.total;
-                        this.categoryPageSize=data.pageSize
-                        this.categoryListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取分类列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
+                categoryAPI.getCategoryList(pageNum, 10).then(data=>{
+                    this.categoryList=data.list
+                    this.categoryTotal=data.total;
+                    this.categoryPageSize=data.pageSize
+                    this.categoryListLoading=false;
+                },()=>{})
             }
         },
-        activated(){
-            document.title="Blog | 分 类"
-
-        },
         created(){
-            this.getCategoryList(1)
             this.getArticleList(1)
+            this.getCategoryList(1)
         },
         mounted(){
         }

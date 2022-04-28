@@ -64,6 +64,7 @@
                 <ArticleInfoList v-loading="loading" :article-list="this.articleList"></ArticleInfoList>
                 <div class="block pagination">
                     <el-pagination
+                            background
                             @current-change="getArticleList"
                             :current-page="1"
                             :page-size=pageSize
@@ -108,7 +109,11 @@
 <script>
     import ArticleInfoList from "./ArticleInfoList";
     import TagContainer from "@/components/fore/TagContainer";
-    import axios from 'axios'
+    import articleAPI from "@/api/fore/article";
+    import newsAPI from "@/api/fore/news";
+    import friendLinkAPI from "@/api/fore/friendLink";
+    import indexAPI from "@/api/fore";
+
     export default {
         data(){
             return{
@@ -132,68 +137,40 @@
         methods:{
             getArticleList(pageNum){
                 this.loading=true
-                let url = this.baseUrl+"/fore/article/list?pageNum="+pageNum;
-                axios.get(url).then((res) => {
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data
-                        this.articleList=data.list;
-                        this.pageSize=data.pageSize
-                        this.total=data.total
-                        this.loading=false
-                    }
-                }).catch((error) => {
-                    console.log(error);
-                });
+                articleAPI.getArticleList(pageNum, 5).then(data=>{
+                    this.articleList=data.list;
+                    this.pageSize=data.pageSize
+                    this.total=data.total
+                })
+                this.loading=false
             },
             queryAllFriendLink(){
-                let url=this.baseUrl+"/fore/friend/link/all"
-                axios.get(url).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        this.loading=false;
-                        this.friendLinkList=result.data;
-                    }
-                })
+                friendLinkAPI.getAllFriendLink().then(data=>{
+                    this.loading=false;
+                    this.friendLinkList=data;
+                },error => console.error(error))
             },
             getNews(){
-                let url=this.baseUrl+"/fore/news/list?pageNum=1&pageSize=4"
-                axios.get(url).then(res=>{
-                    let result =res.data
-                    if(result.code==200){
-                        let data=result.data;
-                        data.list.forEach(value => {
-                            value.content=value.content.replace(/(?<=src=")\/images\//g,this.baseUrl+'/images/')
-                        })
-                        this.newsList=data.list;
-                    }
+                newsAPI.getNews(1,4).then(data=>{
+                    this.newsList=data.list;
                 })
             },
             selectHandler(item){
+                // history.pushState('','',"/fore/article?id="+item.id)
                 this.$router.push({name:'article',query:{id:item.id}})
                 this.drawer=false
             },
             initData(){
-                let url=this.baseUrl+"/fore/index/data"
-                axios.get(url).then((response)=>{
-                    let result=response.data;
-                    if(result.code==200){
-                        let data=result.data
-                        this.tagList=data.tagList.sort((a,b)=>b.value-a.value)
-                        this.signature=data.signature
-                        this.notice=data.notice
-                        this.countTag=data.countTag
-                        this.countCategory=data.countCategory
-                        this.countPublicArticle=data.countPublicArticle
-                        this.countVisitor = data. countVisitor
-                        this.hotArticleList = data.hotArticleList
-                    }else{
-                        this.$message({
-                            message:'加载首页信息出错啦！',
-                            type:'error'
-                        })
-                    }
-                })
+                indexAPI.initIndexData().then(data=>{
+                    this.tagList=data.tagList
+                    this.signature=data.signature
+                    this.notice=data.notice
+                    this.countTag=data.countTag
+                    this.countCategory=data.countCategory
+                    this.countPublicArticle=data.countPublicArticle
+                    this.countVisitor = data. countVisitor
+                    this.hotArticleList = data.hotArticleList
+                },reason => console.error(reason))
             },
             setTime(){
                 let seconds = 1000;
@@ -208,7 +185,7 @@
                 let todayHour = today.getHours();
                 let todayMinute = today.getMinutes();
                 let todaySecond = today.getSeconds();
-                let t1 = Date.UTC(2019,9,1,0,0,0); //北京时间2016-12-1 00:00:00
+                let t1 = Date.UTC(2019,9,1,0,0,0);
                 let t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
                 let diff = t2-t1;
                 let diffYears = Math.floor(diff/years);
@@ -219,10 +196,6 @@
         updated(){
         },
         activated(){
-            document.title="Blog | 首 页"
-            // this.show=true
-        },
-        deactivated(){
         },
         created(){
             this.initData()

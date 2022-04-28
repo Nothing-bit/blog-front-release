@@ -64,8 +64,9 @@
 </template>
 
 <script>
-    import axios from 'axios'
-    import{Notification} from 'element-ui'
+    import tokenName from "@/config/tokenName";
+    import friendLinkAPI from "@/api/admin/friendLink";
+    import checkerUtil from "@/utils/checker";
     export default {
         name: "FriendLinkList",
         data(){
@@ -89,46 +90,17 @@
                     logoUrl:'',
                     url:''
                 },
-                //headerConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:''
-                    }
-                }
             }
         },
         methods:{
             submitUpdate(){
-                if(this.friendLink.name==''){
-                    this.$message({
-                        message:'名称不能为空！',
-                        type:'warning'
-                    })
-                }else if(this.friendLink.url==''){
-                    this.$message({
-                        message:'地址不能为空！',
-                        type:'warning'
-                    })
-                }else{
-                    let url=this.baseUrl+"/admin/friend/link"
-                    axios.put(url,this.friendLink,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'更新友链成功！',
-                                type:'success'
-                            })
+                if(checkerUtil.friendLinkChecker(this.friendLink)){
+                    friendLinkAPI.updateFriendLink(this.token, this.friendLink).then(
+                        ()=>{
+                            this.updateDialogDisplay=false
                             this.getFriendLinkList(this.pageNum)
-                            this.updateDialogDisplay=false;
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'更新友链失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                        },reason => console.error(reason)
+                    )
                 }
             },
             updateFriendLink(index){
@@ -139,36 +111,13 @@
                 this.updateDialogDisplay=true
             },
             submitAdd(){
-                if(this.friendLink.name==''){
-                    this.$message({
-                        message:'名称不能为空！',
-                        type:'warning'
-                    })
-                }else if(this.friendLink.url==''){
-                    this.$message({
-                        message:'地址不能为空！',
-                        type:'warning'
-                    })
-                }else{
-                    let url=this.baseUrl+"/admin/friend/link"
-                    axios.post(url,this.friendLink,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'添加友链成功！',
-                                type:'success'
-                            })
+                if(checkerUtil.friendLinkChecker(this.friendLink)){
+                    friendLinkAPI.addFriendLink(this.token, this.friendLink).then(
+                        ()=>{
+                            this.addDialogDisplay=false
                             this.getFriendLinkList(this.pageNum)
-                            this.addDialogDisplay=false;
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'添加友链失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                        },reason => console.error(reason)
+                    )
                 }
             },
             addFriendLink(){
@@ -183,24 +132,11 @@
                     showCancelButton:true,
                     type:'warning',
                 }).then(()=>{
-                    let url=this.baseUrl+"/admin/friend/link?id="+id
-                    axios.delete(url,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'删除友链成功！',
-                                type:'success'
-                            })
+                    friendLinkAPI.deleteFriendLink(this.token, id).then(
+                        ()=>{
                             this.getFriendLinkList(this.pageNum)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'删除友链失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                        },reason => console.error(reason)
+                    )
                 }).catch(()=>{})
             },
             orderFriendLinkList(params){
@@ -211,34 +147,19 @@
             },
             getFriendLinkList(pageNum){
                 this.friendLinkListLoading=true;
-                let url=this.baseUrl+"/admin/friend/link/list?pageNum="+ pageNum+
-                    "&pageSize="+ this.pageSize+
-                    "&searchValue="+ this.searchValue+
-                    "&orderProperty="+this.orderProperty+
-                    "&orderDirection="+this.orderDirection
-                axios.get(url,this.headerConfig).then(res=>{
-                    let result= res.data;
-                    if(result.code==200){
-                        let data=result.data;
+                friendLinkAPI.getFriendLinkList(this.token, pageNum, this.pageSize, this.searchValue, this.orderProperty, this.orderDirection).then(
+                    data=>{
                         this.friendLinkList=data.list
                         this.pageNum=pageNum;
                         this.total=data.total;
                         this.friendLinkListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取友链列表失败！',
-                            type:'error'
-                        })
-                    }
-                })
-
+                    },error => console.error(error)
+                )
             },
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
-                if(token!=null){
-                    this.headerConfig.headers.Authorization=token
-                }else{
+                let token=this.$cookies.get(tokenName.admin)
+                this.token = token
+                if(token==null){
                     this.$router.push("/admin/login")
                 }
             }
@@ -247,7 +168,6 @@
         created(){
             this.getToken()
             this.getFriendLinkList(1)
-            document.title="Blog后台|友链列表"
         }
     }
 </script>

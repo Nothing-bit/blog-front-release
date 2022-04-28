@@ -12,7 +12,6 @@
             </el-col>
         </el-row>
         <el-row :gutter="20">
-<!--            <el-button @click="$forceUpdate">test fresh</el-button>-->
             <el-col :xl="{span:14,offset:5}" :lg="{span:16,offset:4}" :md="{span:24}">
                 <!--                时间轴部分-->
                 <el-col :lg="{span:20,offset:2}" :md="{span:24}">
@@ -48,8 +47,7 @@
 </template>
 
 <script>
-    import axios from 'axios'
-    import {Notification} from "element-ui";
+    import newsAPI from "@/api/fore/news";
     export default {
         name: "News",
         data(){
@@ -68,33 +66,17 @@
             getList(){
                 if(this.pageInfo.hasNextPage){
                     this.listLoading=true;
-                    let url=this.baseUrl+"/fore/news/list?pageNum="+this.pageInfo.pageNum+
-                        "&pageSize="+this.pageInfo.pageSize;
-                    axios.get(url).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            let data=result.data;
-                            this.pageInfo.pageNum++
-                            data.list.forEach(value => {
-                                value.content=value.content.replace(/(?<=src=")\/images\//g,this.baseUrl+'/images/')
-                            })
-                            this.pageInfo.list=this.pageInfo.list.concat(data.list);
-                            this.pageInfo.total=data.total;
-                            this.pageInfo.hasNextPage=data.hasNextPage
-                            this.listLoading=false
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'获取随说列表失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                    newsAPI.getNews(this.pageInfo.pageNum, this.pageInfo.pageSize).then(data=>{
+                        this.pageInfo.pageNum++
+                        this.pageInfo.list=this.pageInfo.list.concat(data.list);
+                        this.pageInfo.total=data.total;
+                        this.pageInfo.hasNextPage=data.hasNextPage
+                        this.listLoading=false
+                    }, error => {console.error(error)})
                 }
             }
         },
         activated(){
-            document.title="Blog | 随 说"
         }
     }
 </script>

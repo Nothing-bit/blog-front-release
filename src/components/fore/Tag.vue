@@ -26,9 +26,8 @@
 </template>
 
 <script>
-    import axios from 'axios'
-    import { Notification }  from 'element-ui';
     import TagContainer from "@/components/fore/TagContainer";
+    import tagAPI from "@/api/fore/tag";
     export default {
         name: "Tag",
         components:{
@@ -44,25 +43,14 @@
         methods:{
             getTagCloudList(){
                 this.tagListLoading=true;
-                let url=this.baseUrl+"/fore/tag/cloud"
-                axios.get(url).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.tagList=data;
-                        this.tagListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取标签列表失败',
-                            type:'error'
-                        })
-                    }
-                })
+                tagAPI.getTagAll().then(data=>{
+                    // console.log(data)
+                    this.tagList=data;
+                    this.tagListLoading=false;
+                },error=>console.error(error))
             },
         },
         activated() {
-            document.title="Blog | 标 签"
         },
         created(){
             this.getTagCloudList()

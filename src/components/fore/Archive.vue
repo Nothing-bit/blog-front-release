@@ -42,7 +42,9 @@
                 <!--                    日志-->
                 <el-col :xl="{span:10,offset:8}" :lg="{span:12,offset:6}">
                     <ArticleInfoList v-loading="articleListLoading" :article-list="articleList"></ArticleInfoList>
-                    <el-pagination  class="pagination" :total=articleTotal
+                    <el-pagination  class="pagination"
+                                    background
+                                    :total=articleTotal
                                     :page-size=articlePageSize
                                     :current-page=1
                                     @current-change="getArticleList"></el-pagination>
@@ -53,9 +55,9 @@
 </template>
 
 <script>
-    import axios from "axios"
-    import {Notification} from 'element-ui'
     import ArticleInfoList from "./ArticleInfoList";
+    import archiveAPI from "@/api/fore/archive";
+    import articleAPI from "@/api/fore/article";
     export default {
         name: "Archive",
         components:{
@@ -84,50 +86,24 @@
             },
             getArticleList(pageNum){
                 this.articleListLoading=true;
-                let url=this.baseUrl+"/fore/archive/article/list?month=" +this.month
-                    +"&pageNum="+pageNum
-                    +"&pageSize=10";
-                axios.get(url).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.articleList=data.list;
-                        this.articlePageSize=data.pageSize;
-                        this.articleTotal=data.total;
-                        this.articleListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取日志列表失败',
-                            type:'error'
-                        })
-                    }
-                })
+                articleAPI.getArticleListByMonth(this.month, pageNum, 5).then(data=>{
+                    this.articleList=data.list;
+                    this.articlePageSize=data.pageSize;
+                    this.articleTotal=data.total;
+                    this.articleListLoading=false;
+                },error=>console.error(error))
             },
             getArchiveList(pageNum){
                 this.archiveListLoading=true;
-                let url=this.baseUrl+"/fore/archive/list?pageNum="+pageNum
-                    +"&pageSize=10";
-                axios.get(url).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.archiveList=data.list;
-                        this.archiveTotal=data.total;
-                        this.archivePageSize=data.pageSize;
-                        this.archiveListLoading=false;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'获取归档列表失败',
-                            type:'error'
-                        })
-                    }
-                })
+                archiveAPI.getArchiveList(pageNum,10).then(data=>{
+                    this.archiveList=data.list;
+                    this.archiveTotal=data.total;
+                    this.archivePageSize=data.pageSize;
+                    this.archiveListLoading=false;
+                },error=>console.error(error))
             }
         },
         activated() {
-            document.title="Blog | 归 档"
         },
         created(){
             this.getArchiveList(1)

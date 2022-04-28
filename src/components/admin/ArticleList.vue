@@ -62,8 +62,8 @@
 </template>
 
 <script>
-    import axios from "axios"
-    import {Notification} from "element-ui"
+    import tokenName from "@/config/tokenName";
+    import articleAPI from "@/api/admin/article";
     export default {
         name: "Article",
         data(){
@@ -80,21 +80,16 @@
                 articleListDisplay:true,
                 //article add
                 articleAddDisplay:false,
-                //axiosConfig
-                headerConfig:{
-                    headers:{
-                        Authorization:''
-                    }
-                }
+                token:null
             }
         },
         methods:{
             getToken(){
-                let token=this.$cookies.get("zBlogAdminToken")
-                if(token!=null){
-                    this.headerConfig.headers.Authorization=token
-                }else{
+                let token = this.$cookies.get(tokenName.admin)
+                if(token==null){
                     this.$router.push("/admin/login")
+                }else{
+                    this.token = token
                 }
             },
             addArticle(){
@@ -112,24 +107,9 @@
                     confirmButtonText:'确定',
                     type:'warning'
                 }).then(()=>{
-                    let url=this.baseUrl+"/admin/article?id="+id;
-                    axios.delete(url,this.headerConfig).then(res=>{
-                        let result=res.data;
-                        if(result.code==200){
-                            Notification({
-                                title:'提示',
-                                message:'id为：'+id+'的日志已被成功删除！',
-                                type:'success'
-                            })
-                            this.getArticleList(this.pageNum)
-                        }else{
-                            Notification({
-                                title:'提示',
-                                message:'id为：'+id+'的日志删除失败！',
-                                type:'error'
-                            })
-                        }
-                    })
+                    articleAPI.deleteArticle(this.token, id).then(()=>{
+                    this.getArticleList(this.pageNum)
+                    }, reason => console.error(reason))
                 }).catch(()=>{})
             },
             updateArticle(id){
@@ -137,27 +117,13 @@
             },
             getArticleList(pageNum){
                 this.articleListLoading=true;
-                let url=this.baseUrl+"/admin/article/list?pageNum="+pageNum+
-                    "&pageSize="+this.pageSize+
-                    "&searchValue="+this.searchValue+
-                    "&orderProperty="+this.orderProperty+
-                    "&orderDirection="+this.orderDirection
-                axios.get(url,this.headerConfig).then((res)=>{
-                    let result=res.data;
-                    if(result.code==200){
-                        let data=result.data;
-                        this.articleList=data.list
-                        this.total=data.total;
-                        this.articleListLoading=false;
-                        this.pageNum=pageNum;
-                    }else{
-                        Notification({
-                            title:'提示',
-                            message:'加载日志列表失败',
-                            type:'error'
-                        })
-                    }
-                })
+                articleAPI.getArticleList(this.token, pageNum, this.pageSize, this.searchValue, this.orderProperty, this.orderDirection)
+                .then(data=>{
+                    this.articleList=data.list
+                    this.total=data.total;
+                    this.articleListLoading=false;
+                    this.pageNum=pageNum;
+                },reason => console.error(reason))
             }
         },
         activated(){
@@ -165,7 +131,6 @@
         },
         created(){
             this.getToken()
-            document.title="Blog后台|日志列表"
         }
     }
 </script>
