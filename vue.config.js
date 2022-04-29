@@ -33,13 +33,13 @@ module.exports = {
             })
         ],
         //此处配置不打包
-        externals: {
-            'vue': 'Vue',
-            'vuex': 'Vuex',
-            'vue-router': 'VueRouter',
-            'axios': 'axios',
-            'element-ui': 'ELEMENT',
-            'animate.css': 'animate.css'
-        },
+        // externals: {
+        //     'vue': 'Vue',
+        //     'vuex': 'Vuex',
+        //     'vue-router': 'VueRouter',
+        //     'axios': 'axios',
+        //     'element-ui': 'ELEMENT',
+        //     'animate.css': 'animate.css'
+        // },
     }
 }
