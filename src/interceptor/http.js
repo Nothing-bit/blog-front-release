@@ -23,6 +23,7 @@ ajax.interceptors.response.use(
             return Promise.resolve(result.data)
         }
     },error => {
+        messageUtil.error("出错了！")
         return Promise.reject(error)
     }
 )
