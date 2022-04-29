@@ -329,6 +329,10 @@
         font-size: 16px;
         color: rgb(92,182,255);
     }
+    .el-menu.el-menu--horizontal {
+        border-bottom: solid 0px #e6e6e6 !important;
+    }
+
     .el-timeline-item__timestamp.is-top{
         margin-bottom: 8px;
         padding-top: 3px;
