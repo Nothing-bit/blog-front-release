@@ -19,14 +19,12 @@
                 </keep-alive>
                 <router-view v-if="!$route.meta.keepAlive"/>
             </el-main>
-        <el-footer id="footer">
-            <div class="footer">
-                <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
-                <br>
-                <a href="http://beian.miit.gov.cn" target="_blank">
-                    <span>苏ICP备19061991号</span>
-                </a>
-            </div>
+        <el-footer id="footer" >
+            <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
+            <br>
+            <el-link href="http://beian.miit.gov.cn" target="_blank">
+                <span>苏ICP备19061991号</span>
+            </el-link>
         </el-footer>
             <!--    登录Dialog-->
             <el-dialog :visible.sync="loginDialogDisplay" width="35%">
@@ -36,7 +34,7 @@
                     <el-divider></el-divider>
                     <img class="login-icon" src="../../assets/login-gitee.png" @click="login('gitee')">
                     <img class="login-icon" src="../../assets/login-github.png" @click="login('github')">
-<!--                    <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">-->
+                    <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">
                     <img class="login-icon" src="../../assets/login-tencentCloud.png" @click="login('coding')">
                     <img class="login-icon" src="../../assets/login-huawei.png" @click="login('huawei')">
                     <el-divider></el-divider>
@@ -300,10 +298,11 @@
     .breadcrumb-item{
         font-size: 15px;
     }
-    .footer{
+    .el-footer{
         text-align: center;
         background: white;
         padding: 20px;
+        height: 70px !important;
     }
     .main{
         min-height: 700px;
