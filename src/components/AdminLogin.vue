@@ -25,7 +25,6 @@
 </template>
 
 <script>
-    import userInfoAPI from "@/api/fore/auth";
     import tokenName from "@/config/tokenName";
     import messageUtil from "@/utils/message";
     import notifyUtil from "@/utils/notify";

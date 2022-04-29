@@ -216,15 +216,6 @@ const router = new Router({
                     component:resolve =>require(["@/components/fore/About"],resolve)
                 },
                 {
-                    //404页面
-                    path:'404',
-                    name:'404',
-                    meta:{
-                        keepAlive: true,
-                    },
-                    component:resolve => require(["@/components/fore/404"], resolve)
-                },
-                {
                     //第三方登录回调+验证界面
                     path:'callback/:platform',
                     name:'OauthLogin',

@@ -1,5 +1,6 @@
 
-// const bundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
+const bundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
+const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
     // publicPath默认值是'/'，即你的应用是被部署在一个域名的根路径上
     // 设置为'./'，可以避免打包后的静态页面空白
@@ -19,9 +20,26 @@ module.exports = {
         // }
     },
     productionSourceMap: false,
-    // configureWebpack:{
-    //     plugins: [
-    //         new bundleAnalyzerPlugin()
-    //     ]
-    // }
+    configureWebpack:{
+        plugins: [
+            new bundleAnalyzerPlugin(),
+            new CompressionPlugin({
+                filename: '[path][base].gz',
+                algorithm: 'gzip',
+                test: /\.js$|\.html$|\.json$|\.css/,
+                threshold: 5120, // 只有大小大于该值的资源会被处理
+                minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
+                // deleteOriginalAssets: true // 删除原文件
+            })
+        ],
+        //此处配置不打包
+        externals: {
+            'vue': 'Vue',
+            'vuex': 'Vuex',
+            'vue-router': 'VueRouter',
+            'axios': 'axios',
+            'element-ui': 'ELEMENT',
+            'animate.css': 'animate.css'
+        },
+    }
 }

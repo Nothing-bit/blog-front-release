@@ -76,9 +76,6 @@ const articleAPI = {
         return new Promise((resolve, reject) => {
             ajax.get(url).then(data=>resolve(data), reason => reject(reason))
         })
-    },
-    deleteArticle(token, articleId){
-
     }
 }
 
