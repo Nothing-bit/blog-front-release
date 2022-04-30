@@ -35,8 +35,6 @@
                     <img class="login-icon" src="../../assets/login-gitee.png" @click="login('gitee')">
                     <img class="login-icon" src="../../assets/login-github.png" @click="login('github')">
                     <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">
-                    <img class="login-icon" src="../../assets/login-tencentCloud.png" @click="login('coding')">
-                    <img class="login-icon" src="../../assets/login-huawei.png" @click="login('huawei')">
                     <el-divider></el-divider>
                     <span>TIP:只获取你的昵称和头像~</span>
                 </el-row>
@@ -228,20 +226,8 @@
             //     })
             // }
         },
-        components:{
-        },
-        beforeMount(){
-            // console.warn("beforeMount")
-        },
-        mounted(){
-            // console.warn("mounted")
-        },
-        beforeUpdate(){
-
-        },
         created(){
             this.check()
-            // this.getMusicURL()
         },
     }
 </script>
