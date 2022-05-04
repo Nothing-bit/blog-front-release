@@ -99,6 +99,7 @@
     import tagAPI from "@/api/admin/tag";
     import categoryAPI from "@/api/admin/category";
     import checkerUtil from "@/utils/checker";
+    import {languages} from "@/utils/highlightCustom";
     let staticToken;
     let staticArticleId;
     export default {
@@ -110,7 +111,7 @@
                 editorConfig:{
                     language:'zh-cn',
                     codeBlock:{
-                        languages:this.languages
+                        languages:languages()
                     },
                     image: {
                         toolbar: [

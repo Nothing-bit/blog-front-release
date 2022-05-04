@@ -76,6 +76,7 @@
     import articleAPI from "@/api/admin/article";
     import checkerUtil from "@/utils/checker";
     import tokenName from "@/config/tokenName";
+    import {languages} from "@/utils/highlightCustom"
     export default {
         name: "ArticleAdd",
         data(){
@@ -85,7 +86,7 @@
                 editorConfig: {
                     language:'zh-cn',
                     codeBlock:{
-                        languages:this.languages
+                        languages: languages()
                     },
                     image: {
                         toolbar: [
@@ -182,8 +183,7 @@
                     tagList:[]
                 },
                 categoryList:[],
-                tagList:[],
-
+                tagList:[]
             }
         },
         methods:{

@@ -5,7 +5,7 @@ import vueCookie from 'vue-cookies'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'highlight.js/styles/atom-one-light.css'
 import router from "./router.js";
-import highlightCustom from "@/utils/highlightCustom";
+import {highlightCustom} from "@/utils/highlightCustom";
 
 
 Vue.use(ElementUI)

@@ -16,7 +16,7 @@ hljs.registerLanguage('c', require('highlight.js/lib/languages/c'))
 hljs.registerLanguage('c++', require('highlight.js/lib/languages/cpp'))
 hljs.registerLanguage('json', require('highlight.js/lib/languages/json'))
 
-const highlightCustom = function(el){
+function highlightCustom(el){
     let blocks = el.querySelectorAll('pre code');
     blocks.forEach((block)=>{
         if(block.hasAttribute("highlighted")){
@@ -36,6 +36,15 @@ const highlightCustom = function(el){
         }
     })
 }
+function languages(){
+    let languages = []
+    hljs.listLanguages().forEach(((value) => {
+        languages.push({
+            language:value,
+            label:value
+        })
+    }))
+    return languages
+}
 
-
-export default highlightCustom
+export {highlightCustom, languages}
