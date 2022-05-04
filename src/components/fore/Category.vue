@@ -114,6 +114,9 @@
             }
         },
         created(){
+            if(this.$route.query.categoryId!=null){
+                this.categoryId = this.$route.query.categoryId
+            }
             this.getArticleList(1)
             this.getCategoryList(1)
         },

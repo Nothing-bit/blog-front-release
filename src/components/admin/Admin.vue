@@ -1,7 +1,7 @@
 <template>
     <el-container id="header">
         <!---头部--->
-        <el-header style="height: 65px;width: 100%;background: rgb(255,255,255);z-index: 2;">
+        <el-header>
             <el-row type="flex" align="middle" justify="center" >
                 <el-menu mode="horizontal" active-text-color="rgb(64,158,255)" default-active="/admin/article/list" router>
                     <el-menu-item class="nav-bar-item" index="/admin/news/list"><i class="el-icon-edit"></i>随 说</el-menu-item>
@@ -16,7 +16,7 @@
             </el-row>
         </el-header>
 <!--        中间主要内容-->
-        <el-main style="min-height: calc(85vh)">
+        <el-main>
             <keep-alive >
                 <router-view v-if="$route.meta.keepAlive"/>
             </keep-alive>
@@ -31,12 +31,12 @@
             <i class="el-icon-caret-bottom"></i>
         </div>
 <!--底部-->
-        <el-footer id="footer" class="footer" style="height: calc(7vh)">
+        <el-footer id="footer" >
             <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
             <br>
-            <a href="http://beian.miit.gov.cn" target="_blank">
+            <el-link href="http://beian.miit.gov.cn" target="_blank">
                 <span>苏ICP备19061991号</span>
-            </a>
+            </el-link>
         </el-footer>
     </el-container>
 </template>
@@ -63,32 +63,5 @@
 </script>
 
 <style>
-    .nav-bar-item{
-        font-size: 17px;
-        font-family: "Helvetica Neue";
-    }
-    .header{
-        border-bottom:1px solid rgb(220,223,230);
-    }
-    .aside{
-        text-align: center;
-    }
-    .el-footer {
-        /* border-top: 1px solid rgb(220,223,230); */
-        text-align: center;
-        background: white;
-        border-top: 1px solid #c6c4ca
-    }
-    .el-header {
-        padding: 0 20px;
-        box-sizing: border-box;
-        flex-shrink: 0;
-        border-bottom: 1px solid #c6c4ca;
-    }
-    .el-menu.el-menu--horizontal {
-        border-bottom: none;
-    }
-    .table-button-container{
-        padding-bottom: 20px;
-    }
+    @import "~@/assets/css/el-override.css";
 </style>

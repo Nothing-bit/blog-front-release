@@ -21,30 +21,31 @@
                                 <b @click="articlePage(item.id)">{{item.title}}</b>
                             </div>
                             <div class="article-info-summary">
-                                <p>{{item.summary}}</p>
+                                <p>{{item.summary.length>80?item.summary.substring(0, 80)+"...":item.summary}}</p>
                             </div>
                             <el-row>
                                 <el-col :lg="9" :md="9" :sm="8">
                                     <div class="article-info-item">
-                                        <span><i class="el-icon-menu"></i>&nbsp;{{item.categoryName}}</span>
+                                        <span @click="categoryPage(item.categoryId)"><i class="el-icon-menu"></i>&nbsp;{{item.categoryName}}</span>
                                     </div>
                                 </el-col>
                                 <el-col :lg="9" :md="9" :sm="8">
                                     <div class="article-info-item">
-                                        <span><i class="el-icon-date"></i>&nbsp;{{item.createBy}}</span>
+                                        <span  @click="archivePage(item.createBy.match(/\d{4}年\d{2}月/g))"><i class="el-icon-date"></i>&nbsp;{{item.createBy}}</span>
                                     </div>
                                 </el-col>
                                 <el-col :lg="6" :md="6" :sm="8">
                                     <div class="article-info-item">
-                                        <span><i class="el-icon-view"></i>&nbsp;{{item.traffic}} 次</span>
+                                        <span @click="articlePage(item.id)"><i class="el-icon-view"></i>&nbsp;{{item.traffic}} 次</span>
                                     </div>
                                 </el-col>
                             </el-row>
                         </el-col>
                     </el-row>
-                    <el-row class="tag-container">
-                        <i class="el-icon-price-tag"></i>
-                        <el-tag size="medium" class="article-tag" v-for="tag in item.tagList" v-bind:key="tag" @click="jumpToArticlePage(tag)">{{tag}}</el-tag>
+                    <el-row class="article-tag-list">
+                        <div  class="article-tag" v-for="tag in item.tagList" v-bind:key="tag">
+                            <el-tag size="medium"  @click="tagArticlePage(tag)">{{tag}}</el-tag>
+                        </div>
                     </el-row>
                 </el-card>
             </transition-group>
@@ -72,14 +73,18 @@
                         name:'article',
                         query:{
                             id:id,
-                        },
-                        // params:{
-                        //     title:title
-                        // }
+                        }
                     })
             },
-            jumpToArticlePage(tagName){
+            categoryPage(categoryId){
+                this.$router.push({name:'category',query:{categoryId:categoryId}})
+            }
+            ,
+            tagArticlePage(tagName){
                 this.$router.push({name:'tagArticle',query:{tagName:tagName}})
+            },
+            archivePage(month){
+                this.$router.push({name:'archive',query:{month:month}})
             }
         }
     }
@@ -87,7 +92,7 @@
 
 <style scoped>
     .article-card{
-        padding: 13px;
+        padding: 10px;
         margin-bottom: 15px;
         text-align: left;
         position: relative;
@@ -98,13 +103,14 @@
         /*transform: translateZ(0) scale(1.01);*/
         /*transition: all 300ms;*/
     }
-    .tag-container{
-        height: 20px;
-        vertical-align: center;
-        padding: 10px;
+    .article-tag-list{
+        margin-top: 10px;
+        margin-bottom: -10px;
+        display: table
     }
     .article-tag{
-        margin-left: 15px;
+        display: table-cell;
+        padding-left: 10px;
     }
     .article-info-cover{
         text-align: center;
@@ -134,6 +140,11 @@
     }
     .article-info-item{
         padding: 2px;
+        color: rgba(60, 60, 60, 0.78);
+        font-weight: bold;
+    }
+    .article-info-item:hover{
+        cursor: pointer;
     }
     .article-tag:hover{
         cursor: pointer;

@@ -79,21 +79,37 @@
                         enter-active-class="animate__animated animate__fadeIn">
                 <el-col :xl="{span:5}" :lg="{span:6}" :md="24">
                     <h3>标签云</h3>
-                    <el-card shadow="hover" class="card" ref="wordCloudCard">
+                    <el-card shadow="hover" ref="wordCloudCard">
                         <TagContainer :tag-list="tagList" :size-range="[10,50]" padding="0.2rem"></TagContainer>
                     </el-card>
                     <h3>友 链</h3>
                     <el-card shadow="hover" style="text-align: center;" :body-style="{padding:'10px !important'}">
-                        <el-link icon="el-icon-link" class="link" :underline=true v-for="item in friendLinkList" v-bind:key="item.id" :href="item.url" target="_blank">{{item.name}}</el-link>
+                        <table class="friend-link-table">
+                            <tr v-for="(item, index) in friendLinkList" v-if="index%3==0" v-bind:key="item.id">
+                                <td class="friend-link-table-td" v-if="index<friendLinkList.length">
+                                    <el-link :underline=true icon="el-icon-link"   :href="item.url" target="_blank">{{friendLinkList[index].name}}</el-link></td>
+                                <td class="friend-link-table-td" v-else></td>
+                                <td class="friend-link-table-td" v-if="index+1<friendLinkList.length">
+                                    <el-link :underline=true icon="el-icon-link"   :href="item.url" target="_blank">{{friendLinkList[index+1].name}}</el-link></td>
+                                <td class="friend-link-table-td" v-else></td>
+                                <td class="friend-link-table-td" v-if="index+2<friendLinkList.length">
+                                    <el-link :underline=true icon="el-icon-link"   :href="item.url" target="_blank">{{friendLinkList[index+2].name}}</el-link></td>
+                                <td class="friend-link-table-td" v-else></td>
+                            </tr>
+                        </table>
+
                     </el-card>
                     <h3>最多阅读</h3>
-                    <el-card shadow="hover" class="card">
-                        <el-row v-for="(item) in hotArticleList" v-bind:key="item.id" style="padding: 5px">
-                            <el-link  type="primary" @click="selectHandler(item)">{{"  "+item.title}}</el-link>
-                        </el-row>
+                    <el-card shadow="hover">
+                        <div class="top-read-node" v-for="(item, index) in hotArticleList" v-bind:key="item.id" style="padding: 5px">
+                            <div class="top-read-order-number" :style="{background:getColor(index)}">{{index+1}}</div>
+                            <div class="top-read-content">
+                                <el-link :underline=true @click="selectHandler(item)">{{item.title.length>30?item.title.substring(0,30)+"...":item.title}}</el-link>
+                            </div>
+                        </div>
                     </el-card>
                     <h3>站点信息</h3>
-                    <el-card shadow="hover" class="card">
+                    <el-card shadow="hover" style="color: rgba(50,50,50,0.95)">
                         <p><i class="el-icon-time"></i> 运行时间：{{time}}</p>
                         <p><i class="el-icon-document"></i> 日志数量：{{countPublicArticle}} 篇</p>
                         <p><i class="el-icon-menu"></i> 分类数量：{{countCategory}} 个</p>
@@ -113,6 +129,7 @@
     import newsAPI from "@/api/fore/news";
     import friendLinkAPI from "@/api/fore/friendLink";
     import indexAPI from "@/api/fore";
+    import colorPanel from "@/config/colorPanel";
 
     export default {
         data(){
@@ -135,6 +152,9 @@
             }
         },
         methods:{
+            getColor(index){
+                return colorPanel[index]
+            },
             getArticleList(pageNum){
                 this.loading=true
                 articleAPI.getArticleList(pageNum, 5).then(data=>{
@@ -236,5 +256,37 @@
     .link{
         padding: 10px;
         font-size: 15px;
+    }
+    .top-read-node{
+        display: table;
+    }
+    .top-read-order-number {
+        display: table-cell;
+        border-radius: 18px;
+        background-color: rgb(92,182,255);
+        width: 22px;
+        height: 22px;
+        font-size: 10px;
+        text-align: center;
+        vertical-align: middle;
+        color: #fff;
+    }
+    .top-read-content{
+        display: table-cell;
+        padding-left:10px;
+    }
+    .friend-link-table{
+        border-collapse: separate;
+        width: 100%;
+        table-layout: fixed;
+        border-spacing: 0;
+        border-top:dashed 1px rgba(60, 60, 60, 0.4);
+        border-left: dashed 1px rgba(60, 60, 60, 0.4);
+    }
+    .friend-link-table-td{
+        padding: 8px;
+        border:dashed 1px rgba(60, 60, 60, 0.4);
+        border-top:none;
+        border-left: none;
     }
 </style>

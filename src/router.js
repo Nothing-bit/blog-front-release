@@ -136,7 +136,7 @@ const router = new Router({
                     name:'index',
                     // component:()=>import('@/components/fore/Index')
                     meta:{
-                        keepAlive:true,
+                        keepAlive:false,
                         title:'ZBlog | 首 页'
                     },
                     // component:()=>import('@/components/fore/Index.vue')
@@ -147,7 +147,7 @@ const router = new Router({
                     path:'category',
                     name:'category',
                     meta:{
-                        keepAlive:true,
+                        keepAlive:false,
                         title:'ZBlog | 分 类'
                     },
                     // component:()=>import("@/components/fore/Category")
@@ -158,7 +158,7 @@ const router = new Router({
                     path:'tag',
                     name:'tag',
                     meta:{
-                        keepAlive:true,
+                        keepAlive:false,
                         title:'ZBlog | 标 签'
                     },
                     // component:()=>import("@/components/fore/Tag")
@@ -179,7 +179,7 @@ const router = new Router({
                     path:'archive',
                     name:'archive',
                     meta:{
-                        keepAlive:true,
+                        keepAlive:false,
                         title:'ZBlog | 归 档'
                     },
                     // component:()=>import("@/components/fore/Archive")
@@ -189,7 +189,7 @@ const router = new Router({
                     //日志内容页
                     path:'article',
                     name:'article',
-                    props:true,
+                    props:false,
                     // component:()=>import('@/components/fore/Article')
                     component:resolve =>require(["@/components/fore/Article"],resolve)
                 },
@@ -209,7 +209,7 @@ const router = new Router({
                     path:'about',
                     name:'about',
                     meta:{
-                        keepAlive:true,
+                        keepAlive:false,
                         title:'ZBlog | 关 于'
                     },
                     // component:()=>import('@/components/fore/About')

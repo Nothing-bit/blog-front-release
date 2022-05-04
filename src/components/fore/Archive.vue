@@ -106,6 +106,9 @@
         activated() {
         },
         created(){
+            if(this.$route.query.month!=null){
+                this.month = this.$route.query.month
+            }
             this.getArchiveList(1)
             this.getArticleList(1)
         }

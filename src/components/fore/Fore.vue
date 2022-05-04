@@ -1,6 +1,6 @@
 <template>
     <el-container id="header">
-        <el-header class="header">
+        <el-header>
             <el-row type="flex" align="middle" justify="center">
                 <el-menu default-active="/fore/index" active-text-color="rgb(64,158,255)" mode="horizontal"  router>
                     <el-menu-item index="/fore/index" class="nav-bar-item" ><i class="el-icon-s-promotion"></i>首 页</el-menu-item>
@@ -12,13 +12,12 @@
                 </el-menu>
             </el-row>
         </el-header>
-
-            <el-main class="main" style="padding-top: 10px; min-height: calc(100vh - 150px);margin-top:65px">
-                <keep-alive >
-                    <router-view v-if="$route.meta.keepAlive"/>
-                </keep-alive>
-                <router-view v-if="!$route.meta.keepAlive"/>
-            </el-main>
+        <el-main>
+            <keep-alive >
+                <router-view v-if="$route.meta.keepAlive"/>
+            </keep-alive>
+            <router-view v-if="!$route.meta.keepAlive"/>
+        </el-main>
         <el-footer id="footer" >
             <span>@CopyRight 2019 ZhouJianGuo版权所有</span>
             <br>
@@ -34,7 +33,7 @@
                     <el-divider></el-divider>
                     <img class="login-icon" src="../../assets/login-gitee.png" @click="login('gitee')">
                     <img class="login-icon" src="../../assets/login-github.png" @click="login('github')">
-<!--                    <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">-->
+                    <img class="login-icon" src="../../assets/login-qq.png" @click="login('qq')">
                     <img class="login-icon" src="../../assets/login-coding.png" @click="login('coding')">
                     <img class="login-icon" src="../../assets/login-huawei.png" @click="login('huawei')">
                     <el-divider></el-divider>
@@ -132,6 +131,7 @@
                 searchResultList:[],
                 visible: false,
                 drawer:false,
+                lCount:0
             };
         },
         methods: {
@@ -211,6 +211,13 @@
                 window.open(url, 'newwindow', 'height=500, width=500, top=50, left=50, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no')
                 window.addEventListener('message', this.getUserInfo,false)
             },
+            adminLogin(e){
+                if(e.key=='L'){
+                    if(this.lCount>2)
+                        this.$router.push("/admin/article/list")
+                    this.lCount++
+                }
+            }
             // getMusicURL(){//获取音乐URL
             //     let url=this.baseUrl+"/fore/setting?name=musicURL"
             //     axios.get(url).then(res=>{
@@ -230,13 +237,19 @@
         },
         created(){
             this.check()
+            window.addEventListener('keydown', this.adminLogin)
         },
+        beforeDestroy(){
+            this.lCount = 0
+            window.removeEventListener('keydown',this.adminLogin)
+        }
     }
 </script>
 
 <style>
     @import "~@/assets/css/ckeditor-content.css";
     @import "~animate.css/animate.min.css";
+    @import "~@/assets/css/el-override.css";
     /* for block of numbers */
     .hljs-ln-numbers {
         text-align: center;
@@ -275,39 +288,11 @@
     .avatar{
         vertical-align:center;
     }
-    .nav-bar-item{
-        font-size: 17px;
-        font-family: "Helvetica Neue";
-        text-align: center;
-    }
-    .breadcrumb{
-        padding: 15px;
-    }
-    .breadcrumb-item{
-        font-size: 15px;
-    }
-    .el-footer{
-        text-align: center;
-        background: white;
-        padding: 20px;
-        height: 70px !important;
-    }
-    .main{
-        min-height: 700px;
-    }
     .login-module{
         text-align: center;
     }
 
-    .tag-cloud{
-        height: 300px;
-    }
-    .pagination{
-        text-align: center;
-    }
-    .card{
-        margin-top: 5px;
-    }
+
     .el-link--inner{
         /*transition: all 500ms;*/
     }
@@ -316,79 +301,10 @@
         font-size: 16px;
         color: rgb(92,182,255);
     }
-    .el-menu.el-menu--horizontal {
-        border-bottom: solid 0px #e6e6e6 !important;
-    }
 
-    .el-timeline-item__timestamp.is-top{
-        margin-bottom: 8px;
-        padding-top: 3px;
 
-    }
-    .el-timeline-item__wrapper{
-        padding: 0px 20px;
-    }
-    .el-timeline-item__tail{position:absolute;left:4px;height:100%;border-left:2px solid #accaf7}
-    .el-card{
-        border: 1px solid #d3d5d7;
-        background-color: #FFF;
-        color: #303133;
-        transition: .3s;
-    }
-    .el-header {
-        padding: 0 20px;
-        box-sizing: border-box;
-        flex-shrink: 0;
-        height:65px !important;
-        position:fixed;
-        background: rgb(255,255,255);
-        z-index: 2;
-        width:100%;
-        box-shadow: 2px 2px 5px 1px rgba(140, 140, 140, 0.3);
-    }
-    .el-menu.el-menu--horizontal {
-        border-bottom: none;
-    }
-    .el-footer {
-        /* border-top: 1px solid rgb(220,223,230); */
-        text-align: center;
-        background: white;
-        border-top: 1px solid #c6c4ca
-    }
-    .el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover{
-        box-shadow: 4px 4px 6px 3px rgba(140, 140, 140, 0.2);
-    }
-
-    .nav-menu{
-        text-align: center;
-        padding: 10px;
-
-    }
     .list-complete-leave-to{
         display: none;
     }
-    /** scroll bar custom
-     style
-    /* width */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
 
-    /* Track */
-    ::-webkit-scrollbar-track {
-        background: rgb(235, 235, 235);
-    }
-
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-        background: rgb(190, 190, 190);
-        border-radius:5px;
-    }
-
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgb(150, 150, 150);
-    }
-
-    .el-scrollbar__wrap{ overflow-x:hidden; }
 </style>
