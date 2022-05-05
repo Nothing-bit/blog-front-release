@@ -71,10 +71,10 @@
                         <div style="text-align: center">
                             <el-row>
                                 <el-col :lg="12" :md="12">
-                                    <el-link><i class="el-icon-arrow-left"></i>&nbsp;&nbsp;上一篇：{{articleData.preTitle}}</el-link>
+                                    <el-link @click="refreshPage(articleData.preId)"><i class="el-icon-arrow-left"></i>&nbsp;&nbsp;上一篇：{{articleData.preTitle}}</el-link>
                                 </el-col>
                                 <el-col :lg="12" :md="12">
-                                    <el-link>下一篇：{{articleData.nextTitle}}&nbsp;&nbsp;<i class="el-icon-arrow-right"></i></el-link>
+                                    <el-link @click="refreshPage(articleData.nextId)">下一篇：{{articleData.nextTitle}}&nbsp;&nbsp;<i class="el-icon-arrow-right"></i></el-link>
                                 </el-col>
                             </el-row>
                         </div>
@@ -380,6 +380,10 @@
             refreshPage(id) {
                 this.$router.push({name:'article',query:{id:id}})
                 this.getArticleDetail()
+                this.list = []
+                this.hasNextPage = true
+                this.pageNum = 1
+                this.getArticleComment()
             },
             //决定目录是否隐藏
             directoryCollapse () {
