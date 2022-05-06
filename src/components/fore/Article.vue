@@ -36,13 +36,13 @@
                         <div class="article-info" >
                             <el-row type="flex" align="middle">
                                 <el-col :lg="4">
-                                    <p >分类：{{articleData.categoryName}}</p>
+                                    <strong >分类：{{articleData.categoryName}}</strong>
                                 </el-col>
                                 <el-col :lg="7" >
-                                    <p >创建于：{{articleData.createBy}}</p>
+                                    <strong >创建于：{{articleData.createBy}}</strong>
                                 </el-col>
                                 <el-col :lg="7" >
-                                    <p >最后修改：{{articleData.createBy}}</p>
+                                    <strong >最后修改：{{articleData.modifiedBy}}</strong>
                                 </el-col>
                                 <el-col :lg="6">
                                     <el-button-group>
@@ -67,6 +67,19 @@
                         </div>
                         <el-divider></el-divider>
                         <div v-html="articleData.content" v-highlight class="article-content ck-content" v-viewer="{movable: false}"/>
+                        <el-row>
+                            <el-col :lg="{span:16,offset:4}">
+                                <div class="tip">
+                                    <span>本文链接：{{href}}</span>
+                                    <br>
+                                    <span>版权声明：本站所有文章除特别声明外,转载请注明出处！</span>
+                                    <br>
+                                    <span>最后修改于：{{articleData.modifiedBy}}</span>
+                                    <br>
+                                    <span>许可协议：署名-非商业性使用-禁止演绎 4.0 国际 转载请保留原文链接及作者。</span>
+                                </div>
+                            </el-col>
+                        </el-row>
                         <el-divider></el-divider>
                         <div style="text-align: center">
                             <el-row>
@@ -436,6 +449,7 @@
                 list:[],
                 pageNum:1,
                 directory:[],
+                href:window.location.href
             }
         }
     }
@@ -443,13 +457,14 @@
 
 <style scoped>
     .article-content{
-        padding: 30px;
+        padding: 20px;
     }
     .article-title{
         text-align: center;
     }
     .article-info{
         text-align: center;
+        color:rgba(60,60,60,0.8);
     }
     .article-comment-module{
         margin-top: 20px;

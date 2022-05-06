@@ -103,7 +103,9 @@
     margin-left: 0;
     margin-right: 0;
     font-style: italic;
-    border-left: solid 5px hsl(0, 0%, 80%);
+    border-radius: 4px;
+    border-left: solid 5px rgb(103,194,58);
+    background-color: rgba(180,180,180,0.2);
 }
 /* ckeditor5-block-quote/theme/blockquote.css */
 .ck-content[dir="rtl"] blockquote {
