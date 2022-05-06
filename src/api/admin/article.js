@@ -25,7 +25,12 @@ const articleAPI = {
                     headers:{
                         Authorization: token
                     }
-                }).then(data=>resolve(data),reason => reject(reason))
+                }).then(data=>{
+                    data.list.forEach(value => {
+                        value.pictureUrl = baseURL+value.pictureUrl
+                    })
+                    resolve(data)
+                },reason => reject(reason))
             })
         }else{
             return Promise.reject("no token")
