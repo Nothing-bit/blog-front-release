@@ -87,13 +87,13 @@
                         <table class="friend-link-table">
                             <tr v-for="(item, index) in friendLinkList" v-if="index%3==0" v-bind:key="item.id">
                                 <td class="friend-link-table-td" v-if="index<friendLinkList.length">
-                                    <el-link :underline=true icon="el-icon-link"   :href="item.url" target="_blank">{{friendLinkList[index].name}}</el-link></td>
+                                    <el-link :underline=true icon="el-icon-link"   :href="friendLinkList[index].url" target="_blank">{{friendLinkList[index].name}}</el-link></td>
                                 <td class="friend-link-table-td" v-else></td>
                                 <td class="friend-link-table-td" v-if="index+1<friendLinkList.length">
-                                    <el-link :underline=true icon="el-icon-link"   :href="item.url" target="_blank">{{friendLinkList[index+1].name}}</el-link></td>
+                                    <el-link :underline=true icon="el-icon-link"   :href="friendLinkList[index+1].url" target="_blank">{{friendLinkList[index+1].name}}</el-link></td>
                                 <td class="friend-link-table-td" v-else></td>
                                 <td class="friend-link-table-td" v-if="index+2<friendLinkList.length">
-                                    <el-link :underline=true icon="el-icon-link"   :href="item.url" target="_blank">{{friendLinkList[index+2].name}}</el-link></td>
+                                    <el-link :underline=true icon="el-icon-link"   :href="friendLinkList[index+2].url" target="_blank">{{friendLinkList[index+2].name}}</el-link></td>
                                 <td class="friend-link-table-td" v-else></td>
                             </tr>
                         </table>
