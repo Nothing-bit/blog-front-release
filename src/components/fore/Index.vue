@@ -85,16 +85,10 @@
                     <h3>友 链</h3>
                     <el-card shadow="hover" style="text-align: center;" :body-style="{padding:'10px !important'}">
                         <table class="friend-link-table">
-                            <tr v-for="(item, index) in friendLinkList" v-if="index%3==0" v-bind:key="item.id">
-                                <td class="friend-link-table-td" v-if="index<friendLinkList.length">
-                                    <el-link :underline=true icon="el-icon-link"   :href="friendLinkList[index].url" target="_blank">{{friendLinkList[index].name}}</el-link></td>
-                                <td class="friend-link-table-td" v-else></td>
-                                <td class="friend-link-table-td" v-if="index+1<friendLinkList.length">
-                                    <el-link :underline=true icon="el-icon-link"   :href="friendLinkList[index+1].url" target="_blank">{{friendLinkList[index+1].name}}</el-link></td>
-                                <td class="friend-link-table-td" v-else></td>
-                                <td class="friend-link-table-td" v-if="index+2<friendLinkList.length">
-                                    <el-link :underline=true icon="el-icon-link"   :href="friendLinkList[index+2].url" target="_blank">{{friendLinkList[index+2].name}}</el-link></td>
-                                <td class="friend-link-table-td" v-else></td>
+                            <tr v-for="(itemList, index) in friendLinkList" v-bind:key="'row' + index">
+                                <td class="friend-link-table-td" v-for = "item in itemList" v-bind:key="item.id">
+                                    <el-link :underline=true icon="el-icon-link" :href="item.url" target="_blank">{{item.name}}</el-link>
+                                </td>
                             </tr>
                         </table>
 
@@ -167,7 +161,16 @@
             queryAllFriendLink(){
                 friendLinkAPI.getAllFriendLink().then(data=>{
                     this.loading=false;
-                    this.friendLinkList=data;
+                    let i = 0;
+                    let friendLinkList = []
+                    while (i < data.length) {
+                        let tempList = [];
+                        for (let j = 0; i < data.length && j < 3; i++, j++) {
+                            tempList.push(data[i])
+                        }
+                        friendLinkList.push(tempList)
+                    }
+                    this.friendLinkList = friendLinkList
                 },error => console.error(error))
             },
             getNews(){
