@@ -256,7 +256,7 @@
             renderContent(h, { node}) {
                 return (
                     <el-tooltip content={node.label[0]} effect="light" placement="right">
-                        <span id={"node"+node.data.anchor} style="font-size:12px">{node.label}</span>
+                        <span id={"node"+node.data.anchor} style="font-size:12px; font-weight: bold">{node.label}</span>
                     </el-tooltip>);
             },
             // 锚点跳转
@@ -275,12 +275,21 @@
             //深度搜索建立目录树
             dfs(level, titleList, anchor){
                 let list=[]
-                for(let i=0;i<titleList.length;){
+                for (let i=0;i<titleList.length;){
                     // console.log(level+titleList[i])
                     let curLevel=titleList[i].charAt(2)
-                    if(curLevel==level){
+                    if (curLevel==level){
+                        let label = titleList[i].match(/(?<=<h[1-9][^/]*?>).+?(?=<\/h[1-9]>)/g);
+                        // 这里是过滤样式，对于包含html标签修饰的标题进行过滤
+                        let pattern = /(?<=<\w+>).+(?=<\/\w+>)/g
+                        label.forEach((value, index) => {
+                            if (pattern.test(value)) {
+                                let ret = value.match(pattern);
+                                label[index] = ret[0];
+                            }
+                        })
                         let data={
-                            label:titleList[i].match(/(?<=<h[1-9][^/]*?>).+?(?=<\/h[1-9]>)/g),
+                            label: label,
                             children:[],
                             anchor:anchor++
                         }
@@ -306,7 +315,7 @@
                 let titleList=detail.match(/(<h[1-9].*?>.*?<\/h[1-9]>)/g)
                 if(titleList!=null&&titleList.length!=0){
                     titleList.forEach(((value, index) => {
-                        detail=detail.replace(value,"<a id=anchor"+index+">"+value+"</a>")
+                        detail = detail.replace(value,"<a id=anchor"+index+">"+value+"</a>")
                     }))
                     let level=titleList[0].charAt(2)
                     //目录树
